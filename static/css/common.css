@@ -1,0 +1,148 @@
+/* 清楚浮动 */
+.clear_both::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* 头部工具条 */
+.top-bar {
+    line-height: 28px;
+    padding: 2px 0px;
+    background: #eee;
+}
+
+.top-bar a {
+    font-size: 12px;
+    color: #999;
+}
+
+.top-bar a:hover {
+    color: #035D1C;
+}
+
+/* 搜索框、LOGO */
+.search-bar {
+    padding: 3.5px 0;
+}
+
+.search-bar-input {
+    margin: 20.5px 0;
+}
+
+.search-bar-text {
+    text-align: center;
+    line-height: 73px;
+}
+
+.search-bar-text a {
+    font-size: 18px;
+    color: darkseagreen;
+}
+
+.search-bar-input .form-control:focus {
+    border-color: darkseagreen;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px darkseagreen;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px darkseagreen;
+}
+
+@media (min-width: 768px) {
+    .search-bar-text a {
+        font-size: 12px;
+        color: darkseagreen;
+    }
+}
+
+@media (min-width: 992px) {
+    .search-bar-text a {
+        font-size: 18px;
+        color: darkseagreen;
+    }
+}
+
+/* 导航条 */
+.nav-bar {
+    background: #668D2F;
+}
+
+.nav-bar-box {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-bar li {
+    float: left;
+}
+
+.nav-bar li a {
+    color: white;
+    display: block;
+    line-height: 40px;
+    font-size: 16px;
+    padding: 0 20px;
+}
+
+.nav-bar li a:hover {
+    background: #48681A;
+    text-decoration: none;
+}
+
+.nav-bar li.active a {
+    background: #48681A;
+    text-decoration: none;
+}
+
+/* 重置按钮*/
+.btn-green, .btn-green:focus {
+    color: white;
+    background-color: #668D2F;
+    border-color: #668D2F;
+}
+
+.btn-green:hover {
+    color: #fff;
+    background-color: #5a8222;
+    border-color: #4e7517;
+    -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 1px rgba(0, 0, 0, .1);
+}
+
+.btn-green:active {
+    color: #fff;
+    background-color: #3b6303;
+    border-color: #2d4d00;
+    background-image: none;
+    -webkit-box-shadow: inset 0 4px 6px rgba(0, 0, 0, .15);
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, .15);
+}
+
+/* 通用a:hover*/
+.a-text {
+    font-size: 12px;
+    color: #000;
+    text-decoration: none;
+}
+
+.a-text-hover:hover {
+    color: #035D1C;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 重置居中盒子*/
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1280px
+    }
+}
+
+/* 底部CSS*/
+.footer {
+    background: #f7f7f7;
+    padding: 20px 0;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 20px;
+}

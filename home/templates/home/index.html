@@ -1,0 +1,103 @@
+{% load static %}
+{%  include "home/base_header.html" %}
+<link rel="stylesheet" href="{% static '/css/common.css' %}">
+<link rel="stylesheet" href="{% static '/css/body.css' %}">
+</head>
+<body>
+{%  include "home/base_nav.html" %}
+<div class="">
+    <div class="container">
+        <div class="col-md-8">
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <h3 class="pull-left">农产品交易信息</h3>
+                    <a class="a-text pull-right" href="">查看求购信息</a>
+                </div>
+                <div>
+                    <ul class="msg-list">
+{#                        <li>#}
+{#                            <span>[供]</span>#}
+{#                            <a href="" class="msg-word has-ding has-photo">柑桔13886725378特早蜜桔，叶桔，蜜橘桔子</a>#}
+{#                            <span class="pull-right">10-6 09:30</span>#}
+{#                            <span class="pull-right">宜昌</span>#}
+{#                            <span class="pull-right">湖北</span>#}
+{#                        </li>#}
+
+                        {% for item in list %}
+                            <li>
+                                <span>[供]</span>
+                                <a href="" class="msg-word has-ding has-photo">{{ item.m_title }}</a>
+                                <span class="pull-right">{{ item.create_time }}</span>
+                                <span class="pull-right">{{ item.m_address_belong }}</span>
+                                <span class="pull-right">湖北</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-box ready-login-box">
+                <p class="ready-login-btn"><a href="">注册会员</a>|<a href="">会员登录</a></p>
+                <a class="btn btn-green btn-create" type="button">免费发布信息</a>
+            </div>
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">产地报价</span>
+                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
+                </div>
+                <div>
+                    <ul class="p-today-list">
+                        <li>
+                            <span>5分钟前</span>
+                            <span title="自产红薯50克左右，装箱10公斤：0.7-0.8元/斤">
+                                <a class="p-todat-list-a a-text-hover" href="">自产红薯50克左右，装箱10公斤：0.7-0.8元/斤</a>
+                                <div class="p-todat-list-special">
+                                    <a href="">辽宁新民白菜，矮棵黄心菜，玲珑黄，秋宝</a>
+                                </div>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">热门农产品价格信息</span>
+                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
+                </div>
+                <div>
+                    <ul class="clear_both p-list">
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">近期热门信息</span>
+                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
+                </div>
+                <div>
+                    <ul class="m-list">
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%  include "home/base_footer.html" %}
