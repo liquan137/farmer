@@ -21,6 +21,7 @@ class p_message(models.Model):
 
 class p_menber(models.Model):
     username = models.CharField(max_length=30, help_text="关联用户")
+    nickname = models.CharField(max_length=30, help_text="昵称")
     type = models.CharField(max_length=10, help_text="1:代办（农产品经纪人）2：经销商 3：种养殖户 4：涉农企业 5：农业合作社")
     company_name = models.CharField(max_length=80, help_text="公司名称")
     address_belong = models.CharField(max_length=80, help_text="所属地区代码")

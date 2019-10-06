@@ -20,3 +20,33 @@ def index(request):
         'list': list
     }
     return HttpResponse(template.render(context, request))
+
+def login(request):
+    template = loader.get_template('home/login.html')
+    list = []
+    list_data = {
+        'm_title': '柑桔13886725378特早蜜桔，叶桔，蜜橘桔子',
+        'm_address_belong': '1564',
+        'create_time': '1564658781'
+    }
+    for i in range(0, 10):
+        list.append(list_data)
+    context = {
+        'list': list
+    }
+    return HttpResponse(template.render(context, request))
+
+def register(request):
+    template = loader.get_template('home/register.html')
+    list = []
+    list_data = {
+        'm_title': '柑桔13886725378特早蜜桔，叶桔，蜜橘桔子',
+        'm_address_belong': '1564',
+        'create_time': '1564658781'
+    }
+    for i in range(0, 10):
+        list.append(list_data)
+    context = {
+        'list': list
+    }
+    return HttpResponse(template.render(context, request))
