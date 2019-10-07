@@ -38,7 +38,16 @@
         </div>
         <div class="col-md-4">
             <div class="card-box ready-login-box">
-                <p class="ready-login-btn"><a href="">注册会员</a>|<a href="">会员登录</a></p>
+                {% if request.userInfo != None %}
+                    <p>
+                        <strong><font color="#444">{{ request.userInfo.nickname }}</font></strong>
+                        <font color="#444">您好，欢迎登录！</font>
+                        <a href="/register/" class="a-text a-text-hover">退出</a>
+                    </p>
+                {% elif request.userInfo == None %}
+                    <p class="ready-login-btn"><a href="">注册会员</a>|<a href="">会员登录</a></p>
+                {% endif %}
+
                 <a class="btn btn-green btn-create" type="button">免费发布信息</a>
             </div>
             <div class="card-box">

@@ -16,13 +16,34 @@
                 </div>
                 <div class="container">
                     <div class="login-center">
-                        <form class="form-horizontal">
+                        <form class="form-horizontal registerReg" method="post">
                             <div class="form-group">
                                 <label for="exampleInputAccount1" class="col-sm-2">昵称</label>
                                 <div class="col-md-8 col-sm-10">
                                     <input type="text" name="nickname" class="form-control" id="exampleInputAccount1"
                                            placeholder="请输入昵称 (必填)">
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputAccount1" class="col-sm-2">昵称</label>
+                                <div class="col-md-8 col-sm-10">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="type" value="1"> 代办（农产品经纪人）
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="type" value="2"> 经销商
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="type" value="3"> 种养殖户
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="type" value="4"> 涉农企业
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="type" value="4"> 农业合作社
+                                    </label>
+                                </div>
+
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputAccount2" class="col-sm-2">公司名称</label>
@@ -113,7 +134,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="submit" class="btn btn-green btn-create">完善资料</button>
+                                    <button class="btn btn-green btn-create"  onclick="formSubmit()">完善资料</button>
                                 </div>
                             </div>
                         </form>
@@ -123,6 +144,8 @@
         </div>
     </div>
 </div>
+<script src="{% static '/js/api.js' %}"></script>
+<script src="{% static '/js/request.js' %}"></script>
 <script type="text/javascript"
         src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
 <script type="text/javascript">
@@ -4428,5 +4451,27 @@
             }
         });
     })
+    let formSubmit = () => {
+        var bootstrapValidator = $("form.registerReg").data('bootstrapValidator');
+        bootstrapValidator.validate();
+        if (bootstrapValidator.isValid()) {
+            fetch_POST(api.registerReg, qs.parse($('form.registerReg').serialize())).then(response => {
+                let data = response.data
+                if (data.status == 200) {
+                    new $.zui.Messager(data.msg, {
+                        type: 'success',
+                        placement: 'center'
+                    }).show();
+                } else {
+                    new $.zui.Messager(data.msg, {
+                        type: 'danger',
+                        placement: 'center'
+                    }).show();
+                }
+                console.log()
+            })
+
+        } else return;
+    }
 </script>
 {% include "home/base_footer.html" %}

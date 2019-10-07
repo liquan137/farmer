@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from home.models import models as home_model
 from django.template import loader
 
@@ -21,7 +21,9 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+
 def login(request):
+    print(request.userInfo)
     template = loader.get_template('home/login.html')
     list = []
     list_data = {
@@ -35,6 +37,7 @@ def login(request):
         'list': list
     }
     return HttpResponse(template.render(context, request))
+
 
 def register(request):
     template = loader.get_template('home/register.html')
@@ -51,7 +54,10 @@ def register(request):
     }
     return HttpResponse(template.render(context, request))
 
+
 def registerReg(request):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
     template = loader.get_template('home/registerReg.html')
     list = []
     list_data = {

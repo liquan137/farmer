@@ -1,11 +1,11 @@
 {% load static %}
-{%  include "home/base_header.html" %}
+{% include "home/base_header.html" %}
 <link rel="stylesheet" href="{% static '/css/common.css' %}">
 <link rel="stylesheet" href="{% static '/css/body.css' %}">
 <link rel="stylesheet" href="{% static '/css/login.css' %}">
 </head>
 <body>
-{%  include "home/base_nav.html" %}
+{% include "home/base_nav.html" %}
 <div class="">
     <div class="container">
         <div class="col-md-12">
@@ -15,35 +15,38 @@
                 </div>
                 <div class="container">
                     <div class="login-center">
-                        <form class="form-horizontal">
-                          <div class="form-group">
-                            <label for="exampleInputAccount4" class="col-sm-2">账号</label>
-                            <div class="col-md-8 col-sm-10">
-                              <input type="text" name="username" class="form-control" id="exampleInputAccount4" placeholder="邮箱号">
+                        <form class="form-horizontal login" method="post">
+                            <div class="form-group">
+                                <label for="exampleInputAccount4" class="col-sm-2">账号</label>
+                                <div class="col-md-8 col-sm-10">
+                                    <input type="text" name="username" class="form-control" id="exampleInputAccount4"
+                                           placeholder="邮箱号">
+                                </div>
                             </div>
-                          </div>
-                          <div class="form-group">
-                            <label for="exampleInputPassword4" class="col-sm-2">密码</label>
-                            <div class="col-md-8 col-sm-10">
-                              <input type="password" name="password" class="form-control" id="exampleInputPassword4" placeholder="密码">
+                            <div class="form-group">
+                                <label for="exampleInputPassword4" class="col-sm-2">密码</label>
+                                <div class="col-md-8 col-sm-10">
+                                    <input type="password" name="password" class="form-control"
+                                           id="exampleInputPassword4" placeholder="密码">
+                                </div>
                             </div>
-                          </div>
-                          <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                              <div class="checkbox checkbox-inline">
-                                <label>
-                                  <input type="checkbox"> 记住我
-                                </label>
-                              </div>
-                                <a class="a-text a-text-hover checkbox-right"  href="">忘记密码</a>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox checkbox-inline">
+                                        <label>
+                                            <input name="remember" type="checkbox" checked> 记住我
+                                        </label>
+                                    </div>
+                                    <a class="a-text a-text-hover checkbox-right" href="">忘记密码</a>
+                                </div>
                             </div>
-                          </div>
-                          <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit"  class="btn btn-green btn-create">登录</button>
-                                <a type="submit"  class="btn btn-green btn-create">注册</a>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-green btn-create" onclick="formSubmit()">登录
+                                    </button>
+                                    <a class="btn btn-green btn-create" href="/register">注册</a>
+                                </div>
                             </div>
-                          </div>
                         </form>
                     </div>
                 </div>
@@ -51,4 +54,81 @@
         </div>
     </div>
 </div>
-{%  include "home/base_footer.html" %}
+<script src="{% static '/js/api.js' %}"></script>
+<script src="{% static '/js/request.js' %}"></script>
+<script type="text/javascript"
+        src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+<script>
+    console.log(api)
+    $(document).ready(function () {
+        $('form').bootstrapValidator({
+            // 默认的提示消息
+            message: '请填写该字段',
+            // 表单框里右侧的icon
+            feedbackIcons: {
+                valid: 'icon-radiobutton iconfont iconfont-val',
+                invalid: 'icon-roundclosefill iconfont iconfont-val',
+                validating: 'icon-icon_task_checkbox_d iconfont iconfont-val'
+            },
+            submitHandler: function (validator, form, submitButton) {
+                // 表单提交成功时会调用此方法
+                // validator: 表单验证实例对象
+                // form  jq对象  指定表单对象
+                // submitButton  jq对象  指定提交按钮的对象
+                console.log(form)
+            },
+            fields: {
+                username: {
+                    validators: {
+                        notEmpty: {
+                            message: '账号（邮箱号码）不能为空'
+                        },
+                        regexp: {
+                            regexp: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                            message: '账号（邮箱号码）格式错误'
+                        },
+                        callback: {
+                            callback: function (value, validator) {
+                                if (value == " ") {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        }
+                    }
+                },
+            }
+        });
+    })
+    let formSubmit = () => {
+        var bootstrapValidator = $("form").data('bootstrapValidator');
+        bootstrapValidator.validate();
+        if (bootstrapValidator.isValid()) {
+            fetch_POST(api.login,qs.parse($('form.login').serialize())).then(response => {
+                let data = response.data
+                if (data.status == 200) {
+                    new $.zui.Messager(data.msg, {
+                        type: 'success',
+                        placement: 'center'
+                    }).show();
+                } else {
+                    new $.zui.Messager(data.msg, {
+                        type: 'danger',
+                        placement: 'center'
+                    }).show();
+                }
+                console.log()
+            })
+
+        } else return;
+    }
+</script>
+{% include "home/base_footer.html" %}

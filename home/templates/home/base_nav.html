@@ -3,8 +3,19 @@
         <div class="container">
             <div class="col-lg-12 clear_both">
         <span class="pull-left">
-            <a href="/login/">会员登陆</a>
-            <a href="/register/">注册会员</a>
+
+            {%  if request.userInfo != None %}
+                <a><font color="#444">用户：</font></a>
+                <a><b><font color="#444">{{ request.userInfo.nickname }}</font></b></a>
+                <a><font color="#444">，欢迎登录！</font></a>
+                <a href="/login/">发布信息</a>
+                <a href="/register/">管理信息</a>
+                <a href="/registerReg/">修改资料</a>
+                <a href="/register/">退出</a>
+            {% elif request.userInfo == None %}
+                <a href="/login/">会员登陆</a>
+                <a href="/register/">注册会员</a>
+            {% endif %}
         </span>
                 <span class="pull-right">
             <a href="">收藏本站</a>

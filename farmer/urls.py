@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from home import views as home_views
+from api import views as api_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +24,7 @@ urlpatterns = [
     path('login/', home_views.login),
     path('register/', home_views.register),
     path('registerReg/', home_views.registerReg),
+    path('api/login', api_views.login),
+    path('api/register', api_views.register),
+    path('api/registerReg', api_views.registerReg),
 ]
