@@ -6,7 +6,8 @@
 
             {%  if request.userInfo != None %}
                 <a><font color="#444">用户：</font></a>
-                <a><b><font color="#444">{{ request.userInfo.nickname }}</font></b></a>
+                <a><b>{% autoescape off %}{{ request.userInfo.nickname }}{% endautoescape %}</b></a>
+
                 <a><font color="#444">，欢迎登录！</font></a>
                 <a href="/login/">发布信息</a>
                 <a href="/register/">管理信息</a>

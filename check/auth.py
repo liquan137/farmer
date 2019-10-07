@@ -11,7 +11,10 @@ class menber_check(object):
         if user_id:
             try:
                 user = p_menber.objects.get(username=user_id)
-                # request.userInfo = user
+                if user.nickname == '':
+                    user.nickname = '<font><a href="/registerReg/" style="color:#F00">请完善资料</a></font>'
+                else:
+                    user.nickname = '<font color="#444">' + user.nickname + '</font>'
                 request.userInfo = {
                     'nickname': user.nickname,
                     'username': user.username,
