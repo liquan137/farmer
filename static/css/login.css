@@ -1,6 +1,83 @@
 .login-center{
     display: block;
     margin: 0 auto;
-    max-width: 400px;
+    max-width: 550px;
     padding: 80px 0;
+}
+.custom-select{
+    display: block;
+    width: calc(100% / 3 - 10px);
+    margin-right: 0px!important;
+    margin-left: 0px!important;
+    position: relative;
+    float: left;
+}
+.custom-select:nth-of-type(2){
+    margin: 0 15px!important;
+}
+.iconfont-val{
+	position: absolute;
+	right: 18px;
+	top: 0;
+	height: 32px;
+	line-height: 32px;
+}
+.icon-radiobutton{
+	color: #28a745;
+}
+.icon-roundclosefill{
+	color:#dc3545;
+}
+.btn.disabled, .btn.disabled.active, .btn.disabled:active, .btn.disabled:focus, .btn.disabled:hover, .btn[disabled], .btn[disabled].active, .btn[disabled]:active, .btn[disabled]:focus, .btn[disabled]:hover, fieldset[disabled] .btn, fieldset[disabled] .btn.active, fieldset[disabled] .btn:active, fieldset[disabled] .btn:focus, fieldset[disabled] .btn:hover{
+    background-color: #ddd;
+    color: #999;
+    border-color: #bbb;
+    cursor: not-allowed
+}
+.success{
+    color: #28a745;
+}
+.primary{
+
+}
+.danger{
+    color:#dc3545;
+}
+.states-box{
+    width: 220px;
+    margin-bottom: 10px;
+}
+.states-box:after{
+    display: table;
+    content: "";
+    clear: both;
+}
+.states{
+    display: block;
+    float: left;
+    width: calc(100% / 3 - 10px);
+    height: 8px;
+    background-color: #eee;
+    position: relative;
+    margin: 7px 0;
+    margin-top: 13px;
+    transition: 0.3s;
+    position: relative;
+}
+.states:nth-of-type(2){
+    margin: 7px 15px;
+    margin-top: 13px;
+    transition: 0.3s;
+}
+.states-danger .states:nth-of-type(1){
+    background-color: #dc3545;
+    transition: 0.3s;
+}
+.states-primary .states:nth-of-type(1),.states-primary .states:nth-of-type(2){
+    background-color: #4daaff;
+    transition: 0.3s;
+}
+.states-success .states:nth-of-type(1),.states-success .states:nth-of-type(2),.states-success .states:nth-of-type(3){
+    background-color: #28a745;
+    transition: 0.3s;
 }
