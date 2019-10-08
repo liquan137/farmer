@@ -3,10 +3,11 @@ from home.models import p_menber
 
 class menber_check(object):
 
-    def __init__(self,get_response):
+    def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
+        request.session['from'] = request.META.get('HTTP_REFERER', '/')
         user_id = request.session.get("user_id")
         if user_id:
             try:

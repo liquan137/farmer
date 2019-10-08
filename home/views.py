@@ -71,3 +71,12 @@ def registerReg(request):
         'list': list
     }
     return HttpResponse(template.render(context, request))
+
+
+def logout(request):
+    template = loader.get_template('home/logout.html')
+    if request.userInfo != None:
+        del request.session['user_id']
+    context = {
+    }
+    return HttpResponse(template.render(context, request))

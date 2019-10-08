@@ -1,0 +1,12 @@
+.logout-title{
+    text-align: center;
+}
+body{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.logout-box{
+    position: relative;
+    top: calc(50% - 277px);
+}

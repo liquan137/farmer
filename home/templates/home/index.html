@@ -42,10 +42,10 @@
                     <p>
                         <strong>{% autoescape off %}{{ request.userInfo.nickname }}{% endautoescape %}</strong>
                         <font color="#444">您好，欢迎登录！</font>
-                        <a href="/register/" >退出</a>
+                        <a href="/logout/" >退出</a>
                     </p>
                 {% elif request.userInfo == None %}
-                    <p class="ready-login-btn"><a href="">注册会员</a>|<a href="">会员登录</a></p>
+                    <p class="ready-login-btn"><a href="/register">注册会员</a>|<a href="/login">会员登录</a></p>
                 {% endif %}
 
                 <a class="btn btn-green btn-create" type="button">免费发布信息</a>

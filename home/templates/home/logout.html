@@ -1,0 +1,29 @@
+{% load static %}
+{% include "home/base_header.html" %}
+<link rel="stylesheet" href="{% static '/css/common.css' %}">
+<link rel="stylesheet" href="{% static '/css/logout.css' %}">
+</head>
+<body>
+<div class="logout-box">
+    <p class="logout-title"><img src="{% static '/img/logout.jpg' %}" alt=""></p>
+    <h2 class="logout-title">登出状态</h2>
+    <p class="logout-title"><span id="times">倒计时：0 秒</span> <a href="{{ request.session.from }}">立即跳转</a></p>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+        let i = 0
+        window.times = setInterval(() => {
+            i += 1
+            $('#times').text('倒计时：' + i + ' 秒')
+            if (i == 5) {
+                clearInterval(times)
+                $('#times').text('')
+                setTimeout(()=>{
+                    window.location.href = '{{ request.session.from }}'
+                }, 500)
+            }
+        }, 1000)
+    })
+</script>
+</html>

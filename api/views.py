@@ -1,10 +1,29 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from home.models import *
+import zmail
 import json
-
+import string
+import random
 
 # Create your views here.
+# 邮箱发送
+server = zmail.server('1031308775@qq.com', 'vwfjwqaeftiebegb')
+
+
+# 生成AES密匙
+def random_password(num):
+    result = ''
+    choice = '0123456789' + string.ascii_lowercase
+    result += random.choice('0123456789')
+    result += random.choice(string.ascii_lowercase)
+    list = []
+    for i in range(num - 2):
+        a = random.choice(choice)
+        list.append(a)
+        result += a
+    return result
+
 
 def login(request):
     print(request.userInfo)
@@ -100,6 +119,35 @@ def registerReg(request):
                 'data': None
             }
 
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+def verifyEmail(request):
+    if request.method == 'POST':
+        responses = json.loads(request.body)
+        for response in responses:
+            print(responses[response])
+        key = random_password(5)
+        print(key)
+        mail = {
+            'subject': '验证码通知-农业网',
+            'content_text': """
+                您的验证码是： """ + key + """，10分钟内有效！
+                            """,
+        }
+        server.send_mail(responses['username'], mail)
+        data = {
+            'status': 200,
+            'msg': '发送成功',
+            'data': None
+        }
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
     else:
         data = {

@@ -31,6 +31,17 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label for="exampleInputPassword4" class="col-sm-2">验证</label>
+                                <div class="col-md-8 col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" onclick="send()">获取验证码</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <a class="a-text a-text-hover checkbox-right" href="/login/">已有账号，直接登陆</a>
                                 </div>
@@ -217,10 +228,30 @@
                         placement: 'center'
                     }).show();
                 }
-                console.log()
             })
 
         } else return;
+    }
+
+    let send = () => {
+        let mail = $("input[name='username']").val()
+        let check = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        if (check.exec(mail)) {
+            fetch_POST(api.verifyEmail,qs.parse($('form.register').serialize())).then(response => {
+                let data = response.data
+                if (data.status == 200) {
+                    new $.zui.Messager(data.msg, {
+                        type: 'success',
+                        placement: 'center'
+                    }).show();
+                } else {
+                    new $.zui.Messager(data.msg, {
+                        type: 'danger',
+                        placement: 'center'
+                    }).show();
+                }
+            })
+        }
     }
 </script>
 {% include "home/base_footer.html" %}

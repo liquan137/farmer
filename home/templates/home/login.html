@@ -119,6 +119,9 @@
                         type: 'success',
                         placement: 'center'
                     }).show();
+                    setTimeout(() => {
+                        window.location.href = '{{ request.session.from }}'
+                    }, 500)
                 } else {
                     new $.zui.Messager(data.msg, {
                         type: 'danger',

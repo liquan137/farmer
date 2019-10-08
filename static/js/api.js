@@ -1,7 +1,8 @@
 let apiData = {
     login: '/login',
     register: '/register',
-    registerReg: '/registerReg'
+    registerReg: '/registerReg',
+    verifyEmail: '/verifyEmail'
 }
 
 let setApi = (data) => {
