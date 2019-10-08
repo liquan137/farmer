@@ -12,7 +12,7 @@
         <div class="col-md-12">
             <div class="card-box">
                 <div class="clear_both card-title">
-                    <span class="pull-left card-o-title a-text-hover">会员注册-完善注册信息</span>
+                    <span class="pull-left card-o-title a-text-hover">完善或修改资料</span>
                 </div>
                 <div class="container">
                     <div class="login-center">
@@ -4191,6 +4191,7 @@
             820201: '离岛'
         }
     };
+    /* 设置地区 */
     $(document).ready(function () {
         var province = citylist.province_list
         var city = citylist.city_list
@@ -4225,7 +4226,7 @@
 
         })
     })
-
+    /* 表单效验 */
     $(document).ready(function () {
         $('form').bootstrapValidator({
             // 默认的提示消息
@@ -4254,6 +4255,13 @@
                             max: 20,
                             message: '字数在2~20之间'
                         },
+                    }
+                },
+                type: {
+                    validators: {
+                        notEmpty: {
+                            message: '请选择一个类型'
+                        }
                     }
                 },
                 company_name: {
@@ -4451,6 +4459,7 @@
             }
         });
     })
+    /* 表单提交 */
     let formSubmit = () => {
         var bootstrapValidator = $("form.registerReg").data('bootstrapValidator');
         bootstrapValidator.validate();
@@ -4468,7 +4477,6 @@
                         placement: 'center'
                     }).show();
                 }
-                console.log()
             })
 
         } else return;

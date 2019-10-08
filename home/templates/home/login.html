@@ -37,7 +37,7 @@
                                             <input name="remember" type="checkbox" checked> 记住我
                                         </label>
                                     </div>
-                                    <a class="a-text a-text-hover checkbox-right" href="">忘记密码</a>
+                                    <a class="a-text a-text-hover checkbox-right" href="/forget">忘记密码</a>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -120,7 +120,13 @@
                         placement: 'center'
                     }).show();
                     setTimeout(() => {
-                        window.location.href = '{{ request.session.from }}'
+                        console.log('{{ request.session.from }}')
+                        if ('{{ request.session.from }}'.indexOf('logout') > -1 || '{{ request.session.from }}'.indexOf('register') > -1){
+                            window.location.href = '/'
+                        }  else {
+                            window.location.href = '{{ request.session.from }}'
+                        }
+
                     }, 500)
                 } else {
                     new $.zui.Messager(data.msg, {

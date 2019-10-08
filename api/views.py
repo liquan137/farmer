@@ -5,13 +5,14 @@ import zmail
 import json
 import string
 import random
+import time
 
 # Create your views here.
-# 邮箱发送
+# 邮箱配置
 server = zmail.server('1031308775@qq.com', 'vwfjwqaeftiebegb')
 
 
-# 生成AES密匙
+# 生成AES密匙以及邮箱验证码
 def random_password(num):
     result = ''
     choice = '0123456789' + string.ascii_lowercase
@@ -25,6 +26,7 @@ def random_password(num):
     return result
 
 
+# 登陆
 def login(request):
     print(request.userInfo)
     print(request.method)
@@ -34,11 +36,28 @@ def login(request):
             print(responses[response])
             if response == 'username':
                 request.session['user_id'] = responses[response]
-        data = {
-            'status': 200,
-            'msg': '登录成功',
-            'data': None
-        }
+
+        try:
+            user = p_menber.objects.get(username=responses['username'])
+            if user.password == responses['password']:
+                request.session['user_id'] = responses['username']
+                data = {
+                    'status': 200,
+                    'msg': '登录成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 401,
+                    'msg': '密码错误',
+                    'data': None
+                }
+        except:
+            data = {
+                'status': 401,
+                'msg': '没有此账号',
+                'data': None
+            }
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
     else:
         data = {
@@ -49,6 +68,7 @@ def login(request):
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
 
+# 注册
 def register(request):
     print(request.userInfo)
     print(request.method)
@@ -66,15 +86,37 @@ def register(request):
                 'data': None
             }
         except:
-            newUser = p_menber(username=responses['username'], password=responses['password'], nickname='')
-            newUser.save()
-            request.session['user_id'] = responses['username']
-            data = {
-                'status': 200,
-                'msg': '注册成功',
-                'data': None
-            }
+            try:
+                userEmail = p_menber_email.objects.get(username=responses['username'], type=1)
+                if userEmail.code == responses['code']:
+                    newUser = p_menber(username=responses['username'], password=responses['password'], nickname='')
+                    newUser.save()
+                    request.session['user_id'] = responses['username']
+                    data = {
+                        'status': 200,
+                        'msg': '注册成功',
+                        'data': None
+                    }
+                    return HttpResponse(json.dumps(data, ensure_ascii=False),
+                                        content_type="application/json,charset=utf-8")
+                else:
+                    data = {
+                        'status': 401,
+                        'msg': '邮箱验证码错误',
+                        'data': None
+                    }
+                    print('code错误')
+                    return HttpResponse(json.dumps(data, ensure_ascii=False),
+                                        content_type="application/json,charset=utf-8")
+            except:
+                data = {
+                    'status': 401,
+                    'msg': '请先获取邮箱验证码，再完成注册！',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
     else:
         data = {
             'status': 401,
@@ -84,6 +126,63 @@ def register(request):
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
 
+# 忘记密码
+def forget(request):
+    print(request.userInfo)
+    print(request.method)
+    if request.method == 'POST':
+        responses = json.loads(request.body)
+        for response in responses:
+            print(responses[response])
+
+        try:
+            username = responses['username']
+            user = p_menber.objects.get(username=username)
+            try:
+                userEmail = p_menber_email.objects.get(username=responses['username'], type=2)
+                if userEmail.code == responses['code']:
+                    user.password = responses['password']
+                    user.save()
+                    request.session['user_id'] = responses['username']
+                    data = {
+                        'status': 200,
+                        'msg': '修改成功',
+                        'data': None
+                    }
+                    return HttpResponse(json.dumps(data, ensure_ascii=False),
+                                        content_type="application/json,charset=utf-8")
+                else:
+                    data = {
+                        'status': 401,
+                        'msg': '邮箱验证码错误',
+                        'data': None
+                    }
+                    return HttpResponse(json.dumps(data, ensure_ascii=False),
+                                        content_type="application/json,charset=utf-8")
+            except:
+                data = {
+                    'status': 401,
+                    'msg': '请先获取邮箱验证码，再修改密码！',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        except:
+            data = {
+                'status': 401,
+                'msg': '没有此账号！',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+# 完善资料
 def registerReg(request):
     print(request.userInfo)
     print(request.method)
@@ -129,25 +228,68 @@ def registerReg(request):
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
 
+# 邮箱验证码 注册、忘记密码的时候发送验证码
 def verifyEmail(request):
+    # status为True 就发送邮件
+    status = False
     if request.method == 'POST':
         responses = json.loads(request.body)
-        for response in responses:
-            print(responses[response])
-        key = random_password(5)
-        print(key)
-        mail = {
-            'subject': '验证码通知-农业网',
-            'content_text': """
-                您的验证码是： """ + key + """，10分钟内有效！
-                            """,
-        }
-        server.send_mail(responses['username'], mail)
-        data = {
-            'status': 200,
-            'msg': '发送成功',
-            'data': None
-        }
+        type = responses['sendType']
+        key = random_password(4)
+        if int(type) == 1:
+            try:
+                p_menber.objects.get(username=responses['username'])
+                data = {
+                    'status': 401,
+                    'msg': '账号已经注册过了',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+            except:
+                print('账号不存在，可以注册')
+        # 检查该邮箱是否发送过邮件，如果发送过，就检查发送时间，如果超过60秒就设置status为True，
+        try:
+            sqlTime = p_menber_email.objects.get(username=responses['username'], type=type)
+            oldTime = int(str(sqlTime.create_time).split('.')[0]) + 60
+            nowTime = int(str(time.time()).split('.')[0])
+            if nowTime < oldTime:
+                status = False
+            else:
+                status = True
+        except:
+            status = True
+        #     判断是否发送验证码邮件
+        if status == True:
+            option = ['', '注册账号', '找回密码']
+            mail = {
+                'subject': '验证码通知-农业网',
+                'content_text': """
+                    此验证码为 [ """ + option[int(type)] + """] 所用，
+                    
+                    您的验证码是： """ + key + """，10分钟内有效！
+                                """,
+            }
+            server.send_mail(responses['username'], mail)
+            data = {
+                'status': 200,
+                'msg': '发送成功',
+                'data': None
+            }
+            try:
+                sqlTime = p_menber_email.objects.get(username=responses['username'], type=type)
+                sqlTime.create_time = time.time()
+                sqlTime.code = key
+                sqlTime.save()
+            except:
+                newEmail = p_menber_email(username=responses['username'], type=type, code=key, create_time=time.time())
+                newEmail.save()
+        else:
+            data = {
+                'status': 401,
+                'msg': '已经发送过一封邮件了',
+                'data': None
+            }
+
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
     else:
         data = {

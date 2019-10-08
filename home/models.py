@@ -34,11 +34,13 @@ class p_menber(models.Model):
     contact_qq = models.CharField(max_length=200, help_text="联系人QQ", default="")
     company_des = models.CharField(max_length=600, help_text="公司介绍,不超过300字", default="")
 
+
 class p_menber_email(models.Model):
     username = models.CharField(max_length=30, help_text="关联用户")
     type = models.CharField(max_length=30, help_text="作用：1：注册 2：找回密码 3：修改密码", default="0")
     code = models.CharField(max_length=30, help_text="验证码", default="0")
     create_time = models.CharField(max_length=30, help_text="创建时间", default="0")
+
 
 class p_product(models.Model):
     p_name = models.CharField(max_length=30, help_text="类别名称")
@@ -51,3 +53,10 @@ class p_product_child(models.Model):
     p_id = models.IntegerField(help_text="父ID")
     create_time = models.CharField(max_length=30, help_text="创建时间", default="0")
     update_time = models.CharField(max_length=30, help_text="修改时间", default="0")
+
+
+class p_admin(models.Model):
+    username = models.CharField(max_length=30, help_text="关联的普通用户")
+    user = models.CharField(max_length=30, help_text="管理员账号")
+    password = models.CharField(max_length=30, help_text="管理员密码")
+    auth = models.IntegerField(help_text="管理员权限 1：超级管理员 2：子管理员", default=2)

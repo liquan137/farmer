@@ -1,0 +1,95 @@
+{% load static %}
+{% include "home/base_header.html" %}
+<link rel="stylesheet" href="{% static '/css/common.css' %}">
+<link rel="stylesheet" href="{% static '/css/body.css' %}">
+<link rel="stylesheet" href="{% static '/css/publish.css' %}">
+</head>
+<body>
+{% include "home/base_nav.html" %}
+<div class="">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">发布</span>
+                </div>
+                <div class="clear_both">
+                    <div class="col-xs-3">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item active">发布供应信息</a>
+                            <a href="#" class="list-group-item">管理我发布的信息</a>
+                            <a href="#" class="list-group-item">查看我的报价</a>
+                            <a href="/registerReg" class="list-group-item">修改会员资料</a>
+                            <a href="#" class="list-group-item">修改密码</a>
+                            <a href="/logout" class="list-group-item">退出</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-9">
+                        <h3>第一步 --- 选择分类和产品（点击产品名称即可进入下一步）</h3>
+                        <div class="clear_both">
+                            <div class="col-xs-6">
+                                <h4 class="p-list-title">蔬菜</h4>
+                                <div class="clear_both p-list-body">
+                                    <table width="100%" class="table table-bordered">
+                                        <tr>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                        </tr>
+                                        <tr>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                        </tr>
+                                        <tr>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                            <th>芒果</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="{% static '/js/api.js' %}"></script>
+<script src="{% static '/js/request.js' %}"></script>
+<script type="text/javascript"
+        src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+<script type="text/javascript">
+    /* 表单提交 */
+    let formSubmit = (dom) => {
+        var bootstrapValidator = $("form.register").data('bootstrapValidator');
+        bootstrapValidator.validate();
+        if (bootstrapValidator.isValid()) {
+            fetch_POST(api.register, qs.parse($('form.register').serialize())).then(response => {
+                let data = response.data
+                if (data.status == 200) {
+                    new $.zui.Messager(data.msg, {
+                        type: 'success',
+                        placement: 'center'
+                    }).show();
+                } else {
+                    new $.zui.Messager(data.msg, {
+                        type: 'danger',
+                        placement: 'center'
+                    }).show();
+                }
+                $(dom).removeAttr('disabled')
+            })
+
+        } else return;
+    }
+</script>
+{% include "home/base_footer.html" %}

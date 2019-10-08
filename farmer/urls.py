@@ -17,16 +17,22 @@ from django.contrib import admin
 from django.urls import include, path
 from home import views as home_views
 from api import views as api_views
+from admin import views as admin_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('captcha/', include('captcha.urls')),
+    path('refresh_captcha/', admin_views.refresh_captcha),
+    path('admin/login', admin_views.login),
     path('', home_views.index),
     path('logout/', home_views.logout),
     path('login/', home_views.login),
     path('register/', home_views.register),
     path('registerReg/', home_views.registerReg),
+    path('forget/', home_views.forget),
+    path('publish/', home_views.publish),
     path('api/login', api_views.login),
     path('api/register', api_views.register),
     path('api/verifyEmail', api_views.verifyEmail),
     path('api/registerReg', api_views.registerReg),
+    path('api/forget', api_views.forget),
 ]

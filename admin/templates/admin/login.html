@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>zui-admin</title>
+    <script src="https://cdn.bootcss.com/qs/6.8.0/qs.min.js"></script>
+    <!-- axios请求处理JS-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- zui css -->
+    <link rel="stylesheet" href="{% static '/dist/css/zui.min.css' %}">
+    <link rel="stylesheet" href="{% static '/dist/theme/blue.css' %}">
+    <!-- app css -->
+    <link rel="stylesheet" href="{% static '/css/app.css' %}">
+    <!-- jquery js -->
+    <script src="{% static '/dist/lib/jquery/jquery.js' %}"></script>
+</head>
+<style>
+    .form-group {
+        position: relative;
+    }
+
+    .form-group input {
+        height: 36px;
+        border-radius: 0;
+        box-shadow: none;
+        display: block;
+        width: 100%;
+        padding: 5px 8px;
+        font-size: 13px;
+        line-height: 1.53846154;
+        color: #222;
+        vertical-align: middle;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        outline: none;
+    }
+
+    .form-group input:focus {
+        border-color: #0288d1;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        outline: none;
+        box-shadow: inset 0 1px 1px transparent;
+    }
+
+    .form-group img {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+</style>
+<body class="bg-primary">
+<div class="page page-login text-center">
+    <div class="panel">
+        <div class="panel-body">
+            <div class="logo">
+                <a href="#">管理后台</a>
+            </div>
+            <form action="#">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field }}
+                    </div>
+                    {#                    <div class="form-group">#}
+                    {#                        <input type="text" class="form-control" placeholder="密码" name="password">#}
+                    {#                    </div>#}
+                    {#                    <div class="form-group">#}
+                    {#                        <input type="text" class="form-control" placeholder="验证码" name="code">#}
+                    {#                        <img src="{{ captcha.image_url }}" alt="">#}
+                    {#                    </div>#}
+                {% endfor %}
+                <button class="btn btn-lg btn-primary btn-block" onclick="formSubmit(this)">登录</button>
+            </form>
+        </div>
+    </div>
+    <footer class="page-copyright page-copyright-inverse">
+        <p>WEBSITE BY admin</p>
+        <p>© 2019. All RIGHT RESERVED.</p>
+    </footer>
+</div>
+
+<script type="text/javascript"
+        src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+<!-- zui js -->
+<script src="{% static '/dist/js/zui.min.js' %}"></script>
+<!-- app js -->
+<script src="{% static '/js/app.js' %}"></script>
+<script src="{% static '/js/request.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('.captcha').click(function () {
+            $.getJSON("/refresh_captcha/", function (result) {
+                $('img.captcha').attr('src', result['image_url']);
+                $('#id_captcha_0').val(result['hashkey'])
+            });
+        });
+    });
+    $(document).ready(function () {
+        $('form').bootstrapValidator({
+            // 默认的提示消息
+            message: '请填写该字段',
+            // 表单框里右侧的icon
+            feedbackIcons: {
+                valid: 'icon-radiobutton iconfont iconfont-val',
+                invalid: 'icon-roundclosefill iconfont iconfont-val',
+                validating: 'icon-icon_task_checkbox_d iconfont iconfont-val'
+            },
+            submitHandler: function (validator, form, submitButton) {
+                // 表单提交成功时会调用此方法
+                // validator: 表单验证实例对象
+                // form  jq对象  指定表单对象
+                // submitButton  jq对象  指定提交按钮的对象
+                console.log(form)
+            },
+            fields: {
+                user: {
+                    validators: {
+                        notEmpty: {
+                            message: '账号不能为空'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        }
+                    }
+                },
+            }
+        });
+    })
+    let formSubmit = (dom) => {
+        var bootstrapValidator = $("form").data('bootstrapValidator');
+        bootstrapValidator.validate();
+        if (bootstrapValidator.isValid()) {
+            fetch_POST('/55', qs.parse($('form').serialize())).then(response => {
+                let data = response.data
+                if (data.status == 200) {
+                    new $.zui.Messager(data.msg, {
+                        type: 'success',
+                        placement: 'center'
+                    }).show();
+                } else {
+                    new $.zui.Messager(data.msg, {
+                        type: 'danger',
+                        placement: 'center'
+                    }).show();
+                }
+                $(dom).removeAttr('disabled')
+            })
+
+        } else return;
+    }
+</script>
+</body>
+</html>
