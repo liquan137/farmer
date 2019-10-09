@@ -187,8 +187,13 @@ def forget(request):
 
 # 完善资料
 def registerReg(request):
-    print(request.userInfo)
-    print(request.method)
+    if request.userInfo == None:
+        data = {
+            'status': 401,
+            'msg': '请登录之后，再进行操作哦',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
     if request.method == 'POST':
         responses = json.loads(request.body)
         for response in responses:
@@ -307,6 +312,13 @@ def verifyEmail(request):
 
 # 发布信息
 def publish(request):
+    if request.userInfo == None:
+        data = {
+            'status': 401,
+            'msg': '请登录之后，再进行操作哦',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
     if request.method == 'POST':
         responses = json.loads(request.body)
         try:
