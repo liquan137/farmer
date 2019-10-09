@@ -17,6 +17,7 @@ class menber_check(object):
                 else:
                     user.nickname = '<font color="#444">' + user.nickname + '</font>'
                 request.userInfo = {
+                    'id': user.id,
                     'nickname': user.nickname,
                     'username': user.username,
                     'type': user.type,

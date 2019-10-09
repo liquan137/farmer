@@ -136,3 +136,6 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null',
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
 CAPTCHA_TIMEOUT = 1
+
+# 上传文件保存路径
+UPLOADFILES_DIRS = os.path.join(BASE_DIR, 'static/upload/images')

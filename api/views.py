@@ -6,6 +6,9 @@ import json
 import string
 import random
 import time
+import os
+from django.conf import settings
+import datetime
 
 # Create your views here.
 # 邮箱配置
@@ -196,7 +199,9 @@ def registerReg(request):
             user.nickname = responses['nickname']
             user.type = responses['type']
             user.company_name = responses['company_name']
-            user.address_belong = responses['company_address2']
+            user.address_province = responses['company_address1']
+            user.address_city = responses['company_address2']
+            user.address_belong = responses['company_address']
             user.address_detail = responses['address_detail']
             user.contact_person = responses['contact_person']
             user.contact_phone = responses['contact_phone']
@@ -298,3 +303,85 @@ def verifyEmail(request):
             'data': None
         }
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+# 发布信息
+def publish(request):
+    if request.method == 'POST':
+        responses = json.loads(request.body)
+        try:
+            p_message.objects.get(m_title=responses['m_title'])
+            data = {
+                'status': 400,
+                'msg': '已经发表过此标题的文章了',
+                'data': None
+            }
+        except:
+            newMessage = p_message(
+                m_title=responses['m_title'],
+                m_address_belong=responses['company_address'],
+                m_address_detail=responses['address_detail'],
+                m_begin=str(responses['m_begin'])+responses['m_begin_size'],
+                m_end=str(responses['m_end']) + responses['m_end_size'],
+                m_photo=responses['m_photo'],
+                m_pz=responses['m_pz'],
+                m_size=responses['m_size'],
+                m_today_price=responses['m_today_price'],
+                m_today_date=time.time(),
+                m_today_size=responses['m_today_size'],
+                m_content=responses['m_content']
+            )
+            newMessage.save()
+            data = {
+                'status': 200,
+                'msg': '发表成功',
+                'data': newMessage.id
+            }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+# 图片上传
+def uploadImg(request):
+    if request.userInfo == None:
+        data = {
+            'status': 401,
+            'msg': '请登录之后，再上传图片哦',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    img = request.FILES.get('file')
+    # 判断参数是否齐全
+    if not img:
+        data = {
+            'status': 400,
+            'msg': '参数不全',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+    fix = str(round(time.time())) + '1'
+    name = img.name.split('.')
+    # 对 我们settings中已经配置好的路径 把文件的名称进行存入
+    img_path = os.path.join(settings.UPLOADFILES_DIRS, fix + str(request.userInfo['id']) + '.' + name[1])
+    f = open(img_path, 'wb')
+    for i in img.chunks():
+        f.write(i)
+    f.close()
+
+    # 入库操作
+    url = '/static/images/' + fix + str(request.userInfo['id']) + '.' + name[1]
+    newFile = p_file(name=img.name, path=url, create_time=time.time())
+    newFile.save()
+    data = {
+        'status': 200,
+        'msg': '上传成功',
+        'data': url,
+        'type': 'success'
+    }
+    return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")

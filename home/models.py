@@ -10,6 +10,7 @@ class p_message(models.Model):
     m_end = models.CharField(max_length=30, help_text="上市结束日期时间", default="")
     m_size = models.CharField(max_length=30, help_text="报价规格", default="")
     m_today_price = models.CharField(max_length=30, help_text="今日价格", default="")
+    m_today_size = models.CharField(max_length=30, help_text="今日价格的单位", default="")
     m_today_date = models.CharField(max_length=30, help_text="上架日期", default="")
     m_photo = models.CharField(max_length=200, help_text="实拍图片，展示图片", default="")
     m_address_belong = models.CharField(max_length=200, help_text="所属地区代码", default="")
@@ -25,7 +26,9 @@ class p_menber(models.Model):
     type = models.CharField(max_length=10, help_text="1:代办（农产品经纪人）2：经销商 3：种养殖户 4：涉农企业 5：农业合作社", default="")
     company_name = models.CharField(max_length=80, help_text="公司名称", default="")
     password = models.CharField(max_length=90, help_text="密码")
-    address_belong = models.CharField(max_length=80, help_text="所属地区代码", default="")
+    address_province = models.CharField(max_length=80, help_text="所属地区代码(省级)", default="")
+    address_city = models.CharField(max_length=80, help_text="所属地区代码(市级)", default="")
+    address_belong = models.CharField(max_length=80, help_text="所属地区代码（地区）", default="")
     address_detail = models.CharField(max_length=200, help_text="详细地址", default="")
     contact_person = models.CharField(max_length=200, help_text="联系人", default="")
     contact_phone = models.CharField(max_length=200, help_text="联系人手机号码", default="")
@@ -55,4 +58,9 @@ class p_product_child(models.Model):
     update_time = models.CharField(max_length=30, help_text="修改时间", default="0")
 
 
-
+class p_file(models.Model):
+    name = models.CharField(max_length=30, help_text="文件名称", default="")
+    username = models.CharField(max_length=30, help_text="关联用户")
+    path = models.CharField(max_length=200, help_text="文件路径")
+    create_time = models.CharField(max_length=30, help_text="创建时间", default="0")
+    update_time = models.CharField(max_length=30, help_text="修改时间", default="0")

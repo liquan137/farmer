@@ -27,34 +27,16 @@
                     <div class="col-xs-9">
                         <h3>第一步 --- 选择分类和产品（点击产品名称即可进入下一步）</h3>
                         <div class="clear_both">
-                            <div class="col-xs-6">
-                                <h4 class="p-list-title">蔬菜</h4>
+                            {% for item in list %}
+                            <div class="col-xs-6 p-list-box">
+                                <h4 class="p-list-title a-text-hover">{{ item.title }}</h4>
                                 <div class="clear_both p-list-body">
-                                    <table width="100%" class="table table-bordered">
-                                        <tr>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                        </tr>
-                                        <tr>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                        </tr>
-                                        <tr>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                            <th>芒果</th>
-                                        </tr>
-                                    </table>
+                                    {% for items in item.child %}
+                                    <div class="p-list-item"><a class="a-text a-text-hover" href="/publishDetail/{{ item.link }}/{{ items.link }}">{{ items.title }}</a></div>
+                                    {% endfor %}
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

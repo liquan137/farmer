@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.conf.urls import url
 from home import views as home_views
 from api import views as api_views
 from admin import views as admin_views
@@ -36,4 +37,7 @@ urlpatterns = [
     path('api/verifyEmail', api_views.verifyEmail),
     path('api/registerReg', api_views.registerReg),
     path('api/forget', api_views.forget),
+    path('api/publish', api_views.publish),
+    path('api/uploadImg', api_views.uploadImg),
+    path('publishDetail/<int:father>/<int:child>', home_views.publishDetail),
 ]

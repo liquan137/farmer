@@ -3,7 +3,9 @@ let apiData = {
     register: '/register',
     registerReg: '/registerReg',
     verifyEmail: '/verifyEmail',
-    forget: '/forget'
+    forget: '/forget',
+    publish: '/publish',
+    uploadImg: '/uploadImg'
 }
 
 let setApi = (data) => {
