@@ -64,6 +64,27 @@ let fetch_POST = (url, params) => {
     })
 }
 
+// 公共FORM请求
+let fetch_FORM = (url, params) => {
+    axios.defaults.headers = {
+        'Content-type': 'application/x-www-form-urlencoded'
+    }
+    return new Promise((resolve, reject) => {
+        axios.post(url, params)
+            .then(response => {
+                resolve(response)
+            }, err => {
+                reject(err)
+            })
+            .catch((error) => {
+                new $.zui.Messager('服务器宕机了 - _ -', {
+                    type: 'danger'
+                }).show();
+                reject(error)
+            })
+    })
+}
+
 // 公共GET请求
 let fetch_GET = (url, params) => {
     // params = qs.stringify(params)

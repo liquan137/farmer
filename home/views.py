@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from home.models import models as home_model
+from home.models import *
 from django.template import loader
 import time
 

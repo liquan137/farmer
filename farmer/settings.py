@@ -124,14 +124,14 @@ STATICFILES_DIRS = [
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
-CAPTCHA_IMAGE_SIZE = (120, 36)  # 设置 captcha 图片大小
+CAPTCHA_IMAGE_SIZE = (120, 26)  # 设置 captcha 图片大小
 CAPTCHA_LENGTH = 4  # 字符个数
 CAPTCHA_TIMEOUT = 1  # 超时(minutes)
 
 # 加减乘除验证码
 CAPTCHA_OUTPUT_FORMAT = '%(image)s %(text_field)s %(hidden_field)s '
 CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null',
-                           'captcha.helpers.noise_dots',  # 点
+                           # 'captcha.helpers.noise_dots',  # 点
                            )
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
