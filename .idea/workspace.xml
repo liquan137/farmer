@@ -3,23 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="fc417b68-8707-43fc-8043-875c39218e6c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/check/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/check/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/farmer/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/farmer/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/farmer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/farmer/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0002_delete_p_admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/publish.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/publish.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/registerReg.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/registerReg.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/publish.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/publish.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/api.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/publishDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/publishDetail.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -135,7 +121,7 @@
       <workItem from="1570443572849" duration="14131000" />
       <workItem from="1570493126286" duration="8241000" />
       <workItem from="1570529597102" duration="18784000" />
-      <workItem from="1570615675962" duration="20155000" />
+      <workItem from="1570615675962" duration="21007000" />
     </task>
     <task id="LOCAL-00001" summary="new">
       <created>1570353648422</created>

@@ -361,7 +361,8 @@ def uploadImg(request):
         data = {
             'status': 400,
             'msg': '参数不全',
-            'data': None
+            'data': None,
+            "errno": 1,
         }
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
@@ -375,13 +376,14 @@ def uploadImg(request):
     f.close()
 
     # 入库操作
-    url = '/static/images/' + fix + str(request.userInfo['id']) + '.' + name[1]
+    url = '/static/upload/images/' + fix + str(request.userInfo['id']) + '.' + name[1]
     newFile = p_file(name=img.name, path=url, create_time=time.time())
     newFile.save()
     data = {
         'status': 200,
         'msg': '上传成功',
-        'data': url,
-        'type': 'success'
+        'data': [url],
+        'type': 'success',
+        "errno": 0,
     }
     return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")

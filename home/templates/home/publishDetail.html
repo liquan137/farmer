@@ -30,7 +30,8 @@
                         </div>
                     </div>
                     <div class="col-xs-9">
-                        <h3>第二步 --- 详细填写产品信息</h3>
+                        <div class="card-box">
+                            <h3>第二步 --- 详细填写产品信息</h3>
                         <p>当前选择的产品：{{ now.f_name }} -> {{ now.c_name }} <a class="a-text a-text-hover" href="/publish">【返回重选】</a>
                         </p>
                         <div class="clear_both">
@@ -274,6 +275,7 @@
                                     </div>
                                 </div>
                             </form>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -4724,7 +4726,7 @@
                     return '上传失败。服务器返回了一个错误：' + responseObject.response;
                 } else if (data.status == 200) {
                     let imgList = JSON.parse($("input[name='m_photo']").val())
-                    imgList.push(data.data)
+                    imgList.push(data.data[0])
                     $("input[name='m_photo']").val(JSON.stringify(imgList))
                     console.log('列表', imgList)
                 }
@@ -4766,6 +4768,10 @@
             'undo',  // 撤销
             'redo'  // 重复
         ]
+        window.editor.customConfig.uploadImgServer = api.uploadImg
+        window.editor.customConfig.uploadFileName = 'file'
+        window.editor.customConfig.withCredentials = true
+
         window.editor.create()
     })
     /* 表单提交 */
