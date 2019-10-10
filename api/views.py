@@ -332,18 +332,39 @@ def publish(request):
             newMessage = p_message(
                 m_title=responses['m_title'],
                 m_address_belong=responses['company_address'],
+                m_address_province=responses['company_address1'],
+                m_address_city=responses['company_address2'],
                 m_address_detail=responses['address_detail'],
-                m_begin=str(responses['m_begin'])+responses['m_begin_size'],
-                m_end=str(responses['m_end']) + responses['m_end_size'],
+                m_begin=str(int(responses['m_begin'])) + '月' + responses['m_begin_size'],
+                m_end=str(int(responses['m_end'])) + '月' + responses['m_end_size'],
                 m_photo=responses['m_photo'],
                 m_pz=responses['m_pz'],
                 m_size=responses['m_size'],
                 m_today_price=responses['m_today_price'],
                 m_today_date=time.time(),
                 m_today_size=responses['m_today_size'],
-                m_content=responses['m_content']
+                m_content=responses['m_content'],
+                m_f_id=responses['m_f_id'],
+                m_c_id=responses['m_c_id'],
+                create_time=time.time(),
+                update_time=time.time()
             )
             newMessage.save()
+            newMessageContact = p_message_contact(
+                p_id=newMessage.id,
+                username=request.userInfo['username'],
+                company_name=responses['company_name'],
+                address_province=responses['company_address1'],
+                address_city=responses['company_address2'],
+                address_belong=responses['company_address'],
+                address_detail=responses['address_detail'],
+                contact_person=responses['contact_person'],
+                contact_phone=responses['contact_phone'],
+                contact_tel=responses['contact_tel'],
+                contact_email=responses['contact_email'],
+                contact_qq=responses['contact_qq'],
+            )
+            newMessageContact.save()
             data = {
                 'status': 200,
                 'msg': '发表成功',
@@ -357,6 +378,7 @@ def publish(request):
             'data': None
         }
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
 
 # 图片上传
 def uploadImg(request):

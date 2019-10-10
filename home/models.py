@@ -4,6 +4,7 @@ from django.db import models
 # Create your models here.
 class p_message(models.Model):
     username = models.CharField(max_length=30, help_text="关联用户")
+    type = models.CharField(max_length=30, help_text="1：供应 2：需求", default=1)
     m_title = models.CharField(max_length=50, help_text="信息标题", default="")
     m_pz = models.CharField(max_length=30, help_text="产品品种", default="")
     m_begin = models.CharField(max_length=30, help_text="上市开始日期时间", default="")
@@ -23,6 +24,19 @@ class p_message(models.Model):
     create_time = models.CharField(max_length=30, help_text="创建时间", default="0")
     update_time = models.CharField(max_length=30, help_text="修改时间", default="0")
 
+class p_message_contact(models.Model):
+    p_id = models.CharField(max_length=30, help_text="关联信息ID")
+    username = models.CharField(max_length=30, help_text="关联用户")
+    company_name = models.CharField(max_length=80, help_text="公司名称", default="")
+    address_province = models.CharField(max_length=80, help_text="所属地区代码(省级)", default="")
+    address_city = models.CharField(max_length=80, help_text="所属地区代码(市级)", default="")
+    address_belong = models.CharField(max_length=80, help_text="所属地区代码（地区）", default="")
+    address_detail = models.CharField(max_length=200, help_text="详细地址", default="")
+    contact_person = models.CharField(max_length=200, help_text="联系人", default="")
+    contact_phone = models.CharField(max_length=200, help_text="联系人手机号码", default="")
+    contact_tel = models.CharField(max_length=200, help_text="联系人固定号码", default="")
+    contact_email = models.CharField(max_length=200, help_text="联系人邮箱", default="")
+    contact_qq = models.CharField(max_length=200, help_text="联系人QQ", default="")
 
 class p_menber(models.Model):
     username = models.CharField(max_length=30, help_text="关联用户")

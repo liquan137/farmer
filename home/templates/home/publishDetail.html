@@ -36,8 +36,8 @@
                         </p>
                         <div class="clear_both">
                             <form class="form-horizontal publish" method="post">
-                                <input type="hidden" name="sendType" value="1">
-
+                                <input type="hidden" name="m_f_id" value="{{ id.f }}">
+                                <input type="hidden" name="m_c_id" value="{{ id.c }}">
                                 <div class="form-group">
                                     <label for="exampleInputAccount4" class="col-sm-2">信息标题</label>
                                     <div class="col-md-10 col-sm-10">
@@ -4643,20 +4643,20 @@
         var township = citylist.county_list
         for (var i in province) {
             let selectProvince = ''
-            if (i == {{ userInfo.address_province }}) {
+            if (i == '{{ userInfo.address_province }}') {
                 selectProvince = 'selected'
             }
-            $("select[name='company_address1']").append('<option value="' + i + '" ' + selectProvince + '>' + province[i] + '</option>')
+            $("select[name='company_address1']").append('<option value="' + province[i] + '" ' + selectProvince + '>' + province[i] + '</option>')
         }
         if ('{{ userInfo.address_city }}' != '') {
             var chooseleng = '{{ userInfo.address_city }}'[0] + '{{ userInfo.address_city }}'[1];
             for (var i in city) {
                 if (i[0] + i[1] == chooseleng) {
                     let selectCity = ''
-                    if (i == {{ userInfo.address_city }}) {
+                    if (i == '{{ userInfo.address_city }}') {
                         selectCity = 'selected'
                     }
-                    $("select[name='company_address2']").append('<option value="' + i + ' "' + selectCity + '>' + city[i] + '</option>')
+                    $("select[name='company_address2']").append('<option value="' + city[i] + ' "' + selectCity + '>' + city[i] + '</option>')
                 }
             }
         }
@@ -4666,10 +4666,10 @@
             for (var i in township) {
                 if (i[0] + i[1] + i[2] + i[3] == chooseleng) {
                     let selectBelong = ''
-                    if (i == {{ userInfo.address_belong }}) {
+                    if (i == '{{ userInfo.address_belong }}') {
                         selectBelong = 'selected'
                     }
-                    $("select[name='company_address']").append('<option value="' + i + ' "' + selectBelong + '>' + township[i] + '</option>')
+                    $("select[name='company_address']").append('<option value="' + township[i] + ' "' + selectBelong + '>' + township[i] + '</option>')
                 }
             }
         }
@@ -4679,7 +4679,7 @@
             var chooseleng = choose[0] + choose[1];
             for (var i in city) {
                 if (i[0] + i[1] == chooseleng) {
-                    $("select[name='company_address2']").append('<option value="' + i + '">' + city[i] + '</option>')
+                    $("select[name='company_address2']").append('<option value="' + city[i] + '">' + city[i] + '</option>')
                 }
             }
 
@@ -4691,7 +4691,7 @@
                 var chooseleng = choose[0] + choose[1] + choose[2] + choose[3];
                 for (var i in township) {
                     if (i[0] + i[1] + i[2] + i[3] == chooseleng) {
-                        $("select[name='company_address']").append('<option value="' + i + '">' + township[i] + '</option>')
+                        $("select[name='company_address']").append('<option value="' + township[i] + '">' + township[i] + '</option>')
                     }
                 }
             } else {
@@ -4775,7 +4775,7 @@
     })
     /* 表单提交 */
     let formSubmit = (dom) => {
-        let content = window.editor.txt.text()
+        let content = window.editor.txt.html()
         if (content == ''){
             new $.zui.Messager('正文内容不能为空', {
                 type: 'danger',

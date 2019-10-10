@@ -1,0 +1,52 @@
+.page-box{
+    line-height: 28px;
+}
+.page-box span{
+    font-size: 13px;
+}
+.page-box button{
+    font-size: 13px;
+    box-sizing: border-box;
+    line-height: 23px!important;
+    box-shadow: none;
+    padding: 2.5px 12px;
+    border-radius: 0;
+    position: relative;
+    top: -1px;
+}
+.page-box input{
+    font-size: 13px;
+    box-sizing: border-box;
+    line-height: 24.5px;
+    padding-left: 4px;
+}
+.page-link-a{
+    border: 1px solid #ddd;
+    padding: 7px 12px;
+    color: #444;
+    font-size: 12px;
+}
+a.disabled {
+    color: #aaa;
+    padding: 7px 10px;
+}
+a.disabled i{
+    font-size: 12px!important;
+}
+a.disabled-active{
+    color: white;
+    background-color: #52c238;
+    cursor: not-allowed;
+}
+.page-link-a:hover{
+    background-color: #f1f1f1;
+}
+a.disabled-active:hover{
+    font-size: 12px;
+    color: white;
+    background-color: #52c238;
+    cursor: not-allowed;
+}
+#dumpPage{
+    width: 40px;
+}

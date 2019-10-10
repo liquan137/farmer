@@ -4199,7 +4199,7 @@
         var township = citylist.county_list
         for (var i in province) {
             let selectProvince = ''
-            if (i == {{ userInfo.address_province }}) {
+            if (i == '{{ userInfo.address_province }}') {
                 selectProvince = 'selected'
             }
             $("select[name='company_address1']").append('<option value="' + i + '" ' + selectProvince + '>' + province[i] + '</option>')
@@ -4209,7 +4209,7 @@
             for (var i in city) {
                 if (i[0] + i[1] == chooseleng) {
                     let selectCity = ''
-                    if (i == {{ userInfo.address_city }}) {
+                    if (i == '{{ userInfo.address_city }}') {
                         selectCity = 'selected'
                     }
                     $("select[name='company_address2']").append('<option value="' + i + ' "' + selectCity + '>' + city[i] + '</option>')
@@ -4222,7 +4222,7 @@
             for (var i in township) {
                 if (i[0] + i[1] + i[2] + i[3] == chooseleng) {
                     let selectBelong = ''
-                    if (i == {{ userInfo.address_belong }}) {
+                    if (i == '{{ userInfo.address_belong }}') {
                         selectBelong = 'selected'
                     }
                     $("select[name='company_address']").append('<option value="' + i + ' "' + selectBelong + '>' + township[i] + '</option>')
@@ -4260,7 +4260,7 @@
     let radioDom = $("input[name='type']")
     for (let i =0;i< radioDom.length; i++) {
         console.log({{ userInfo.type }})
-        if (radioDom.eq(i).val() == {{ userInfo.type }}) {
+        if (radioDom.eq(i).val() == '{{ userInfo.type }}') {
             $("input[name='type']").eq(i).attr("checked","checked");
         }
     }

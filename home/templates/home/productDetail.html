@@ -1,0 +1,113 @@
+{% load static %}
+{% include "home/base_header.html" %}
+<link rel="stylesheet" href="{% static '/css/common.css' %}">
+<link rel="stylesheet" href="{% static '/css/body.css' %}">
+<link rel="stylesheet" href="{% static '/css/detail.css' %}">
+</head>
+<body>
+{% include "home/base_nav.html" %}
+<div class="">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="detail-nav">
+                <a href="/" class="a-text a-text-hover">农产品信息网</a>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="detail-box">
+                <div class="clear_both">
+                    <div class="img-view">
+                        <img src="{{ data.m_photo.0 }}" alt="">
+                    </div>
+                    <div class="contact-box">
+                        <p><span>联系人：</span><strong>{{ contact.contact_person }}</strong></p>
+                        <p><span>手机号码：</span><strong>{{ contact.contact_phone }}</strong></p>
+                        <p><span>所在地址：</span><strong>{{ contact.address_province }} - {{ contact.address_city }} - {{ contact.address_belong }}</strong></p>
+                        <p><span>详细地址：</span><strong>{{ contact.address_detail }}</strong></p>
+                        <p><span>QQ号码：</span><strong>{{ contact.contact_qq }}</strong></p>
+                        <p><span>上市时间：</span><strong>{{ data.m_begin }} 至 {{ data.m_end }}</strong></p>
+                        <p><span>产品品种：</span><strong>{{ typeF }} - {{ typeC }} - {{ data.m_pz }}</strong></p>
+                        <p><span>最新报价：</span><strong>{{ data.m_size }}</strong></p>
+                    </div>
+                </div>
+                <div class="m_size">
+
+                </div>
+                <div class="body-box">
+                    {% autoescape off %}{{ data.m_content }}{% endautoescape %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-box ready-login-box">
+                {% if request.userInfo != None %}
+                    <p>
+                        <strong>{% autoescape off %}{{ request.userInfo.nickname }}{% endautoescape %}</strong>
+                        <font color="#444">您好，欢迎登录！</font>
+                        <a href="/logout/">退出</a>
+                    </p>
+                {% elif request.userInfo == None %}
+                    <p class="ready-login-btn"><a href="/register">注册会员</a>|<a href="/login">会员登录</a></p>
+                {% endif %}
+
+                <a class="btn btn-green btn-create" type="button" href="/publish">免费发布信息</a>
+            </div>
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">产地报价</span>
+                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
+                </div>
+                <div>
+                    <ul class="p-today-list">
+                        <li>
+                            <span>5分钟前</span>
+                            <span title="自产红薯50克左右，装箱10公斤：0.7-0.8元/斤">
+                                <a class="p-todat-list-a a-text-hover" href="">自产红薯50克左右，装箱10公斤：0.7-0.8元/斤</a>
+                                <div class="p-todat-list-special">
+                                    <a href="">辽宁新民白菜，矮棵黄心菜，玲珑黄，秋宝</a>
+                                </div>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">热门农产品价格信息</span>
+                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
+                </div>
+                <div>
+                    <ul class="clear_both p-list">
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">近期热门信息</span>
+                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
+                </div>
+                <div>
+                    <ul class="m-list">
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "home/base_footer.html" %}

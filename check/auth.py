@@ -28,7 +28,7 @@ def navList(request):
         else:
             active = ''
         nav.append({
-            'link': 'product/' + str(data[i]['id']),
+            'link': 'product/' + str(data[i]['id'])+'/1',
             'title': data[i]['p_name'],
             'active': active
         })
@@ -44,8 +44,6 @@ def navList(request):
             'title': '农产品信息发布',
             'active': ''
         })
-
-    print('path:', nav)
     return nav
 
 
