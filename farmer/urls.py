@@ -32,6 +32,8 @@ urlpatterns = [
     path('registerReg/', home_views.registerReg),
     path('forget/', home_views.forget),
     path('publish/', home_views.publish),
+    path('publishDetail/<int:father>/<int:child>', home_views.publishDetail),
+    path('product/<int:father>', home_views.product),
     path('api/login', api_views.login),
     path('api/register', api_views.register),
     path('api/verifyEmail', api_views.verifyEmail),
@@ -39,5 +41,5 @@ urlpatterns = [
     path('api/forget', api_views.forget),
     path('api/publish', api_views.publish),
     path('api/uploadImg', api_views.uploadImg),
-    path('publishDetail/<int:father>/<int:child>', home_views.publishDetail),
+
 ]

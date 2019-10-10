@@ -380,15 +380,18 @@ def uploadImg(request):
 
     fix = str(round(time.time())) + '1'
     name = img.name.split('.')
+    if len(name) == 1:
+        name = request.POST.get('name').split('.')
+        print('name', name)
     # 对 我们settings中已经配置好的路径 把文件的名称进行存入
-    img_path = os.path.join(settings.UPLOADFILES_DIRS, fix + str(request.userInfo['id']) + '.' + name[1])
+    img_path = os.path.join(settings.UPLOADFILES_DIRS, fix + str(request.userInfo['id']) + '.' + name[len(name) - 1])
     f = open(img_path, 'wb')
     for i in img.chunks():
         f.write(i)
     f.close()
 
     # 入库操作
-    url = '/static/upload/images/' + fix + str(request.userInfo['id']) + '.' + name[1]
+    url = '/static/upload/images/' + fix + str(request.userInfo['id']) + '.' + name[len(name) - 1]
     newFile = p_file(name=img.name, path=url, create_time=time.time())
     newFile.save()
     data = {

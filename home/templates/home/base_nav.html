@@ -50,8 +50,9 @@
         <div class="container">
             <div class="col-md-12">
                 <ul class="nav-bar-box">
-                    <li class="active"><a href="/">首页</a></li>
-                    <li class=""><a href="">采购信息</a></li>
+                    {% for item in request.nav %}
+                        <li class="{{ item.active }}"><a href="/{{ item.link }}">{{ item.title }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>

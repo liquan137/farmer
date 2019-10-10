@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from home.models import *
 from django.template import loader
+from django.core import serializers
 import json
 import time
 
@@ -12,10 +13,21 @@ def object_to_json(obj):
     return dict([(kk, obj.__dict__[kk]) for kk in obj.__dict__.keys() if kk != "_state" and kk != "password"])
 
 
+# 查询并生成导航列表
+def navList():
+    try:
+        p_product.objects.all()
+        lists = list(p_product.objects.all().values())
+        return lists
+    except:
+        return None
+
+
 # 首页
 def index(request):
     template = loader.get_template('home/index.html')
     list = []
+    nav = navList()
     list_data = {
         'm_title': '柑桔13886725378特早蜜桔，叶桔，蜜橘桔子',
         'm_address_belong': '1564',
@@ -24,7 +36,8 @@ def index(request):
     for i in range(0, 10):
         list.append(list_data)
     context = {
-        'list': list
+        'list': list,
+        'nav': nav
     }
     return HttpResponse(template.render(context, request))
 
@@ -139,6 +152,39 @@ def publishDetail(request, father, child):
             context = {
                 'now': nowChoose,
                 'userInfo': userInfo
+            }
+            return HttpResponse(template.render(context, request))
+        else:
+            return HttpResponse('页面参数错误')
+    else:
+        return HttpResponse('不存在参数')
+
+
+# 产品列表
+def product(request, father):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
+    if father != None:
+        if isinstance(father, int):
+            template = loader.get_template('home/product.html')
+            try:
+                childList = list(p_product_child.objects.filter(p_id=father).values())
+                childData = [{
+                    'link': '/product/'+str(father),
+                    'title': '全部',
+                    'f_id': 0
+                }]
+                for item in childList:
+                    childData.append({
+                        'link': item['id'],
+                        'title': item['p_name'],
+                        'f_id': item['p_id']
+                    })
+                # msgList = list()
+            except:
+                childData = None
+            context = {
+                'child': childData
             }
             return HttpResponse(template.render(context, request))
         else:
