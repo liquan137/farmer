@@ -6,12 +6,12 @@
 <body>
 <div class="logout-box">
     <p class="logout-title"><img src="{% static '/img/logout.jpg' %}" alt=""></p>
-    <h2 class="logout-title">登出状态</h2>
+    <h2 class="logout-title">{{ msg }}</h2>
     <p class="logout-title"><span id="times">倒计时：4 秒</span> <a href="{{ request.session.from }}">立即跳转</a></p>
 </div>
 </body>
 <script>
-    /* 倒计时 */
+/* 倒计时 */
     $(document).ready(function () {
         let i = 4
         window.times = setInterval(() => {

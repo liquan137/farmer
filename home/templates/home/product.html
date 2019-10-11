@@ -28,11 +28,26 @@
                         <div class="link-header"><strong>产品：</strong></div>
                         <div class="link-body">
                             {% for item in child %}
-                                <a class="link-body-a a-text a-text-hover" href="{{ item.link }}">{{ item.title }}</a>
+                                <a class="link-body-a a-text a-text-hover {{ item.active }}"
+                                   href="{{ item.link }}">{{ item.title }}</a>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
+                {% if threeAll != None %}
+                    <div class="card-box clear_both list-nav-">
+                        <div class="col-xs-12">
+                            <div class="link-header"><strong>品种：</strong></div>
+                            <div class="link-body">
+                                {% for item in threeAll %}
+                                    <a class="link-body-a a-text a-text-hover {{ item.active }}"
+                                       href="{{ item.link }}">{{ item.title }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                {% endif %}
                 <div class="card-box clear_both list-nav-">
                     <div class="col-xs-12">
                         <div class="link-header"><strong>产地：</strong></div>

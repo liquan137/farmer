@@ -28,7 +28,7 @@ def navList(request):
         else:
             active = ''
         nav.append({
-            'link': 'product/' + str(data[i]['id'])+'/1',
+            'link': 'product/' + str(data[i]['id'])+'/0/0/1',
             'title': data[i]['p_name'],
             'active': active
         })

@@ -21,6 +21,7 @@ from api import views as api_views
 from admin import views as admin_views
 
 urlpatterns = [
+    path('message/<str:error>', home_views.message),
     path('captcha/', include('captcha.urls')),
     path('refresh_captcha/', admin_views.refresh_captcha),
     path('admin/login', admin_views.login),
@@ -33,7 +34,7 @@ urlpatterns = [
     path('forget/', home_views.forget),
     path('publish/', home_views.publish),
     path('publishDetail/<int:father>/<int:child>', home_views.publishDetail),
-    path('product/<int:father>/<int:page>', home_views.product),
+    path('product/<int:father>/<int:child>/<int:last>/<int:page>', home_views.product),
     path('productC/<int:id>/<int:page>', home_views.productC),
     path('productDetail/<int:id>', home_views.productDetail),
     path('api/login', api_views.login),

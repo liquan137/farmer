@@ -329,6 +329,18 @@ def publish(request):
                 'data': None
             }
         except:
+            checkPz = list(p_message.objects.filter(m_pz=responses['m_pz']).values())
+            for item in checkPz:
+                if item['m_c_id'] != responses['m_c_id'] or item['m_f_id'] != responses['m_f_id']:
+                    father = p_product.objects.get(id=item['m_f_id'])
+                    child = p_product_child.objects.get(id=item['m_c_id'])
+                    data = {
+                        'status': 401,
+                        'msg': '品种：【' + responses['m_pz'] + '】已经绑定此大类：' + '【' + father.p_name + '-' + child.p_name + '】',
+                        'data': None
+                    }
+                    return HttpResponse(json.dumps(data, ensure_ascii=False),
+                                        content_type="application/json,charset=utf-8")
             newMessage = p_message(
                 m_title=responses['m_title'],
                 m_address_belong=responses['company_address'],

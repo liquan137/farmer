@@ -2,6 +2,7 @@
 {%  include "home/base_header.html" %}
 <link rel="stylesheet" href="{% static '/css/common.css' %}">
 <link rel="stylesheet" href="{% static '/css/body.css' %}">
+<link rel="stylesheet" href="{% static '/css/page.css' %}">
 </head>
 <body>
 {%  include "home/base_nav.html" %}
@@ -23,16 +24,25 @@
 {#                            <span class="pull-right">湖北</span>#}
 {#                        </li>#}
 
-                        {% for item in list %}
+                        {% for item in list.page_list %}
                             <li>
-                                <span>[供]</span>
-                                <a href="" class="msg-word has-ding has-photo">{{ item.m_title }}</a>
+                                <span>
+                                    {% if item.type == '1' %}
+                                        [供]
+                                    {% elif item.type == '2' %}
+                                        [需]
+                                    {% endif %}
+                                </span>
+                                <a href="/productDetail/{{ item.id }}" target="_blank" class="msg-word has-photo">{{ item.m_title }}</a>
                                 <span class="pull-right">{{ item.create_time }}</span>
-                                <span class="pull-right">{{ item.m_address_belong }}</span>
-                                <span class="pull-right">湖北</span>
+                                <span class="pull-right">{{ item.m_address_province }}</span>
+                                <span class="pull-right">{{ item.m_address_city }}</span>
                             </li>
                         {% endfor %}
                     </ul>
+                </div>
+                <div>
+                    {% include "home/page.html" %}
                 </div>
             </div>
         </div>
@@ -57,15 +67,17 @@
                 </div>
                 <div>
                     <ul class="p-today-list">
+                        {% for item in today.page_list %}
                         <li>
-                            <span>5分钟前</span>
-                            <span title="自产红薯50克左右，装箱10公斤：0.7-0.8元/斤">
-                                <a class="p-todat-list-a a-text-hover" href="">自产红薯50克左右，装箱10公斤：0.7-0.8元/斤</a>
+                            <span>{{ item.create_time }}</span>
+                            <span title="{{ item.m_title }}">
+                                <a class="p-todat-list-a a-text-hover" href="/productDetail/{{ item.id }}" target="_blank">{{ item.m_title }}：{{ item.m_today_price }}/{{ item.m_today_size }}</a>
                                 <div class="p-todat-list-special">
-                                    <a href="">辽宁新民白菜，矮棵黄心菜，玲珑黄，秋宝</a>
+                                    <a href="">{{ item.m_address_city }}{{ item.m_address_belong }}新民白菜，矮棵黄心菜，玲珑黄，秋宝</a>
                                 </div>
                             </span>
                         </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
