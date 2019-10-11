@@ -15,20 +15,31 @@
                     <a class="a-text pull-right" href="">查看求购信息</a>
                 </div>
                 <div>
+                    <p class="choose-body">
+                        <strong>选择产品</strong>
+                        {% for item in all %}
+                            <a class="a-text a-text-hover {{ item.active }}"
+                               href="/quote/{{ item.link }}/1">{{ item.title }}</a>
+                        {% endfor %}
+                    </p>
+                </div>
+                <div>
                     <ul class="msg-list">
+                        <li>
+                            <a class="msg-word float-msg float-time" style="color: #777">时间</a>
+                            <span class="msg-word float-msg float-address" style="color: #777">产地</span>
+                            <a class="msg-word float-msg float-product" style="color: #777">产品</a>
+                            <a class="msg-word float-msg  float-title" style="color: #777">报价</a>
+                            <a class="pull-right" style="margin-right: 20px;color: #777">查看</a>
+                        </li>
                         {% for item in list.page_list %}
                             <li>
-                                <span>
-                                    {% if item.type == '1' %}
-                                        [供]
-                                    {% elif item.type == '2' %}
-                                        [需]
-                                    {% endif %}
-                                </span>
-                                <a href="/productDetail/{{ item.id }}" class="msg-word has-photo">{{ item.m_title }}</a>
-                                <span class="pull-right">{{ item.create_time }}</span>
-                                <span class="pull-right">{{ item.m_address_province }}</span>
-                                <span class="pull-right">{{ item.m_address_city }}</span>
+                                <a class="msg-word float-msg float-time">{{ item.update_time }}</a>
+                                <span class="msg-word float-msg float-address">{{ item.m_address_province }} {{ item.m_address_city }} {{ item.m_address_city }}</span>
+                                <a class="msg-word float-msg float-product">{{ item.m_content }}</a>
+                                <a class="msg-word float-msg  float-title">{{ item.m_pz }}：<font
+                                        style="color: red">{{ item.m_today_price }}</font>/{{ item.m_today_size }}</a>
+                                <a href="/productDetail/{{ item.id }}" class="btn btn-default pull-right">详细信息</a>
                             </li>
                         {% endfor %}
                     </ul>

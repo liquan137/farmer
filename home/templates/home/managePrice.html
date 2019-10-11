@@ -1,0 +1,152 @@
+{% load static %}
+{% include "home/base_header.html" %}
+<link rel="stylesheet" href="{% static '/css/common.css' %}">
+<link rel="stylesheet" href="{% static '/css/body.css' %}">
+<link rel="stylesheet" href="{% static '/css/publish.css' %}">
+<link rel="stylesheet" href="{% static '/css/page.css' %}">
+</head>
+<body>
+{% include "home/base_nav.html" %}
+<div class="">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">发布</span>
+                </div>
+                <div class="clear_both">
+                    <div class="col-xs-3">
+                        <div class="list-group">
+                            <a href="/publish/" class="list-group-item">发布供应信息</a>
+                            <a href="/manage/1" class="list-group-item">管理我发布的信息</a>
+                            <a href="/managePrice/1" class="list-group-item active">查看我的报价</a>
+                            <a href="/registerReg" class="list-group-item">修改会员资料</a>
+                            <a href="/password" class="list-group-item">修改密码</a>
+                            <a href="/logout" class="list-group-item">退出</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-9">
+                        <h3>管理发布过的报价信息</h3>
+                        <div class="clear_both">
+
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>时间</td>
+                                    <td>产品</td>
+                                    <td>报价</td>
+                                    <td>操作</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in list.page_list %}
+                                    <tr>
+                                        <td>{{ item.id }}</td>
+                                        <td>{{ item.update_time }}</td>
+                                        <td>{{ item.m_pz }}</td>
+                                        <td><font
+                                                style="color: red">{{ item.m_today_price }}</font>/{{ item.m_today_size }}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-mini " type="button"
+                                                    onclick="upoadate('{{ item.id }}')">修改
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tfoot>
+                            </table>
+
+                        </div>
+                        <div>
+                            {% include "home/page.html" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" id="dumpModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                    class="sr-only">关闭</span></button>
+            <h4 class="modal-title">修改 #<span class="updateTitle"></span> 的报价</h4>
+        </div>
+        <div class="modal-content">
+            <p style="padding: 0 20px;line-height: 28px">
+            <div class="form-group clear_both">
+                <label for="exampleInputPassword4" class="col-sm-3"
+                       style="line-height: 32px;margin-bottom: 0">今日价格</label>
+                <div class="col-md-9 col-sm-9" data-toggle="popover">
+                    <form class="price">
+                        <div class="input-group">
+                            <input type="hidden" name="id" class="updateTitle">
+                            <input type="text" class="form-control" name="m_today_price"
+                                   placeholder="价格">
+                            <span class="input-group-addon">元</span>
+                            <input type="text" class="form-control" placeholder="单位"
+                                   name="m_today_size">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal"
+                    onclick="javascript: $('.updateTitle').text('')">取消
+            </button>
+            <button type="button" class="btn btn-green" onclick="subForm()">修改</button>
+        </div>
+    </div>
+</div>
+<script src="{% static '/js/api.js' %}"></script>
+<script src="{% static '/js/request.js' %}"></script>
+<script type="text/javascript"
+        src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+<script type="text/javascript">
+    let upoadate = (id) => {
+        $('.updateTitle').eq(0).text(id)
+        $('.updateTitle').eq(1).val(id)
+        $('#dumpModal').modal({
+            moveable: true,
+            position: 'center'
+        })
+    }
+    let subForm = () => {
+        let formData = qs.parse($('form.price').serialize())
+        if (formData.m_today_price == '' || formData.m_today_size == '') {
+            new $.zui.Messager('请将表单填写完整', {
+                type: 'danger',
+                placement: 'center'
+            }).show();
+            return false;
+        }
+        fetch_POST(api.updatePrice, qs.parse($('form.price').serialize())).then(response => {
+            let data = response.data
+            if (data.status == 200) {
+                new $.zui.Messager(data.msg, {
+                    type: 'success',
+                    placement: 'center'
+                }).show();
+                $('#dumpModal').modal({
+                    moveable: true,
+                    position: 'center'
+                })
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
+            } else {
+                new $.zui.Messager(data.msg, {
+                    type: 'danger',
+                    placement: 'center'
+                }).show();
+            }
+        })
+    }
+</script>
+{% include "home/base_footer.html" %}

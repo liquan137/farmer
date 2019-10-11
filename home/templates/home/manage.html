@@ -1,0 +1,202 @@
+{% load static %}
+{% include "home/base_header.html" %}
+<link rel="stylesheet" href="{% static '/css/common.css' %}">
+<link rel="stylesheet" href="{% static '/css/body.css' %}">
+<link rel="stylesheet" href="{% static '/css/publish.css' %}">
+<link rel="stylesheet" href="{% static '/css/page.css' %}">
+<script src="//unpkg.com/wangeditor/release/wangEditor.min.js"></script>
+</head>
+<body>
+{% include "home/base_nav.html" %}
+<div class="">
+    <div class="container">
+        <div class="col-md-12">
+            <div class="card-box">
+                <div class="clear_both card-title">
+                    <span class="pull-left card-o-title a-text-hover">发布</span>
+                </div>
+                <div class="clear_both">
+                    <div class="col-xs-3">
+                        <div class="list-group">
+                            <a href="/publish/" class="list-group-item">发布供应信息</a>
+                            <a href="/manage/1" class="list-group-item active">管理我发布的信息</a>
+                            <a href="/managePrice/1" class="list-group-item">查看我的报价</a>
+                            <a href="/registerReg" class="list-group-item">修改会员资料</a>
+                            <a href="/password" class="list-group-item">修改密码</a>
+                            <a href="/logout" class="list-group-item">退出</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-9">
+                        <h3>管理更新发布过的信息</h3>
+                        <div class="clear_both">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>信息标题</td>
+                                    <td>创建时间</td>
+                                    <td>修改时间</td>
+                                    <td>操作</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in list.page_list %}
+                                    <tr>
+                                        <td>{{ item.id }}</td>
+                                        <td>{{ item.m_title }}</td>
+                                        <td>{{ item.create_time }}</td>
+                                        <td>{{ item.update_time }}</td>
+                                        <td>
+                                            <button class="btn btn-mini " type="button"
+                                                    onclick="upoadate('{{ item.id }}')">修改
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tfoot>
+                            </table>
+
+                        </div>
+                        <div>
+                            {% include "home/page.html" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="dumpModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                    class="sr-only">关闭</span></button>
+            <h4 class="modal-title">修改 #<span class="updateTitle"></span> 的信息</h4>
+        </div>
+        <div class="modal-content clear_both">
+            <form class="price" style="padding: 0 20px;padding-top:15px;width: 100%;margin: 0 auto">
+                <div class="form-group">
+                    <label for="exampleInputAccount4" class="col-sm-2">信息标题</label>
+                    <div class="col-md-10 col-sm-10">
+                        <input type="text" name="m_title" class="form-control"
+                               id="exampleInputAccount4"
+                               placeholder="标题">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword4" class="col-sm-2">选择品种</label>
+                    <div class="col-md-10 col-sm-10">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="m_pz" placeholder="品种">
+                            <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">自动创建品种</button>
+                                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword4" class="col-sm-2">报价规格</label>
+                    <div class="col-md-10 col-sm-10" data-toggle="popover">
+                        <input type="text" name="m_size" class="form-control"
+                               id="exampleInputPassword4" placeholder="规格">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword4" class="col-sm-2">正文内容</label>
+                    <div class="col-md-10 col-sm-10" data-toggle="popover">
+                        <div class="input-group-text input-group"><input class="form-control"
+                                                                         type="hidden"
+                                                                         name="m_content"><b>
+                            信息内容请尽量详细，内容不得少于10个字，有利于百度收录和信息排名，图片请缩小到1M以内再上传。</b></div>
+
+                        <div id="editor">
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal"
+                    onclick="javascript: $('.updateTitle').text('')">取消
+            </button>
+            <button type="button" class="btn btn-green" onclick="subForm()">修改</button>
+        </div>
+    </div>
+</div>
+<script src="{% static '/js/api.js' %}"></script>
+<script src="{% static '/js/request.js' %}"></script>
+<script type="text/javascript"
+        src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+<script type="text/javascript">
+    /* 富文本编辑器初始化 */
+    var E = window.wangEditor
+    window.editor = new E('#editor')
+    // 或者 var editor = new E( document.getElementById('editor') )
+    window.editor.customConfig.menus = [
+        'head',  // 标题
+        'bold',  // 粗体
+        'fontSize',  // 字号
+        'fontName',  // 字体
+        'italic',  // 斜体
+        'underline',  // 下划线
+        'strikeThrough',  // 删除线
+        'foreColor',  // 文字颜色
+        'backColor',  // 背景颜色
+        'list',  // 列表
+        'justify',  // 对齐方式
+        'quote',  // 引用
+        'emoticon',  // 表情
+        'image',  // 插入图片
+        'table',  // 表格
+        'undo',  // 撤销
+        'redo'  // 重复
+    ]
+    window.editor.customConfig.uploadImgServer = api.uploadImg
+    window.editor.customConfig.uploadFileName = 'file'
+    window.editor.customConfig.withCredentials = true
+    window.editor.customConfig.zIndex = 100
+    window.editor.create()
+    let upoadate = (id) => {
+        $('.updateTitle').eq(0).text(id)
+        $('.updateTitle').eq(1).val(id)
+        $('#dumpModal').modal({
+            moveable: true,
+            position: 'center'
+        })
+    }
+    let subForm = () => {
+        let content = window.editor.txt.html()
+        if (content == '<p><br></p>') {
+            new $.zui.Messager('正文内容不能为空', {
+                type: 'danger',
+                placement: 'center'
+            }).show();
+            return false;
+        }
+        $("input[name='m_content']").val(content)
+        fetch_POST(api.updatePrice, qs.parse($('form.price').serialize())).then(response => {
+            let data = response.data
+            if (data.status == 200) {
+                new $.zui.Messager(data.msg, {
+                    type: 'success',
+                    placement: 'center'
+                }).show();
+                $('#dumpModal').modal({
+                    moveable: true,
+                    position: 'center'
+                })
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
+            } else {
+                new $.zui.Messager(data.msg, {
+                    type: 'danger',
+                    placement: 'center'
+                }).show();
+            }
+        })
+    }
+</script>
+{% include "home/base_footer.html" %}

@@ -1,0 +1,11 @@
+<div class="clear_both card-title">
+    <span class="pull-left card-o-title a-text-hover">热门产品</span>
+</div>
+<div>
+    <ul class="clear_both p-list">
+        {% for item in hot.page_list %}
+            <li><a href="/product/{{ item.p_id }}/{{ item.id }}/0/1"
+                   class="a-text a-text-hover">{{ item.p_name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>

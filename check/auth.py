@@ -1,5 +1,21 @@
 from home.models import p_menber, p_product
 
+from admin.models import p_sys
+
+global W_title
+global W_dec
+global W_keyword
+
+try:
+    W_sys = p_sys.objects.get(id=1)
+    W_title = W_sys.title
+    W_dec = W_sys.dec
+    W_keyword = W_sys.keyword
+except:
+    W_title = '请先初始化后台'
+    W_dec = '请先初始化后台'
+    W_keyword = '请先初始化后台'
+
 
 # 查询并生成导航列表
 def navList(request):
@@ -28,7 +44,7 @@ def navList(request):
         else:
             active = ''
         nav.append({
-            'link': 'product/' + str(data[i]['id'])+'/0/0/1',
+            'link': 'product/' + str(data[i]['id']) + '/0/0/1',
             'title': data[i]['p_name'],
             'active': active
         })
@@ -56,6 +72,11 @@ class menber_check(object):
         request.session['from'] = request.META.get('HTTP_REFERER', '/')
         user_id = request.session.get("user_id")
         request.nav = navList(request)
+        request.web = {
+            'title': W_title,
+            'dec': W_dec,
+            'keyword': W_keyword
+        }
         if user_id:
             try:
                 user = p_menber.objects.get(username=user_id)

@@ -58,6 +58,8 @@
     clear: both;
 }
 
+
+
 /* 采购消息的主体文字 */
 .msg-word {
     position: relative;
@@ -95,7 +97,24 @@
     background-size: 100%;
     margin: 7px 2px;
 }
+.float-msg{
+    float: left;
+}
+.float-time{
+    width: 100px;
+    color: #999;
+}
+.float-address{
+    width: 120px;
+    font-size: 12px;
+}
+.float-product{
+    width: 70px;
+    font-size: 12px;
+}
+.float-title{
 
+}
 /* 未登陆显示的盒子*/
 .ready-login-box {
     text-align: center;
@@ -196,4 +215,16 @@
     color: #4F9235;
     font-size: 12px;
     text-decoration: none;
+}
+
+.choose-body{
+    padding: 5px;
+    background-color: #eee;
+}
+.choose-body strong{
+    font-size: 12px;
+    color: #aaa;
+}
+.choose-body a.on{
+    color: #2e9134;
 }

@@ -5,7 +5,9 @@ let apiData = {
     verifyEmail: '/verifyEmail',
     forget: '/forget',
     publish: '/publish',
-    uploadImg: '/uploadImg'
+    uploadImg: '/uploadImg',
+    updatePrice: '/updatePrice',
+    updatePassword: '/updatePassword'
 }
 
 let setApi = (data) => {

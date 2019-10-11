@@ -336,7 +336,8 @@ def publish(request):
                     child = p_product_child.objects.get(id=item['m_c_id'])
                     data = {
                         'status': 401,
-                        'msg': '品种：【' + responses['m_pz'] + '】已经绑定此大类：' + '【' + father.p_name + '-' + child.p_name + '】',
+                        'msg': '品种：【' + responses[
+                            'm_pz'] + '】已经绑定此大类：' + '【' + father.p_name + '-' + child.p_name + '】',
                         'data': None
                     }
                     return HttpResponse(json.dumps(data, ensure_ascii=False),
@@ -359,7 +360,8 @@ def publish(request):
                 m_f_id=responses['m_f_id'],
                 m_c_id=responses['m_c_id'],
                 create_time=time.time(),
-                update_time=time.time()
+                update_time=time.time(),
+                username=request.userInfo['username'],
             )
             newMessage.save()
             newMessageContact = p_message_contact(
@@ -436,3 +438,85 @@ def uploadImg(request):
         "errno": 0,
     }
     return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+# 修改报价
+def updatePrice(request):
+    if request.userInfo == None:
+        data = {
+            'status': 401,
+            'msg': '请登录之后，再进行操作哦',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    if request.method == 'POST':
+        responses = json.loads(request.body)
+        try:
+            find = p_message.objects.get(id=responses['id'])
+            find.m_today_price = responses['m_today_price']
+            find.m_today_size = responses['m_today_size']
+            find.update_time = time.time()
+            find.save()
+            data = {
+                'status': 200,
+                'msg': '修改报价成功',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        except:
+            data = {
+                'status': 401,
+                'msg': '没有找到此条信息',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+def updatePassword(request):
+    if request.userInfo == None:
+        data = {
+            'status': 401,
+            'msg': '请登录之后，再进行操作哦',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    if request.method == 'POST':
+        responses = json.loads(request.body)
+        try:
+            find = p_menber.objects.get(username=request.userInfo['username'])
+            if responses['password_old'] == find.password:
+                find.password = responses['password_new']
+                find.save()
+                data = {
+                    'status': 200,
+                    'msg': '修改密码成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': '原密码错误',
+                    'data': None
+                }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        except:
+            data = {
+                'status': 401,
+                'msg': '没有找到此账号',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")

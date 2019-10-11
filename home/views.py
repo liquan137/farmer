@@ -13,6 +13,22 @@ import datetime
 from common.page import PageObject
 from common.dedupe import Dedupe
 
+from admin.models import p_sys
+
+global W_title
+global W_dec
+global W_keyword
+
+try:
+    W_sys = p_sys.objects.get(id=1)
+    W_title = W_sys.title
+    W_dec = W_sys.dec
+    W_keyword = W_sys.keyword
+except:
+    W_title = '请先初始化后台'
+    W_dec = '请先初始化后台'
+    W_keyword = '请先初始化后台'
+
 
 # 处理数据库中的图片数组
 def handlePhoto(list):
@@ -27,19 +43,14 @@ def handlePhoto(list):
     return list
 
 
-
-
 # 处理首页的数据
 def handleIndexData(list):
     for item in list:
         now_time = time.time()
         list[list.index(item)]['m_photo'] = json.loads(item['m_photo'])
         if item['create_time'] != 0:
-            print('datatime', now_time)
-            print('datatime', float(item['create_time']))
             time_delta = round(now_time) - round(float(item['create_time']))
             time_result = round(time_delta / 60)
-            print('分钟', round(time_delta / 60))
             if time_result < 60:
                 temp = time_result
                 list[list.index(item)]['create_time'] = '%s分钟前' % temp
@@ -50,14 +61,47 @@ def handleIndexData(list):
                 temp = round(time_result / 1440)
                 list[list.index(item)]['create_time'] = '%s天前' % temp
         if item['update_time'] != 0:
-            list[list.index(item)]['update_time'] = time.strftime("%m-%d %H:%M",
-                                                                  time.localtime(float(item['update_time'])))
+            time_delta = round(now_time) - round(float(item['update_time']))
+            time_result = round(time_delta / 60)
+            if time_result < 60:
+                temp = time_result
+                list[list.index(item)]['update_time'] = '%s分钟前' % temp
+            elif time_result > 60 and time_result < 1440:
+                temp = round(time_result / 60)
+                list[list.index(item)]['update_time'] = '%s小时前' % temp
+            else:
+                temp = round(time_result / 1440)
+                list[list.index(item)]['update_time'] = '%s天前' % temp
+            # list[list.index(item)]['update_time'] = time.strftime("%m-%d %H:%M",
+            #                                                       time.localtime(float(item['update_time'])))
     return list
+
 
 # Create your views here.
 # objects.get()结果转换
 def object_to_json(obj):
     return dict([(kk, obj.__dict__[kk]) for kk in obj.__dict__.keys() if kk != "_state" and kk != "password"])
+
+
+# 产品报价
+def cdBaoJia():
+    handle = PageObject()
+    page = 1
+    todayPY = Paginator(p_message.objects.all().values().order_by('-create_time'),
+                        6)
+    todayData = handle.handlePage(todayPY, page, 6)
+    todayData['page_list'] = handleIndexData(todayData['page_list'])
+    return todayData
+
+
+# 产品报价
+def hot():
+    handle = PageObject()
+    page = 1
+    todayPY = Paginator(p_product_child.objects.all().values().order_by('-create_time'),
+                        40)
+    todayData = handle.handlePage(todayPY, page, 40)
+    return todayData
 
 
 # 查询并生成导航列表
@@ -73,39 +117,116 @@ def navList():
 # 首页
 def index(request):
     template = loader.get_template('home/index.html')
-    list = []
     nav = navList()
-    recPerPage = 12
+    recPerPage = 25
     page = 1
     try:
         pagePY = Paginator(p_message.objects.all().values().order_by('-create_time'),
-                  recPerPage)
-        todayPY =  Paginator(p_message.objects.all().values().order_by('-create_time'),
-                  6)
+                           recPerPage)
     except:
         pagePY = False
     if pagePY != False:
         handle = PageObject()
         pageData = handle.handlePage(pagePY, page, recPerPage)
         pageData['page_list'] = handlePhoto(pageData['page_list'])
-        todayData = handle.handlePage(todayPY, page, 12)
-        todayData['page_list'] = handleIndexData(todayData['page_list'])
-        print(todayData)
+        todayData = cdBaoJia()
     else:
         pageData = False
-    list_data = {
-        'm_title': '柑桔13886725378特早蜜桔，叶桔，蜜橘桔子',
-        'm_address_belong': '1564',
-        'create_time': '1564658781'
-    }
-    for i in range(0, 10):
-        list.append(list_data)
     context = {
         'supply': pageData,
         'list': pageData,
         'nav': nav,
-        'path': '/',
-        'today': todayData
+        'path': '/list/',
+        'today': todayData,
+        'hot': hot()
+    }
+    return HttpResponse(template.render(context, request))
+
+
+# 首页 分页
+def List(request, page):
+    template = loader.get_template('home/index.html')
+    nav = navList()
+    recPerPage = 25
+    try:
+        pagePY = Paginator(p_message.objects.all().values().order_by('-create_time'),
+                           recPerPage)
+    except:
+        pagePY = False
+    if pagePY != False:
+        handle = PageObject()
+        pageData = handle.handlePage(pagePY, page, recPerPage)
+        pageData['page_list'] = handlePhoto(pageData['page_list'])
+        todayData = cdBaoJia()
+    else:
+        pageData = False
+    context = {
+        'supply': pageData,
+        'list': pageData,
+        'nav': nav,
+        'path': '/list/',
+        'today': todayData,
+        'hot': hot()
+    }
+    return HttpResponse(template.render(context, request))
+
+
+# 报价 分页
+def Quote(request, child, page):
+    template = loader.get_template('home/quote.html')
+    nav = navList()
+    recPerPage = 25
+    try:
+        if child == 0:
+            pagePY = Paginator(p_message.objects.filter(type=1).values().order_by('-create_time'),
+                               recPerPage)
+        else:
+            pagePY = Paginator(p_message.objects.filter(m_c_id=child).values().order_by('-create_time'),
+                               recPerPage)
+    except:
+        pagePY = False
+    if pagePY != False:
+        handle = PageObject()
+        pageData = handle.handlePage(pagePY, page, recPerPage)
+        pageData['page_list'] = handleIndexData(pageData['page_list'])
+        todayData = cdBaoJia()
+    else:
+        pageData = False
+    childAll = list(p_product_child.objects.all().values().order_by('-create_time'))
+    if child == 0:
+        childAllList = [{
+            'title': '全部',
+            'link': 0,
+            'active': 'on'
+        }]
+    else:
+        childAllList = [{
+            'title': '全部',
+            'link': 0,
+            'active': ''
+        }]
+    for item in childAll:
+        on = ''
+        if child == item['id']:
+            on = 'on'
+        childAllList.append({
+            'title': item['p_name'],
+            'link': item['id'],
+            'active': on
+        })
+        for items in pageData['page_list']:
+            print(items['m_c_id'], item['id'])
+            if int(items['m_c_id']) == int(item['id']):
+                pageData['page_list'][pageData['page_list'].index(items)]['m_content'] = item['p_name']
+
+    context = {
+        'supply': pageData,
+        'list': pageData,
+        'nav': nav,
+        'path': '/quote/' + str(child) + '/',
+        'today': todayData,
+        'hot': hot(),
+        'all': childAllList
     }
     return HttpResponse(template.render(context, request))
 
@@ -238,8 +359,6 @@ def getPMsgList(id, recPerPage):
     return List
 
 
-
-
 # 产品列表详情页
 def productDetail(request, id):
     if id != None:
@@ -253,16 +372,17 @@ def productDetail(request, id):
                 typeF = p_product.objects.get(id=data['m_f_id'])
                 typeC = p_product_child.objects.get(id=data['m_c_id'])
                 dataContact = object_to_json(dataContact)
-                print(data)
-                print(dataContact)
             except:
                 data = {}
             context = {
                 'data': data,
                 'contact': dataContact,
                 'typeF': typeF.p_name,
-                'typeC': typeC.p_name
+                'typeC': typeC.p_name,
+                'today': cdBaoJia(),
+                'hot': hot()
             }
+            print(context)
             return HttpResponse(template.render(context, request))
         else:
             return HttpResponse('页面参数错误')
@@ -285,7 +405,7 @@ def productC(request, id, page):
                 childList = list(p_message.objects.filter(m_c_id=id).values())
                 titleNav = [
                     {
-                        'title': '农产品网',
+                        'title': W_title,
                         'link': '/'
                     },
                     {
@@ -385,7 +505,7 @@ def product(request, father, child, last, page):
                     # 检查所属二级列表下面的品种
                     if last == 0:
                         threeAll = [{
-                            'link': '/product/' + str(father) + '/' +str(child) +'/0/1',
+                            'link': '/product/' + str(father) + '/' + str(child) + '/0/1',
                             'title': '全部',
                             'f_id': 0,
                             'active': 'on'
@@ -395,7 +515,7 @@ def product(request, father, child, last, page):
                                             recPerPage)
                     else:
                         threeAll = [{
-                            'link': '/product/' + str(father) + '/' +str(child) +'/0/1',
+                            'link': '/product/' + str(father) + '/' + str(child) + '/0/1',
                             'title': '全部',
                             'f_id': 0,
                             'active': ''
@@ -428,7 +548,7 @@ def product(request, father, child, last, page):
             this = p_product.objects.get(id=father)
             titleNav = [
                 {
-                    'title': '农产品网',
+                    'title': W_title,
                     'link': '/'
                 },
                 {
@@ -442,9 +562,10 @@ def product(request, father, child, last, page):
                 'path': '/product/' + str(father) + '/' + str(child) + '/' + str(last) + '/',
                 'titleNav': titleNav,
                 'this': this.p_name,
-                'threeAll': threeAll
+                'threeAll': threeAll,
+                'today': cdBaoJia(),
+                'hot': hot()
             }
-
 
             return HttpResponse(template.render(context, request))
         else:
@@ -459,5 +580,47 @@ def message(request, error):
     print(urllib.parse.unquote(error))
     context = {
         'msg': urllib.parse.unquote(error)
+    }
+    return HttpResponse(template.render(context, request))
+
+# 管理已经发布消息
+def Manage(request, page):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
+    recPerPage = 16
+    template = loader.get_template('home/manage.html')
+    pageData = Paginator(p_message.objects.filter(username=request.userInfo['username']).values().order_by('create_time'),
+              recPerPage)
+    handle = PageObject()
+    pageData = handle.handlePage(pageData, page, recPerPage)
+    pageData['page_list'] = handlePhoto(pageData['page_list'])
+    context = {
+        'list': pageData,
+        'path': '/manage/',
+    }
+    return HttpResponse(template.render(context, request))
+
+# 报价管理
+def ManagePrice(request, page):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
+    recPerPage = 16
+    template = loader.get_template('home/managePrice.html')
+    pageData = Paginator(p_message.objects.filter(username=request.userInfo['username']).values().order_by('create_time'),
+              recPerPage)
+    handle = PageObject()
+    pageData = handle.handlePage(pageData, page, recPerPage)
+    pageData['page_list'] = handlePhoto(pageData['page_list'])
+    context = {
+        'list': pageData,
+        'path': '/managePrice/',
+    }
+    return HttpResponse(template.render(context, request))
+
+def ManagePassword(request):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
+    template = loader.get_template('home/managePassword.html')
+    context = {
     }
     return HttpResponse(template.render(context, request))

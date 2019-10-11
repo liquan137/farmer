@@ -58,13 +58,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-box clear_both list-nav-">
+                <div class="card-box clear_both list-nav-" style="border-bottom: 1px solid #ddd !important;">
                     <div class="col-xs-12">
                         <div class="link-header"><strong>供应：</strong></div>
                         <div class="link-body">
-                            {% for item in child %}
-                                <a class="link-body-a a-text a-text-hover" href="{{ item.link }}">{{ item.title }}</a>
-                            {% endfor %}
+                            <a class="link-body-a a-text a-text-hover" href="#">全部</a>
+                            <a class="link-body-a a-text a-text-hover" href="#">供应</a>
+                            <a class="link-body-a a-text a-text-hover" href="#">求购</a>
                         </div>
                     </div>
                 </div>
@@ -116,60 +116,14 @@
                 <a class="btn btn-green btn-create" type="button" href="/publish">免费发布信息</a>
             </div>
             <div class="card-box">
-                <div class="clear_both card-title">
-                    <span class="pull-left card-o-title a-text-hover">产地报价</span>
-                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
-                </div>
-                <div>
-                    <ul class="p-today-list">
-                        <li>
-                            <span>5分钟前</span>
-                            <span title="自产红薯50克左右，装箱10公斤：0.7-0.8元/斤">
-                                <a class="p-todat-list-a a-text-hover" href="">自产红薯50克左右，装箱10公斤：0.7-0.8元/斤</a>
-                                <div class="p-todat-list-special">
-                                    <a href="">辽宁新民白菜，矮棵黄心菜，玲珑黄，秋宝</a>
-                                </div>
-                            </span>
-                        </li>
-                    </ul>
-                </div>
+                {% include "home/chandi.html" %}
             </div>
             <div class="card-box">
-                <div class="clear_both card-title">
-                    <span class="pull-left card-o-title a-text-hover">热门农产品价格信息</span>
-                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
-                </div>
-                <div>
-                    <ul class="clear_both p-list">
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                        <li><a href="" class="a-text a-text-hover">西瓜</a></li>
-                    </ul>
-                </div>
+                {% include "home/hot.html" %}
             </div>
-            <div class="card-box">
-                <div class="clear_both card-title">
-                    <span class="pull-left card-o-title a-text-hover">近期热门信息</span>
-                    <a class="pull-right card-o-title a-text-hover" href="">更多<i class="icon icon-angle-right"></i></a>
-                </div>
-                <div>
-                    <ul class="m-list">
-                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
-                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
-                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
-                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
-                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
-                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
-                        <li><a href="" class="a-text a-text-hover">供应香蕉,缅甸欧亚国际</a></li>
-                    </ul>
-                </div>
-            </div>
+            <!--<div class="card-box">
+                {% include "home/info.html" %}
+            </div>-->
         </div>
     </div>
 </div>

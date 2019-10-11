@@ -1,0 +1,19 @@
+<div class="clear_both card-title">
+    <span class="pull-left card-o-title a-text-hover">产地报价</span>
+    <a class="pull-right card-o-title a-text-hover" href="/quote/0/1">更多<i class="icon icon-angle-right"></i></a>
+</div>
+<div>
+    <ul class="p-today-list">
+        {% for item in today.page_list %}
+            <li>
+                <span>{{ item.update_time }}</span>
+                <span title="{{ item.m_title }}">
+            <a class="p-todat-list-a a-text-hover" href="/productDetail/{{ item.id }}">{{ item.m_title }}：<font style="color: red">{{ item.m_today_price }}</font>/{{ item.m_today_size }}</a>
+            <div class="p-todat-list-special">
+                <a href="/productDetail/{{ item.id }}">{{ item.m_address_city }}{{ item.m_address_belong }}新民白菜，矮棵黄心菜，玲珑黄，秋宝</a>
+            </div>
+        </span>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

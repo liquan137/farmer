@@ -30,3 +30,13 @@
 .p-list-item a{
     display: block;
 }
+.price{
+}
+.price .form-group:after{
+    display: table;
+    content: '';
+    clear: both;
+}
+.price .form-group{
+    margin-bottom: 15px;
+}

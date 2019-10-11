@@ -27,6 +27,8 @@ urlpatterns = [
     path('admin/login', admin_views.login),
     path('admin/init', admin_views.initialize),
     path('', home_views.index),
+    path('list/<int:page>', home_views.List),
+    path('quote/<int:child>/<int:page>', home_views.Quote),
     path('logout/', home_views.logout),
     path('login/', home_views.login),
     path('register/', home_views.register),
@@ -36,6 +38,9 @@ urlpatterns = [
     path('publishDetail/<int:father>/<int:child>', home_views.publishDetail),
     path('product/<int:father>/<int:child>/<int:last>/<int:page>', home_views.product),
     path('productC/<int:id>/<int:page>', home_views.productC),
+    path('manage/<int:page>', home_views.Manage),
+    path('managePrice/<int:page>', home_views.ManagePrice),
+    path('password/', home_views.ManagePassword),
     path('productDetail/<int:id>', home_views.productDetail),
     path('api/login', api_views.login),
     path('api/register', api_views.register),
@@ -44,5 +49,6 @@ urlpatterns = [
     path('api/forget', api_views.forget),
     path('api/publish', api_views.publish),
     path('api/uploadImg', api_views.uploadImg),
-
+    path('api/updatePrice', api_views.updatePrice),
+    path('api/updatePassword', api_views.updatePassword),
 ]
