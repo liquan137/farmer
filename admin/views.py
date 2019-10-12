@@ -1,14 +1,30 @@
 from django.shortcuts import render
+import os
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
 from django import forms
 from admin.models import *
-from home.models import p_product, p_product_child
+from home.models import *
 from captcha.fields import CaptchaField
 import json
-import time
+import sys
+import platform
+
+
+def sysInfo():
+    if os.name == 'nt':
+        name = 'windows'
+    elif os.name == 'posix':
+        name = 'linux'
+    elif os.name == 'java':
+        name = 'java'
+    print()
+    return {
+        'name': platform.platform(),
+        'python': platform.python_version(),
+    }
 
 
 # 管理后端登陆表单生成
@@ -55,14 +71,24 @@ def refresh_captcha(request):
 
 # 登陆
 def login(request):
+    print(request.admin)
     loginForm = LoginForm()
     if request.method == 'GET':
+        if request.admin != None:
+            return HttpResponseRedirect('/admin')
         template = loader.get_template('admin/login.html')
         context = {
             'form': loginForm
         }
         return HttpResponse(template.render(context, request))
     elif request.method == 'POST':
+        if request.admin != None:
+            data = {
+                'status': 200,
+                'msg': '已登录管理员账号',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
         requestJson = request.POST
         for requestJsones in requestJson:
             print(requestJson[requestJsones])
@@ -70,6 +96,7 @@ def login(request):
             try:
                 admin = p_admin.objects.get(user=requestJson.get('user'))
                 if admin.password == requestJson.get('password'):
+                    request.session['admin'] = requestJson.get('user')
                     data = {
                         'status': 200,
                         'msg': '登陆成功',
@@ -101,6 +128,211 @@ def login(request):
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
 
+# 首页
+def index(request):
+    if request.method == 'GET':
+        print('admin', request.admin)
+        print('admin', request.userInfo)
+        if request.admin == None:
+            return HttpResponseRedirect('/admin/login')
+        template = loader.get_template('admin/index.html')
+        context = {
+            'number': {
+                'msg': p_message.objects.count(),
+                'user': p_menber.objects.count(),
+                'nav': p_product.objects.count(),
+                'product': p_product_child.objects.count()
+            },
+            'os': sysInfo()
+        }
+        return HttpResponse(template.render(context, request))
+    elif request.method == 'POST':
+        if request.admin != None:
+            data = {
+                'status': 200,
+                'msg': '已登录管理员账号',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        else:
+            data = {
+                'status': 400,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+# 系统设置
+def setting(request):
+    if request.method == 'GET':
+        print('admin', request.admin)
+        print('admin', request.userInfo)
+        if request.admin == None:
+            return HttpResponseRedirect('/admin/login')
+        template = loader.get_template('admin/setting.html')
+        context = {
+            'number': {
+                'msg': p_message.objects.count(),
+                'user': p_menber.objects.count(),
+                'nav': p_product.objects.count(),
+                'product': p_product_child.objects.count()
+            },
+            'os': sysInfo()
+        }
+        return HttpResponse(template.render(context, request))
+    elif request.method == 'POST':
+        if request.admin != None:
+            data = {
+                'status': 200,
+                'msg': '已登录管理员账号',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        else:
+            data = {
+                'status': 400,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+# 系统管理员
+def sysUser(request):
+    if request.method == 'GET':
+        print('admin', request.admin)
+        print('admin', request.userInfo)
+        if request.admin == None:
+            return HttpResponseRedirect('/admin/login')
+        template = loader.get_template('admin/setting.html')
+        context = {
+            'number': {
+                'msg': p_message.objects.count(),
+                'user': p_menber.objects.count(),
+                'nav': p_product.objects.count(),
+                'product': p_product_child.objects.count()
+            },
+            'os': sysInfo()
+        }
+        return HttpResponse(template.render(context, request))
+    elif request.method == 'POST':
+        if request.admin != None:
+            data = {
+                'status': 200,
+                'msg': '已登录管理员账号',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        else:
+            data = {
+                'status': 400,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+# 用户
+def menber(request):
+    if request.method == 'GET':
+        print('admin', request.admin)
+        print('admin', request.userInfo)
+        if request.admin == None:
+            return HttpResponseRedirect('/admin/login')
+        template = loader.get_template('admin/setting.html')
+        context = {
+            'number': {
+                'msg': p_message.objects.count(),
+                'user': p_menber.objects.count(),
+                'nav': p_product.objects.count(),
+                'product': p_product_child.objects.count()
+            },
+            'os': sysInfo()
+        }
+        return HttpResponse(template.render(context, request))
+    elif request.method == 'POST':
+        if request.admin != None:
+            data = {
+                'status': 200,
+                'msg': '已登录管理员账号',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        else:
+            data = {
+                'status': 400,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+# 主类目管理
+def main(request):
+    if request.method == 'GET':
+        print('admin', request.admin)
+        print('admin', request.userInfo)
+        if request.admin == None:
+            return HttpResponseRedirect('/admin/login')
+        template = loader.get_template('admin/setting.html')
+        context = {
+            'number': {
+                'msg': p_message.objects.count(),
+                'user': p_menber.objects.count(),
+                'nav': p_product.objects.count(),
+                'product': p_product_child.objects.count()
+            },
+            'os': sysInfo()
+        }
+        return HttpResponse(template.render(context, request))
+    elif request.method == 'POST':
+        if request.admin != None:
+            data = {
+                'status': 200,
+                'msg': '已登录管理员账号',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        else:
+            data = {
+                'status': 400,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+# 品种管理
+def category(request):
+    if request.method == 'GET':
+        print('admin', request.admin)
+        print('admin', request.userInfo)
+        if request.admin == None:
+            return HttpResponseRedirect('/admin/login')
+        template = loader.get_template('admin/setting.html')
+        context = {
+            'number': {
+                'msg': p_message.objects.count(),
+                'user': p_menber.objects.count(),
+                'nav': p_product.objects.count(),
+                'product': p_product_child.objects.count()
+            },
+            'os': sysInfo()
+        }
+        return HttpResponse(template.render(context, request))
+    elif request.method == 'POST':
+        if request.admin != None:
+            data = {
+                'status': 200,
+                'msg': '已登录管理员账号',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        else:
+            data = {
+                'status': 400,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
 # 初始化管理员账号，以及菜单
 def initialize(request):
     if request.method == 'GET':
@@ -108,7 +340,7 @@ def initialize(request):
         try:
             p_admin.objects.get(user='admin')
             index += 1
-            result = str(index)+') 系统当前已经初始过管理员了<br>'
+            result = str(index) + ') 系统当前已经初始过管理员了<br>'
         except:
             newAdmin = p_admin(user='admin', password='123456', username='', auth=1)
             newAdmin.save()
@@ -149,29 +381,29 @@ def initialize(request):
             index += 1
             try:
                 p_product.objects.get(p_name=list['title'])
-                result += str(index)+') 已经添加过了['+list['title']+']类别<br>'
+                result += str(index) + ') 已经添加过了[' + list['title'] + ']类别<br>'
             except:
                 newP = p_product(p_name=list['title'], create_time=time.time())
                 newP.save()
-                result += str(index)+') ['+list['title']+']类别添加完毕<br>'
+                result += str(index) + ') [' + list['title'] + ']类别添加完毕<br>'
                 for item in list['item']:
                     index += 1
                     try:
                         p_product_child.objects.get(p_name=item)
-                        result += str(index)+') 已经添加过了['+item+']类别<br>'
+                        result += str(index) + ') 已经添加过了[' + item + ']类别<br>'
                     except:
                         newPchild = p_product_child(p_name=item, p_id=newP.id, create_time=time.time())
                         newPchild.save()
-                        result += str(index)+') ['+item+']类别添加完毕<br>'
+                        result += str(index) + ') [' + item + ']类别添加完毕<br>'
         try:
             index += 1
             p_sys.objects.get(id=1)
-            result += str(index)+') 网站设置已经初始化过了<br>'
+            result += str(index) + ') 网站设置已经初始化过了<br>'
         except:
             index += 1
             newSys = p_sys(dec='网站初始化完毕')
             newSys.save()
-            result += str(index)+') 网站设置初始化完毕,请重启django服务！<br>'
+            result += str(index) + ') 网站设置初始化完毕,请重启django服务！<br>'
         result += "<a href='/'>登陆前台首页</a> | <a href='/admin/login'>登陆到后台首页</a>"
-        result = '<div style="text-align:center;line-height:28px;font-size:12px">'+result+'</div>'
+        result = '<div style="text-align:center;line-height:28px;font-size:12px">' + result + '</div>'
         return HttpResponse(result)

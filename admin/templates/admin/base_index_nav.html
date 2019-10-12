@@ -1,0 +1,32 @@
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu" data-widget="tree">
+            <li class="header">功能菜单</li>
+            {% for item in request.admin_list %}
+                <li class="{{ item.active }}">
+                    {% if item.child != False %}
+                        <a href="javascript:;">
+                            <i class="icon icon-file"></i>
+                            <span>{{ item.title }}</span>
+                            <span class="pull-right-container">
+                                <i class="icon icon-angle-left"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: {{ item.block }};">
+                            {% for i in item.child %}
+                                <li  class="{{ i.active }}"><a href="{{ i.link }}"><i class="icon icon-circle-blank"></i> {{ i.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <a href="{{ item.link }}">
+                            <i class="icon icon-dashboard"></i>
+                            <span>{{ item.title }}</span>
+                            <span class="pull-right-container">
+                            </span>
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+</aside>

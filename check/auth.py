@@ -1,6 +1,6 @@
 from home.models import p_menber, p_product
 
-from admin.models import p_sys
+from admin.models import p_sys, p_admin
 
 global W_title
 global W_dec
@@ -63,6 +63,120 @@ def navList(request):
     return nav
 
 
+def adminAuth(request, type):
+    if type == 1:
+        list = [
+            {
+                'title': '首页',
+                'child':  False,
+                'active': '',
+                'link': '/admin',
+                'block': 'none'
+            },
+            {
+                'title': '系统设置',
+                'child': [
+                    {
+                        'title': '网站设置',
+                        'link': '/admin/setting',
+                        'active': ''
+                    },
+                ],
+                'active': '',
+                'link': '',
+                'block': 'none'
+            },
+            {
+                'title': '账户管理',
+                'child': [
+                    {
+                        'title': '系统管理员',
+                        'link': '/admin/sysUser',
+                        'active': ''
+                    },
+                    {
+                        'title': '用户管理',
+                        'link': '/admin/user',
+                        'active': ''
+                    },
+                ],
+                'active': '',
+                'link': '',
+                'block': 'none'
+            },
+            {
+                'title': '类目管理',
+                'child': [
+                    {
+                        'title': '主级类目',
+                        'link': '/admin/main',
+                        'active': ''
+                    },
+                    {
+                        'title': '品种管理',
+                        'link': '/admin/category',
+                        'active': ''
+                    },
+                ],
+                'active': '',
+                'link': '',
+                'block': 'none'
+            }
+        ]
+    else:
+        list = [
+            {
+                'title': '首页',
+                'child': False,
+                'active': '',
+                'link': '/admin',
+                'block': 'none'
+            },
+            {
+                'title': '账户管理',
+                'child': [
+                    {
+                        'title': '用户管理',
+                        'link': '/admin/user',
+                        'active': ''
+                    },
+                ],
+                'active': '',
+                'link': '',
+                'block': 'none'
+            },
+            {
+                'title': '类目管理',
+                'child': [
+                    {
+                        'title': '品种管理',
+                        'link': '/admin/category',
+                        'active': ''
+                    },
+                ],
+                'active': '',
+                'link': '',
+                'block': 'none'
+            }
+        ]
+    for item in list:
+        if len(item['link']) == 6:
+            list[list.index(item)]['active'] = 'active'
+        else:
+            list[list.index(item)]['active'] = 'treeview'
+        if item['child']:
+            for items in item['child']:
+                if items['link'] in request.path:
+                    list[list.index(item)]['child'][list[list.index(item)]['child'].index(items)]['active'] = 'on'
+                    list[list.index(item)]['active'] = 'treeview menu-open'
+                    list[list.index(item)]['block'] = 'block'
+                    list[list.index(item)]['active'] =  'treeview menu-open'
+                else:
+                    list[list.index(item)]['child'][list[list.index(item)]['child'].index(items)]['active'] = ''
+    print(list)
+    return list
+
+
 class menber_check(object):
 
     def __init__(self, get_response):
@@ -71,12 +185,27 @@ class menber_check(object):
     def __call__(self, request):
         request.session['from'] = request.META.get('HTTP_REFERER', '/')
         user_id = request.session.get("user_id")
+        admin = request.session.get("admin")
         request.nav = navList(request)
         request.web = {
             'title': W_title,
             'dec': W_dec,
             'keyword': W_keyword
         }
+        if admin:
+            try:
+                adminSql = p_admin.objects.get(user=admin)
+                request.admin = {
+                    'user': adminSql.user,
+                    'username': adminSql.username,
+                    'auth': adminSql.auth
+                }
+                request.admin_list = adminAuth(request, adminSql.auth)
+                print(request.admin_list)
+            except:
+                request.admin = None
+        else:
+            request.admin = None
         if user_id:
             try:
                 user = p_menber.objects.get(username=user_id)

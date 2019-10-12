@@ -1,0 +1,230 @@
+{% load static %}
+{% include "admin/base_admin_header.html" %}
+<link rel="stylesheet" href="{% static '/css/admin/login.css' %}">
+</head>
+<style>
+
+</style>
+<body>
+<div class="wrapper">
+    {% include "admin/base_index_header.html" %}
+    {% include "admin/base_index_nav.html" %}
+    <div class="content-wrapper">
+        <div class="content-header">
+            <ul class="breadcrumb">
+                <li><a href="#"><i class="icon icon-home"></i></a></li>
+                <li class="active">仪表盘</li>
+            </ul>
+        </div>
+        <div class="content-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box bg-info">
+                            <div class="info-box-icon">
+                                <i class="icon icon-file-text"></i>
+                            </div>
+                            <div class="info-box-content">
+                                <span class="info-box-text">信息总量</span>
+                                <span class="info-box-number">{{ number.msg }}
+                                        <small>篇</small>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box bg-primary">
+                            <div class="info-box-icon">
+                                <i class="icon icon-user"></i>
+                            </div>
+                            <div class="info-box-content">
+                                <span class="info-box-text">用户总量</span>
+                                <span class="info-box-number">{{ number.user }}
+                                        <small>个</small>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box bg-warning">
+                            <div class="info-box-icon">
+                                <i class="icon icon-bars"></i>
+                            </div>
+                            <div class="info-box-content">
+                                <span class="info-box-text">栏目总量</span>
+                                <span class="info-box-number">{{ number.nav }}
+                                        <small>个</small>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box bg-danger">
+                            <div class="info-box-icon">
+                                <i class="icon icon-eye-open"></i>
+                            </div>
+                            <div class="info-box-content">
+                                <span class="info-box-text">产品总量</span>
+                                <span class="info-box-number">{{ number.product }}
+                                        <small>个</small>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <div class="panel-title">产品信息</div>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-info">
+                                    <tr>
+                                        <td>产品名称</td>
+                                        <td>{{ request.web.title }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>核心框架</td>
+                                        <td>zui v1.7.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>后台作者</td>
+                                        <td>Li</td>
+                                    </tr>
+                                    <tr>
+                                        <td>联系方式</td>
+                                        <td>QQ：1031308775</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <div class="panel-title">服务器信息</div>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-info">
+                                    <tr>
+                                        <td>系统</td>
+                                        <td>{{ os.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>运行环境</td>
+                                        <td>{{ os.python }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MYSQL版本</td>
+                                        <td>未知</td>
+                                    </tr>
+                                    <tr>
+                                        <td>上传限制</td>
+                                        <td>3M</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript"
+        src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+{% include "admin/base_admin_footer.html" %}
+<script>
+    $(document).ready(function () {
+        $('#id_captcha_1').attr('placeholder', '请输入右侧的答案').attr('name', 'code').siblings().attr('title', '点击图片切换验证码')
+        $('.captcha').click(function () {
+            $.getJSON("/refresh_captcha/", function (result) {
+                $('img.captcha').attr('src', result['image_url']);
+                $('#id_captcha_0').val(result['hashkey'])
+            });
+        });
+    });
+    $(document).ready(function () {
+        $('form').bootstrapValidator({
+            // 默认的提示消息
+            message: '请填写该字段',
+            // 表单框里右侧的icon
+            feedbackIcons: {
+                valid: 'icon-radiobutton iconfont iconfont-val',
+                invalid: 'icon-roundclosefill iconfont iconfont-val',
+                validating: 'icon-icon_task_checkbox_d iconfont iconfont-val'
+            },
+            submitHandler: function (validator, form, submitButton) {
+                // 表单提交成功时会调用此方法
+                // validator: 表单验证实例对象
+                // form  jq对象  指定表单对象
+                // submitButton  jq对象  指定提交按钮的对象
+                console.log(form)
+            },
+            fields: {
+                user: {
+                    validators: {
+                        notEmpty: {
+                            message: '账号不能为空'
+                        },
+                        stringLength: {
+                            min: 4,
+                            max: 16,
+                            message: '账号长度必须在4到16之间'
+                        },
+                    }
+                },
+                code: {
+                    validators: {
+                        notEmpty: {
+                            message: '验证码不能为空'
+                        },
+                        stringLength: {
+                            min: 1,
+                            max: 4,
+                            message: '验证码长度必须在1到4之间'
+                        },
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        },
+                        stringLength: {
+                            min: 4,
+                            max: 16,
+                            message: '密码长度必须在4到16之间'
+                        },
+                    }
+                },
+            }
+        });
+    })
+    let formSubmit = (dom) => {
+        var bootstrapValidator = $("form").data('bootstrapValidator');
+        bootstrapValidator.validate();
+        if (bootstrapValidator.isValid()) {
+            fetch_FORM(api.login, $('form').serialize()).then(response => {
+                let data = response.data
+                if (data.status == 200) {
+                    new $.zui.Messager(data.msg, {
+                        type: 'success',
+                        placement: 'center'
+                    }).show();
+                } else {
+                    new $.zui.Messager(data.msg, {
+                        type: 'danger',
+                        placement: 'center'
+                    }).show();
+                }
+                $(dom).removeAttr('disabled')
+            })
+
+        } else return;
+    }
+</script>
+</body>
+</html>
