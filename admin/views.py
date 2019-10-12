@@ -1,16 +1,24 @@
-from django.shortcuts import render
 import os
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
-from django import forms
 from admin.models import *
 from home.models import *
-from captcha.fields import CaptchaField
+from django.core.paginator import Paginator
+from django.db.models import Avg
 import json
-import sys
+import time
 import platform
+from admin.form import *
+# 引入公共文件 中的分页class
+from common.page import PageObject
+from common.dedupe import Dedupe
+
+
+# objects.get()结果转换
+def object_to_json(obj):
+    return dict([(kk, obj.__dict__[kk]) for kk in obj.__dict__.keys() if kk != "_state" and kk != "password"])
 
 
 def sysInfo():
@@ -25,19 +33,6 @@ def sysInfo():
         'name': platform.platform(),
         'python': platform.python_version(),
     }
-
-
-# 管理后端登陆表单生成
-class LoginForm(forms.Form):
-    user = forms.CharField(min_length=4, error_messages={
-        "required": "账号不能为空",
-        'min_length': '账号不能少于6位'
-    }, widget=forms.TextInput(attrs={'class': 'form-control', 'name': 'user', 'placeholder': '请输入账号'}))
-    password = forms.CharField(max_length=6, error_messages={
-        "required": "密码不能为空",
-        'min_length': '密码不能少于6位'
-    }, widget=forms.PasswordInput(attrs={'class': 'form-control', 'name': 'password', 'placeholder': '请输入密码'}))
-    captcha = CaptchaField(label='验证码')
 
 
 # Create your views here.
@@ -166,29 +161,40 @@ def index(request):
 # 系统设置
 def setting(request):
     if request.method == 'GET':
-        print('admin', request.admin)
-        print('admin', request.userInfo)
         if request.admin == None:
             return HttpResponseRedirect('/admin/login')
+        Setting = object_to_json(p_sys.objects.get(id=1))
         template = loader.get_template('admin/setting.html')
         context = {
-            'number': {
-                'msg': p_message.objects.count(),
-                'user': p_menber.objects.count(),
-                'nav': p_product.objects.count(),
-                'product': p_product_child.objects.count()
-            },
-            'os': sysInfo()
+            'sys': Setting
         }
         return HttpResponse(template.render(context, request))
     elif request.method == 'POST':
         if request.admin != None:
-            data = {
-                'status': 200,
-                'msg': '已登录管理员账号',
-                'data': None
-            }
-            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+            Form = SettingForm(request.POST)
+            if Form.is_valid():
+                responses = request.POST
+                Setting = p_sys.objects.get(id=1)
+                Setting.title = responses.get('title')
+                Setting.dec = responses.get('dec')
+                Setting.keyword = responses.get('keyword')
+                Setting.url = responses.get('url')
+                Setting.img_limit = responses.get('img_limit')
+                Setting.article_limit = responses.get('article_limit')
+                Setting.save()
+                data = {
+                    'status': 200,
+                    'msg': '修改完毕,请重启服务器，才可以看到效果！',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+            else:
+                data = {
+                    'status': 400,
+                    'msg': Form.errors,
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
         else:
             data = {
                 'status': 400,
@@ -196,30 +202,30 @@ def setting(request):
                 'data': None
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
 
 # 系统管理员
-def sysUser(request):
+def sysUser(request, page):
     if request.method == 'GET':
         print('admin', request.admin)
         print('admin', request.userInfo)
         if request.admin == None:
             return HttpResponseRedirect('/admin/login')
-        template = loader.get_template('admin/setting.html')
+        handle = PageObject()
+        recPerPage = 20
+        pageData = Paginator(p_admin.objects.all().values().order_by('id'),
+                             recPerPage)
+        pageData = handle.handlePage(pageData, page, recPerPage)
+        template = loader.get_template('admin/sysUser.html')
         context = {
-            'number': {
-                'msg': p_message.objects.count(),
-                'user': p_menber.objects.count(),
-                'nav': p_product.objects.count(),
-                'product': p_product_child.objects.count()
-            },
-            'os': sysInfo()
+            'list': pageData
         }
         return HttpResponse(template.render(context, request))
     elif request.method == 'POST':
         if request.admin != None:
             data = {
-                'status': 200,
-                'msg': '已登录管理员账号',
+                'status': 401,
+                'msg': '未查询到的操作',
                 'data': None
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
@@ -231,29 +237,161 @@ def sysUser(request):
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
+
+# 系统管理员设置 API接口
+def sysBind(request):
+    if request.method == 'POST':
+        if request.admin == None and request.admin['auth'] != 1:
+            data = {
+                'status': 401,
+                'msg': '未查询到的操作',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        if request.POST.get('type') == 'b':
+            bind = BindForm(request.POST)
+            if bind.is_valid():
+                admin = p_admin.objects.get(id=request.POST.get('id'))
+                try:
+                    p_menber.objects.get(username=request.POST.get('username'))
+                except:
+                    data = {
+                        'status': 400,
+                        'msg': '您绑定的这个普通账号不存在！',
+                        'data': None
+                    }
+                    return HttpResponse(json.dumps(data, ensure_ascii=False),
+                                        content_type="application/json,charset=utf-8")
+                admin.username = request.POST.get('username')
+                admin.save()
+                data = {
+                    'status': 200,
+                    'msg': '绑定成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'u':
+            bind = UpdateForm(request.POST)
+            if bind.is_valid():
+                try:
+                    p_menber.objects.get(username=request.POST.get('username'))
+                except:
+                    data = {
+                        'status': 400,
+                        'msg': '您绑定的这个普通账号不存在！',
+                        'data': None
+                    }
+                    return HttpResponse(json.dumps(data, ensure_ascii=False),
+                                        content_type="application/json,charset=utf-8")
+                admin = p_admin.objects.get(id=request.POST.get('id'))
+                admin.password = request.POST.get('password')
+                admin.username = request.POST.get('username')
+                admin.save()
+                data = {
+                    'status': 200,
+                    'msg': '修改成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'd':
+            bind = DeleteForm(request.POST)
+            if bind.is_valid():
+                admin = p_admin.objects.get(id=request.POST.get('id'))
+                if admin.user == 'admin':
+                    data = {
+                        'status': 400,
+                        'msg': '系统初始管理员无法删除',
+                        'data': None
+                    }
+                    return HttpResponse(json.dumps(data, ensure_ascii=False),
+                                        content_type="application/json,charset=utf-8")
+                admin.delete()
+                data = {
+                    'status': 200,
+                    'msg': '删除成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'c':
+            bind = CreateForm(request.POST)
+            try:
+                old = p_admin.objects.get(user=request.POST.get('user'))
+                data = {
+                    'status': 400,
+                    'msg': '该账号：' + str(old.user) + '已经存在',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+            except:
+                if bind.is_valid():
+                    admin = p_admin(user=request.POST.get('user'), auth=request.POST.get('auth'),
+                                    password=request.POST.get('password'))
+                    admin.save()
+                    data = {
+                        'status': 200,
+                        'msg': '创建成功',
+                        'data': None
+                    }
+                else:
+                    data = {
+                        'status': 400,
+                        'msg': bind.errors,
+                        'data': None
+                    }
+        else:
+            data = {
+                'status': 401,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
 # 用户
-def menber(request):
+def menber(request, page):
     if request.method == 'GET':
         print('admin', request.admin)
         print('admin', request.userInfo)
         if request.admin == None:
             return HttpResponseRedirect('/admin/login')
-        template = loader.get_template('admin/setting.html')
+        handle = PageObject()
+        recPerPage = 20
+        pageData = Paginator(p_menber.objects.all().values().order_by('id'),
+                             recPerPage)
+        pageData = handle.handlePage(pageData, page, recPerPage)
+        template = loader.get_template('admin/menber.html')
         context = {
-            'number': {
-                'msg': p_message.objects.count(),
-                'user': p_menber.objects.count(),
-                'nav': p_product.objects.count(),
-                'product': p_product_child.objects.count()
-            },
-            'os': sysInfo()
+            'list': pageData
         }
         return HttpResponse(template.render(context, request))
     elif request.method == 'POST':
         if request.admin != None:
             data = {
-                'status': 200,
-                'msg': '已登录管理员账号',
+                'status': 401,
+                'msg': '未查询到的操作',
                 'data': None
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
@@ -264,6 +402,94 @@ def menber(request):
                 'data': None
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+# 用户管理 API接口
+def sysMenber(request):
+    if request.method == 'POST':
+        if request.admin == None:
+            data = {
+                'status': 401,
+                'msg': '未查询到的操作',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        if request.POST.get('type') == 'f':
+            bind = AuthMenberForm(request.POST)
+            if bind.is_valid():
+                user = p_menber.objects.get(username=request.POST.get('id'))
+                user.auth = request.POST.get('auth')
+                user.save()
+                if int(user.auth) == 1:
+                    msg = '切换为正常状态'
+                else:
+                    msg = '切换到封禁状态'
+                data = {
+                    'status': 200,
+                    'msg': msg,
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'u':
+            bind = PasswordMenberForm(request.POST)
+            if bind.is_valid():
+                user = p_menber.objects.get(username=request.POST.get('id'))
+                user.password = request.POST.get('password')
+                user.save()
+                data = {
+                    'status': 200,
+                    'msg': '修改密码成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'd':
+            bind = DeleteForm(request.POST)
+            if bind.is_valid():
+                user = p_menber.objects.get(username=request.POST.get('id'))
+                msg = p_message.objects.filter(username=request.POST.get('id'))
+                msg_add = p_message_contact.objects.filter(username=request.POST.get('id'))
+                msg_img = p_file.objects.filter(username=request.POST.get('id'))
+                msg.delete()
+                msg_add.delete()
+                msg_img.delete()
+                user.delete()
+                data = {
+                    'status': 200,
+                    'msg': '删除成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        else:
+            data = {
+                'status': 401,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
 
 # 主类目管理
 def main(request):
@@ -272,15 +498,18 @@ def main(request):
         print('admin', request.userInfo)
         if request.admin == None:
             return HttpResponseRedirect('/admin/login')
-        template = loader.get_template('admin/setting.html')
+        data = list(p_product.objects.all().values())
+        pageData = []
+        for item in data:
+            pageData.append({
+                'p_name': item['p_name'],
+                'id': item['id'],
+                'child': list(p_product_child.objects.filter(p_id=item['id']).values())
+            })
+        print(pageData)
+        template = loader.get_template('admin/main.html')
         context = {
-            'number': {
-                'msg': p_message.objects.count(),
-                'user': p_menber.objects.count(),
-                'nav': p_product.objects.count(),
-                'product': p_product_child.objects.count()
-            },
-            'os': sysInfo()
+            'list': pageData
         }
         return HttpResponse(template.render(context, request))
     elif request.method == 'POST':
@@ -299,6 +528,7 @@ def main(request):
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
+
 # 品种管理
 def category(request):
     if request.method == 'GET':
@@ -306,15 +536,19 @@ def category(request):
         print('admin', request.userInfo)
         if request.admin == None:
             return HttpResponseRedirect('/admin/login')
-        template = loader.get_template('admin/setting.html')
+        data = list(p_product_child.objects.all().values())
+        pageData = []
+        deep = Dedupe()
+        for item in data:
+            pageData.append({
+                'p_name': item['p_name'],
+                'id': item['id'],
+                'child': list(deep.dedupe(list(p_message.objects.filter(m_c_id=item['id']).values().annotate(avg=Avg("m_pz"))), key=lambda d: d['m_pz']))
+            })
+        print(pageData)
+        template = loader.get_template('admin/category.html')
         context = {
-            'number': {
-                'msg': p_message.objects.count(),
-                'user': p_menber.objects.count(),
-                'nav': p_product.objects.count(),
-                'product': p_product_child.objects.count()
-            },
-            'os': sysInfo()
+            'list': pageData
         }
         return HttpResponse(template.render(context, request))
     elif request.method == 'POST':
@@ -332,6 +566,7 @@ def category(request):
                 'data': None
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
 
 # 初始化管理员账号，以及菜单
 def initialize(request):

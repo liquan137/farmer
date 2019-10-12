@@ -1,0 +1,74 @@
+<p class="page-box">
+    <span>共有{{ list.count }}条记录</span>
+    <span>当前{{ list.now_page }}/{{ list.num_pages }}页</span>
+    <span>每页共{{ list.rec_per_page }}条记录</span>
+    <span>
+        {% if list.has_previous == False %}
+            <a class="page-link-a disabled" disabled="disabled">上一页</a>
+        {% else %}
+            <a class="page-link-a" href="{{ path }}{{ list.pre_page }}">上一页</a>
+        {% endif %}
+    </span>
+    <span>
+        {% for item in list.page_range %}
+            {% if item == False %}
+                <a class="page-link-a disabled" disabled="disabled"><i
+                        class="icon icon-ellipsis-h"></i></a>
+            {% else %}
+                {% if item == list.now_page %}
+                    <a class="page-link-a disabled-active" disabled="disabled">{{ item }}</a>
+                {% else %}
+                    <a class="page-link-a" href="{{ path }}{{ item }}">{{ item }}</a>
+                {% endif %}
+
+            {% endif %}
+        {% endfor %}
+    </span>
+    <span>
+        {% if list.has_next == False %}
+            <a class="page-link-a disabled" disabled="disabled">下一页</a>
+        {% else %}
+            <a class="page-link-a" href="{{ path }}{{ list.next_page }}">下一页</a>
+        {% endif %}
+    </span>
+    <span><input type="text" placeholder="页码" id="dumpPage"><button
+            onclick="dumpPage()" class="btn btn-green">跳转</button></span>
+</p>
+<script>
+    let checkNumber = (theObj) => {
+        var reg = /^[0-9]+.?[0-9]*$/;
+        if (reg.test(theObj)) {
+            return true;
+        }
+        return false;
+    }
+    let dumpPage = () => {
+        let page = $('#dumpPage').val()
+        if (page == '{{ list.now_page }}') {
+            new $.zui.Messager('跳转的页码不能是当前页码！', {
+                type: 'danger',
+                placement: 'center'
+            }).show();
+            return false;
+        } else if (!checkNumber(page)) {
+            new $.zui.Messager('请输入数字的页码！', {
+                type: 'danger',
+                placement: 'center'
+            }).show();
+            return false;
+        } else if (page > '{{ list.num_pages }}') {
+            new $.zui.Messager('跳转的页码不能大于最大页码！', {
+                type: 'danger',
+                placement: 'center'
+            }).show();
+            return false;
+        } else if (page == '') {
+            new $.zui.Messager('请输入页码！', {
+                type: 'danger',
+                placement: 'center'
+            }).show();
+            return false;
+        }
+        window.location.href = '{{ path }}' + page
+    }
+</script>

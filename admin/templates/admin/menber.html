@@ -1,0 +1,204 @@
+{% load static %}
+{% include "admin/base_admin_header.html" %}
+<link rel="stylesheet" href="{% static '/css/admin/login.css' %}">
+<link rel="stylesheet" href="{% static '/css/admin/page.css' %}">
+<link rel="stylesheet" href="{% static '/css/admin/common.css' %}">
+</head>
+<style>
+
+</style>
+<body>
+<div class="wrapper">
+    {% include "admin/base_index_header.html" %}
+    {% include "admin/base_index_nav.html" %}
+    <div class="content-wrapper">
+        <div class="content-header">
+            <ul class="breadcrumb">
+                <li><a href="#"><i class="icon icon-home"></i></a></li>
+                <li class="active">用户管理</li>
+            </ul>
+        </div>
+        <div class="content-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>昵称</th>
+                                <th>账号</th>
+                                <th>类型</th>
+                                <th>公司</th>
+                                <th>状态</th>
+                                <th width="180">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in list.page_list %}
+                                <tr>
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.nickname }}</td>
+                                    <td>{{ item.username }}</td>
+                                    {% if item.type == 1 %}
+                                        <td><span class="label label-primary">代办（农产品经纪人）</span></td>
+                                    {% elif item.type == 2 %}
+                                        <td><span class="label label-primary">经销商</span></td>
+                                    {% elif item.type == 3 %}
+                                        <td><span class="label label-primary">种养殖户</span></td>
+                                    {% elif item.type == 4 %}
+                                        <td><span class="label label-primary">涉农企业</span></td>
+                                    {% else %}
+                                        <td><span class="label label-primary">农业合作社</span></td>
+                                    {% endif %}
+                                    <td>{{ item.company_name }}</td>
+                                    {% if item.auth == 1 %}
+                                        <td><span class="label label-primary">正常</span></td>
+                                    {% else %}
+                                        <td><span class="label">封禁</span></td>
+                                    {% endif %}
+                                    <td>
+                                        <button class="btn btn-mini btn-primary" type="button"
+                                                onclick="handleOption('切换封禁状态','{{ item.username }}','f')">状态
+                                        </button>
+                                        <button class="btn btn-mini btn-info" type="button"
+                                                onclick="handleOption('修改密码','{{ item.username }}','u')">修改密码
+                                        </button>
+                                        <button class="btn btn-mini btn-danger" type="button"
+                                                onclick="handleOption('删除账号','{{ item.username }}','d')">删除
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% include "admin/page.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="dumpModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                    class="sr-only">关闭</span></button>
+            <h4 class="modal-title" id="modal-title"></h4>
+        </div>
+        <div class="modal-content">
+            <p style="padding: 0 20px;line-height: 28px">
+            <form class="form-f">
+                <input type="hidden" name="id">
+                <input type="hidden" name="type">
+                <div style="padding: 0 15px">
+                    <select class="form-control" id="exampleInputAddress1" name="auth">
+                        <option value="1">正常</option>
+                        <option value="2">封禁</option>
+                    </select>
+                </div>
+            </form>
+            <form class="form-u">
+                <div class="form-group clear_both">
+                    <input type="hidden" name="id">
+                <input type="hidden" name="type">
+                    <label for="exampleInputPassword4" class="col-sm-3"
+                           style="line-height: 32px;margin-bottom: 0">修改密码</label>
+                    <div class="col-md-9 col-sm-9" data-toggle="popover">
+                        <div class="input-group">
+                            <input type="password" class="form-control" placeholder="输入新密码"
+                                   name="password" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form class="form-d">
+                <input type="hidden" name="id">
+                <input type="hidden" name="type">
+                <div>
+                    <h4 style="padding: 20px 15px">确认要删除此账号？（删除后,其发布的文章也会被删除！）</h4>
+                </div>
+            </form>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消
+            </button>
+            <button type="button" class="btn btn-green" onclick="formSubmit(this)" id="modal-btn">修改</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript"
+        src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
+{% include "admin/base_admin_footer.html" %}
+<script>
+    $(document).ready(function () {
+        $("input[name='username']").val('')
+        $("input[name='password']").val('')
+        $('[data-toggle="popover"]').popover({
+            trigger: 'hover'
+        });
+        $('#id_captcha_1').attr('placeholder', '请输入右侧的答案').attr('name', 'code').siblings().attr('title', '点击图片切换验证码')
+        $('.captcha').click(function () {
+            $.getJSON("/refresh_captcha/", function (result) {
+                $('img.captcha').attr('src', result['image_url']);
+                $('#id_captcha_0').val(result['hashkey'])
+            });
+        });
+    });
+
+    let formSubmit = (dom) => {
+        fetch_FORM(api.menber, $('form' + window.formClass).serialize()).then(response => {
+            let data = response.data
+            if (data.status == 200) {
+                new $.zui.Messager(data.msg, {
+                    type: 'success',
+                    placement: 'center'
+                }).show();
+            } else {
+                if (typeof (data.msg) != 'string') {
+                    Object.keys(data.msg).map(function (key) {
+                        new $.zui.Messager(data.msg[key], {
+                            type: 'danger',
+                            placement: 'center'
+                        }).show();
+                    })
+                } else {
+                    new $.zui.Messager(data.msg, {
+                        type: 'danger',
+                        placement: 'center'
+                    }).show();
+                }
+            }
+        })
+    }
+    let handleOption = (t, id, o) => {
+        $("input[name='id']").val(id)
+        $("input[name='type']").val(o)
+        $("form.form-f").css('display', 'none')
+        $("form.form-u").css('display', 'none')
+        $("form.form-d").css('display', 'none')
+        window.formClass = '.form-' + o
+        $("#modal-btn").removeClass('btn-primary').removeClass('btn-danger')
+        if (o == 'f') {
+            let tem = '1'
+            $("form.form-" + o).css('display', 'block')
+            $("#modal-btn").addClass('btn-primary').text('封禁')
+        } else if (o == 'u') {
+            let tem = '2'
+            $("form.form-" + o).css('display', 'block')
+            $("#modal-btn").addClass('btn-primary').text('修改')
+        } else if (o == 'd') {
+            let tem = '3'
+            $("form.form-" + o).css('display', 'block')
+            $("#modal-btn").addClass('btn-danger').text('删除')
+        }
+        $("#modal-title").text(t)
+        $('#dumpModal').modal({
+            moveable: true,
+            position: 'center'
+        })
+    }
+</script>
+</body>
+</html>

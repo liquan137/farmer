@@ -1,5 +1,8 @@
 let apiData = {
     login: '/login',
+    setting: '/setting',
+    sysBind: '/sysBind',
+    menber: '/menber'
 }
 
 let setApi = (data) => {

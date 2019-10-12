@@ -1,5 +1,4 @@
 from home.models import p_menber, p_product
-
 from admin.models import p_sys, p_admin
 
 global W_title
@@ -91,12 +90,12 @@ def adminAuth(request, type):
                 'child': [
                     {
                         'title': '系统管理员',
-                        'link': '/admin/sysUser',
+                        'link': '/admin/sysUser/1',
                         'active': ''
                     },
                     {
                         'title': '用户管理',
-                        'link': '/admin/user',
+                        'link': '/admin/user/1',
                         'active': ''
                     },
                 ],
@@ -137,7 +136,7 @@ def adminAuth(request, type):
                 'child': [
                     {
                         'title': '用户管理',
-                        'link': '/admin/user',
+                        'link': '/admin/user/1',
                         'active': ''
                     },
                 ],

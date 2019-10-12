@@ -23,6 +23,8 @@ class p_message(models.Model):
     m_content = models.TextField(help_text="信息内容正文")
     create_time = models.CharField(max_length=30, help_text="创建时间", default="0")
     update_time = models.CharField(max_length=30, help_text="修改时间", default="0")
+    auth = models.IntegerField(help_text="封禁 1：正常 2：封禁", default=1)
+
 
 class p_message_contact(models.Model):
     p_id = models.CharField(max_length=30, help_text="关联信息ID")
@@ -37,6 +39,7 @@ class p_message_contact(models.Model):
     contact_tel = models.CharField(max_length=200, help_text="联系人固定号码", default="")
     contact_email = models.CharField(max_length=200, help_text="联系人邮箱", default="")
     contact_qq = models.CharField(max_length=200, help_text="联系人QQ", default="")
+
 
 class p_menber(models.Model):
     username = models.CharField(max_length=30, help_text="关联用户")
@@ -54,6 +57,7 @@ class p_menber(models.Model):
     contact_email = models.CharField(max_length=200, help_text="联系人邮箱", default="")
     contact_qq = models.CharField(max_length=200, help_text="联系人QQ", default="")
     company_des = models.CharField(max_length=600, help_text="公司介绍,不超过300字", default="")
+    auth = models.IntegerField(help_text="封禁 1：正常 2：封禁", default=1)
 
 
 class p_menber_email(models.Model):
