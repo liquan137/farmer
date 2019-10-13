@@ -43,9 +43,10 @@ urlpatterns = [
     path('registerReg/', home_views.registerReg),
     path('forget/', home_views.forget),
     path('publish/', home_views.publish),
+    path('city/', home_views.city),
     path('publishDetail/<int:father>/<int:child>', home_views.publishDetail),
-    path('product/<int:father>/<int:child>/<int:last>/<int:page>', home_views.product),
-    path('productC/<int:id>/<int:page>', home_views.productC),
+    path('product/<int:father>/<int:child>/<int:last>/<int:province>/<int:city>/<int:county>/<int:page>', home_views.product),
+    path('productC/<int:father>/<int:child>/<int:last>/<int:province>/<int:county>/<int:city>/<int:page>', home_views.product),
     path('manage/<int:page>', home_views.Manage),
     path('managePrice/<int:page>', home_views.ManagePrice),
     path('password/', home_views.ManagePassword),
@@ -60,3 +61,4 @@ urlpatterns = [
     path('api/updatePrice', api_views.updatePrice),
     path('api/updatePassword', api_views.updatePassword),
 ]
+# province, county, city

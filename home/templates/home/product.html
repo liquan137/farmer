@@ -34,7 +34,7 @@
                         </div>
                     </div>
                 </div>
-                {% if threeAll != None %}
+                {% if threeAll|length > 1 %}
                     <div class="card-box clear_both list-nav-">
                         <div class="col-xs-12">
                             <div class="link-header"><strong>品种：</strong></div>
@@ -52,12 +52,41 @@
                     <div class="col-xs-12">
                         <div class="link-header"><strong>产地：</strong></div>
                         <div class="link-body">
-                            {% for item in child %}
-                                <a class="link-body-a a-text a-text-hover" href="{{ item.link }}">{{ item.title }}</a>
+                            {% for item in province %}
+                                <a class="link-body-a a-text a-text-hover {{ item.active }}"
+                                   href="{{ item.link }}">{{ item.title }}</a>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
+                {% if city|length > 1 %}
+                    <div class="card-box clear_both list-nav-">
+                        <div class="col-xs-12">
+                            <div class="link-header"><strong>市区：</strong></div>
+                            <div class="link-body">
+                                {% for item in city %}
+                                    <a class="link-body-a a-text a-text-hover {{ item.active }}"
+                                       href="{{ item.link }}">{{ item.title }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                {% endif %}
+                {% if county|length > 1 %}
+                    <div class="card-box clear_both list-nav-">
+                        <div class="col-xs-12">
+                            <div class="link-header"><strong>镇区：</strong></div>
+                            <div class="link-body">
+                                {% for item in county %}
+                                    <a class="link-body-a a-text a-text-hover {{ item.active }}"
+                                       href="{{ item.link }}">{{ item.title }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                {% endif %}
                 <div class="card-box clear_both list-nav-" style="border-bottom: 1px solid #ddd !important;">
                     <div class="col-xs-12">
                         <div class="link-header"><strong>供应：</strong></div>

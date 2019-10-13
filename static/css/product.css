@@ -41,6 +41,12 @@
 .list-nav-:nth-of-type(5) {
     border-bottom: none !important;
 }
+.list-nav-:nth-of-type(6) {
+    border-bottom: none !important;
+}
+.list-nav-:nth-of-type(7) {
+    border-bottom: none !important;
+}
 
 
 .msg-item-img {

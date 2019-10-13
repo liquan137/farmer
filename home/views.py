@@ -8,7 +8,7 @@ from django.core import serializers
 import json
 import time
 import urllib.parse
-import datetime
+import codecs
 # 引入公共文件 中的分页class
 from common.page import PageObject
 from common.dedupe import Dedupe
@@ -30,6 +30,29 @@ except:
     W_keyword = '请先初始化后台'
 
 
+# 处理信息中的城市渲染
+def CitySelect(list):
+    # 加载城市列表
+    file_name = "static/json/city.json"
+    with open(file_name) as file_obj:
+        cityList = json.load(file_obj)
+    LIST = list
+    for item in list:
+        if isinstance(item['m_address_province'], int):
+            for city_i in cityList['province_list']:
+                if str(item['m_address_province']) == str(city_i):
+                    LIST[list.index(item)]['m_address_province'] = cityList['province_list'][city_i]
+        if isinstance(item['m_address_city'], int):
+            for city_x in cityList['city_list']:
+                if str(item['m_address_city']) == str(city_x):
+                    LIST[list.index(item)]['m_address_city'] = cityList['city_list'][city_x]
+        if isinstance(item['m_address_belong'], int):
+            for city_y in cityList['county_list']:
+                if str(item['m_address_belong']) == str(city_y):
+                    LIST[list.index(item)]['m_address_belong'] = cityList['county_list'][city_y]
+    return LIST
+
+
 # 处理数据库中的图片数组
 def handlePhoto(list):
     for item in list:
@@ -39,7 +62,9 @@ def handlePhoto(list):
                                                                   time.localtime(float(item['create_time'])))
         if item['update_time'] != 0:
             list[list.index(item)]['update_time'] = time.strftime("%m-%d %H:%M",
+
                                                                   time.localtime(float(item['update_time'])))
+    list = CitySelect(list)
     return list
 
 
@@ -74,6 +99,7 @@ def handleIndexData(list):
                 list[list.index(item)]['update_time'] = '%s天前' % temp
             # list[list.index(item)]['update_time'] = time.strftime("%m-%d %H:%M",
             #                                                       time.localtime(float(item['update_time'])))
+    list = CitySelect(list)
     return list
 
 
@@ -392,63 +418,252 @@ def productDetail(request, id):
         return HttpResponse('不存在参数')
 
 
-# 产品列表 二级
-def productC(request, id, page):
+# 生成一级列表、和二级列表
+def FClist(father, child):
+    table_nav = list(p_product_child.objects.filter(p_id=father).values())
+    if child == 0:
+        childData = [{
+            'link': '/product/' + str(father) + '/0/0/0/0/0/1',
+            'title': '全部',
+            'f_id': 0,
+            'active': 'on'
+        }]
+    else:
+        childData = [{
+            'link': '/product/' + str(father) + '/0/0/0/0/0/1',
+            'title': '全部',
+            'f_id': 0,
+            'active': ''
+        }]
+    for item in table_nav:
+        if item['id'] == child:
+            on = 'on'
+        else:
+            on = ''
+        if len(p_message.objects.filter(m_c_id=item['id'])) > 0:
+            childData.append({
+                'link': '/product/' + str(father) + '/' + str(item['id']) + '/0/0/0/0/1',
+                'title': item['p_name'],
+                'f_id': item['p_id'],
+                'active': on
+            })
+    return childData
+
+
+# 生成一级城市列表
+def citySelect(cityList, province, city_arr, father, child, last, city, county):
+    for city_id in cityList['city_list']:
+        if str(province)[0:2] == str(city_id)[0:2]:
+            city_sql = p_message.objects.filter(m_address_city=city_id)
+            if len(city_sql) > 0:
+                if int(city) == int(city_id):
+                    city_arr.append({
+                        'title': cityList['city_list'][city_id],
+                        'link': '/product/' + str(father) + '/' + str(
+                            child) + '/' + str(last) + '/' + str(province) + '/' + city_id + '/0/1',
+                        'active': 'on'
+                    })
+                else:
+                    city_arr.append({
+                        'title': cityList['city_list'][city_id],
+                        'link': '/product/' + str(father) + '/' + str(
+                            child) + '/' + str(last) + '/' + str(province) + '/' + city_id + '/0/1',
+                        'active': ''
+                    })
+    return city_arr
+
+
+# 生成二级城市列表
+def countySelect(cityList, county_arr, father, child, last, province, city, county):
+    for county_id in cityList['county_list']:
+        if str(city)[0:4] == str(county_id)[0:4]:
+            county_sql = p_message.objects.filter(m_address_belong=county_id)
+            if len(county_sql) > 0:
+                if int(county) == int(county_id):
+                    county_arr.append({
+                        'title': cityList['county_list'][county_id],
+                        'link': '/product/' + str(father) + '/' + str(
+                            child) + '/' + str(last) + '/' + str(province) + '/' + str(city) + '/' + county_id + '/1',
+                        'active': 'on'
+                    })
+                else:
+                    county_arr.append({
+                        'title': cityList['county_list'][county_id],
+                        'link': '/product/' + str(father) + '/' + str(
+                            child) + '/' + str(last) + '/' + str(province) + '/' + str(city) + '/' + county_id + '/1',
+                        'active': ''
+                    })
+    return county_arr
+
+
+# 生成一级列表
+def product_selcet_child(father, child, last, province, city, county):
+    threeList = list(
+        p_message.objects.filter(m_f_id=child).values('m_pz', 'id', 'm_c_id').annotate(avg=Avg("m_pz")))
+    deep = Dedupe()
+    threeList = list(deep.dedupe(threeList, key=lambda d: d['m_pz']))
+    if last == 0:
+        threeAll = [{
+            'link': '/product/' + str(father) + '/' + str(child) + '/0/0/0/0/1',
+            'title': '全部',
+            'f_id': 0,
+            'active': 'on'
+        }]
+    else:
+        threeAll = [{
+            'link': '/product/' + str(father) + '/' + str(child) + '/0/0/0/0/1',
+            'title': '全部',
+            'f_id': 0,
+            'active': ''
+        }]
+    for item in threeList:
+        if last == item['id']:
+            on_last = 'on'
+        else:
+            on_last = ''
+        threeAll.append({
+            'link': '/product/' + str(father) + '/' + str(child) + '/' + str(item['id']) + '/0/0/0/1',
+            'title': item['m_pz'],
+            'f_id': 0,
+            'active': on_last
+        })
+    return threeAll
+
+
+# 产品列表
+def product(request, father, child, last, province, city, county, page):
+    city_arr = None
+    county_arr = None
+    # 加载城市列表
+    file_name = "static/json/city.json"
+    with open(file_name) as file_obj:
+        cityList = json.load(file_obj)
+
+    # 默认加载省级列表，只加载存在信息的省级
+    if province == 0:
+        province_arr = [{
+            'title': '全部',
+            'link': '/product/' + str(father) + '/' + str(child) + '/0/0/0/0/1',
+            'active': 'on'
+        }]
+    else:
+        province_arr = [{
+            'title': '全部',
+            'link': '/product/' + str(father) + '/' + str(child) + '/0/0/0/0/1',
+            'active': ''
+        }]
+    for province_id in cityList['province_list']:
+        province_sql = p_message.objects.filter(m_address_province=province_id)
+        if len(province_sql) > 0:
+            if province == int(province_id):
+                province_arr.append({
+                    'title': cityList['province_list'][province_id],
+                    'link': '/product/' + str(father) + '/' + str(child) + '/0/' + province_id + '/0/0/1',
+                    'active': 'on'
+                })
+            else:
+                province_arr.append({
+                    'title': cityList['province_list'][province_id],
+                    'link': '/product/' + str(father) + '/' + str(child) + '/0/' + province_id + '/0/0/1',
+                    'active': ''
+                })
     # 每页多少信息
     recPerPage = 16
-    # if request.userInfo == None:
-    #     return HttpResponseRedirect('/login')
-    if id != None:
-        if isinstance(id, int):
-            template = loader.get_template('home/productC.html')
-            try:
-                index = p_product_child.objects.get(id=id)
-                father = p_product.objects.get(id=index.p_id)
-                childList = list(p_message.objects.filter(m_c_id=id).values())
-                titleNav = [
-                    {
-                        'title': W_title,
-                        'link': '/'
-                    },
-                    {
-                        'title': father.p_name,
-                        'link': ''
-                    },
-                    {
-                        'title': index.p_name,
-                        'link': ''
-                    }
-                ]
-                print(titleNav)
-                childData = [{
-                    'link': '/product/' + str(id) + '/1',
-                    'title': '全部',
-                    'f_id': 0
-                }]
-                for item in childList:
-                    childData.append({
-                        'link': item['id'],
-                        'title': item['m_pz'],
-                        'f_id': item['m_f_id']
-                    })
+    select = {
+    }
 
-            except:
-                childData = None
-            try:
-                mgsLsit = Paginator(p_message.objects.filter(m_c_id=id).values().order_by('create_time'),
-                                    recPerPage)
-                # 使用公共函数中的分页生成器
-                handle = PageObject()
-                pageData = handle.handlePage(mgsLsit, page, recPerPage)
-                pageData['page_list'] = handlePhoto(pageData['page_list'])
-            except:
-                pageData = None
+    # if len(p_message.objects.filter(m_f_id=father)) > 0:
+    #     select['m_f_id'] = father
+
+    if len(p_message.objects.filter(m_c_id=child)) > 0:
+        select['m_c_id'] = child
+
+    try:
+        last_name = p_message.objects.get(id=last).m_pz
+        if len(p_message.objects.filter(m_pz=last_name)) > 0:
+            select['m_pz'] = last_name
+    except:
+        None
+
+    if len(p_message.objects.filter(m_address_province=province)) > 0:
+        select['m_address_province'] = province
+
+    if len(p_message.objects.filter(m_address_city=city)) > 0:
+        select['m_address_city'] = city
+
+    if len(p_message.objects.filter(m_address_belong=county)) > 0:
+        select['m_address_belong'] = county
+
+    print('select', select)
+    if father != None:
+        if isinstance(father, int) and isinstance(child, int) and isinstance(last, int) and isinstance(province,
+                                                                                                       int) and isinstance(
+            county, int) and isinstance(city, int) and isinstance(page, int):
+            threeAll = None
+            template = loader.get_template('home/product.html')
+            # 生成一级二级列表 判断父级、子级是否被选中,来渲染模板列表的选中状态
+            childData = FClist(father, child)
+            threeAll = product_selcet_child(father, child, last, province, city, county)
+            # 如果一级列表没有被选中，就查看地址是否被选中
+            if city == 0:
+                city_arr = [{
+                    'title': '全部',
+                    'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(province) + '/0/0/1',
+                    'active': 'on'
+                }]
+            else:
+                city_arr = [{
+                    'title': '全部',
+                    'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(province) + '/0/0/1',
+                    'active': ''
+                }]
+            if county == 0:
+                county_arr = [{
+                    'title': '全部',
+                    'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(
+                        province) + '/' + str(city) + '/0/1',
+                    'active': 'on'
+                }]
+            else:
+                county_arr = [{
+                    'title': '全部',
+                    'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(
+                        province) + '/' + str(city) + '/0/1',
+                    'active': ''
+                }]
+            city_arr = citySelect(cityList, province, city_arr, father, child, last, city, county)
+            county_arr = countySelect(cityList, county_arr, father, child, last, province, city, county)
+            # 使用公共函数中的分页生成器
+            mgsLsit = Paginator(p_message.objects.filter(**select).values().order_by('create_time'), recPerPage)
+            handle = PageObject()
+            pageData = handle.handlePage(mgsLsit, page, recPerPage)
+            if pageData['count'] == 0:
+                msg = urllib.parse.quote('该栏目下没有信息！')
+                return HttpResponseRedirect('/message/' + msg)
+            pageData['page_list'] = handlePhoto(pageData['page_list'])
+            this = p_product.objects.get(id=father)
+            titleNav = [
+                {
+                    'title': W_title,
+                    'link': '/'
+                },
+                {
+                    'title': this.p_name,
+                    'link': ''
+                }
+            ]
             context = {
-                'child': childData,
+                'child': childData,  # 多级导航
                 'list': pageData,
-                'path': '/product/' + str(id) + '/',
+                'path': '/product/' + str(father) + '/' + str(child) + '/' + str(last) + '/',
                 'titleNav': titleNav,
-                'this': index.p_name
+                'this': this.p_name,
+                'threeAll': threeAll,
+                'today': cdBaoJia(),
+                'hot': hot(),
+                'province': province_arr,
+                'city': city_arr,
+                'county': county_arr
             }
             return HttpResponse(template.render(context, request))
         else:
@@ -458,26 +673,105 @@ def productC(request, id, page):
 
 
 # 产品列表
-def product(request, father, child, last, page):
+def message(request, error):
+    template = loader.get_template('home/message.html')
+    print(urllib.parse.unquote(error))
+    context = {
+        'msg': urllib.parse.unquote(error)
+    }
+    return HttpResponse(template.render(context, request))
+
+
+# 管理已经发布消息
+def Manage(request, page):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
+    recPerPage = 16
+    template = loader.get_template('home/manage.html')
+    pageData = Paginator(
+        p_message.objects.filter(username=request.userInfo['username']).values().order_by('create_time'),
+        recPerPage)
+    handle = PageObject()
+    pageData = handle.handlePage(pageData, page, recPerPage)
+    pageData['page_list'] = handlePhoto(pageData['page_list'])
+    context = {
+        'list': pageData,
+        'path': '/manage/',
+    }
+    return HttpResponse(template.render(context, request))
+
+
+# 报价管理
+def ManagePrice(request, page):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
+    recPerPage = 16
+    template = loader.get_template('home/managePrice.html')
+    pageData = Paginator(
+        p_message.objects.filter(username=request.userInfo['username']).values().order_by('create_time'),
+        recPerPage)
+    handle = PageObject()
+    pageData = handle.handlePage(pageData, page, recPerPage)
+    pageData['page_list'] = handlePhoto(pageData['page_list'])
+    context = {
+        'list': pageData,
+        'path': '/managePrice/',
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def ManagePassword(request):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
+    template = loader.get_template('home/managePassword.html')
+    context = {
+    }
+    return HttpResponse(template.render(context, request))
+
+
+# 保存城市json
+def city(request):
+    if request.method == 'POST':
+        # data = json.loads(request.body)
+        # file = open("static/json/city.json", "w")
+        # file.write(json.dumps(data, ensure_ascii=False).decode('utf-8'))
+        # file.close()
+        return HttpResponse('1')
+    else:
+        file_name = "static/json/city.json"
+        with open(file_name) as file_obj:
+            city = json.load(file_obj)
+        return HttpResponse(json.dumps(city, ensure_ascii=False))
+
+
+# 产品列表
+def productC(request, father, child, last, province, county, city, page):
+    # 加载城市列表
+    file_name = "static/json/city.json"
+    with open(file_name) as file_obj:
+        cityList = json.load(file_obj)
+    print(cityList)
     # 每页多少信息
     recPerPage = 16
     # if request.userInfo == None:
     #     return HttpResponseRedirect('/login')
     if father != None:
-        if isinstance(father, int):
+        if isinstance(father, int) and isinstance(child, int) and isinstance(last, int) and isinstance(province,
+                                                                                                       int) and isinstance(
+            county, int) and isinstance(city, int) and isinstance(page, int):
             threeAll = None
             template = loader.get_template('home/product.html')
             table_nav = list(p_product_child.objects.filter(p_id=father).values())
             if child == 0:
                 childData = [{
-                    'link': '/product/' + str(father) + '/0/0/1',
+                    'link': '/product/' + str(father) + '/0/0/0/0/0/1',
                     'title': '全部',
                     'f_id': 0,
                     'active': 'on'
                 }]
             else:
                 childData = [{
-                    'link': '/product/' + str(father) + '/0/0/1',
+                    'link': '/product/' + str(father) + '/0/0/0/0/0/1',
                     'title': '全部',
                     'f_id': 0,
                     'active': ''
@@ -488,7 +782,7 @@ def product(request, father, child, last, page):
                 else:
                     on = ''
                 childData.append({
-                    'link': '/product/' + str(father) + '/' + str(item['id']) + '/0/1',
+                    'link': '/product/' + str(father) + '/' + str(item['id']) + '/0/0/0/0/1',
                     'title': item['p_name'],
                     'f_id': item['p_id'],
                     'active': on
@@ -574,55 +868,3 @@ def product(request, father, child, last, page):
             return HttpResponse('页面参数错误')
     else:
         return HttpResponse('不存在参数')
-
-
-# 产品列表
-def message(request, error):
-    template = loader.get_template('home/message.html')
-    print(urllib.parse.unquote(error))
-    context = {
-        'msg': urllib.parse.unquote(error)
-    }
-    return HttpResponse(template.render(context, request))
-
-# 管理已经发布消息
-def Manage(request, page):
-    if request.userInfo == None:
-        return HttpResponseRedirect('/login')
-    recPerPage = 16
-    template = loader.get_template('home/manage.html')
-    pageData = Paginator(p_message.objects.filter(username=request.userInfo['username']).values().order_by('create_time'),
-              recPerPage)
-    handle = PageObject()
-    pageData = handle.handlePage(pageData, page, recPerPage)
-    pageData['page_list'] = handlePhoto(pageData['page_list'])
-    context = {
-        'list': pageData,
-        'path': '/manage/',
-    }
-    return HttpResponse(template.render(context, request))
-
-# 报价管理
-def ManagePrice(request, page):
-    if request.userInfo == None:
-        return HttpResponseRedirect('/login')
-    recPerPage = 16
-    template = loader.get_template('home/managePrice.html')
-    pageData = Paginator(p_message.objects.filter(username=request.userInfo['username']).values().order_by('create_time'),
-              recPerPage)
-    handle = PageObject()
-    pageData = handle.handlePage(pageData, page, recPerPage)
-    pageData['page_list'] = handlePhoto(pageData['page_list'])
-    context = {
-        'list': pageData,
-        'path': '/managePrice/',
-    }
-    return HttpResponse(template.render(context, request))
-
-def ManagePassword(request):
-    if request.userInfo == None:
-        return HttpResponseRedirect('/login')
-    template = loader.get_template('home/managePassword.html')
-    context = {
-    }
-    return HttpResponse(template.render(context, request))
