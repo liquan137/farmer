@@ -10,7 +10,11 @@
     <div class="container">
         <div class="col-md-12">
             <div class="detail-nav">
-                <a href="/" class="a-text a-text-hover">农产品信息网</a>
+                <a href="/" class="a-text a-text-hover">农产品信息网</a> >
+                <a href="{{ typeFLink }}" class="a-text a-text-hover">{{ typeF }}</a> >
+                <a href="{{ typeCLink }}" class="a-text a-text-hover">{{ typeC }}</a> >
+                <a href="{{ typePZLink }}" class="a-text a-text-hover">{{ data.m_pz }}</a> >
+                <span class="a-text a-text-hover">【{{ data.m_pz }}】的详细资料</span>
             </div>
         </div>
         <div class="col-md-8">
@@ -22,7 +26,8 @@
                     <div class="contact-box">
                         <p><span>联系人：</span><strong>{{ contact.contact_person }}</strong></p>
                         <p><span>手机号码：</span><strong>{{ contact.contact_phone }}</strong></p>
-                        <p><span>所在地址：</span><strong>{{ contact.address_province }} - {{ contact.address_city }} - {{ contact.address_belong }}</strong></p>
+                        <p><span>所在地址：</span><strong>{{ contact.address_province }} - {{ contact.address_city }}
+                            - {{ contact.address_belong }}</strong></p>
                         <p><span>详细地址：</span><strong>{{ contact.address_detail }}</strong></p>
                         <p><span>QQ号码：</span><strong>{{ contact.contact_qq }}</strong></p>
                         <p><span>上市时间：</span><strong>{{ data.m_begin }} 至 {{ data.m_end }}</strong></p>
@@ -36,6 +41,57 @@
                 <div class="body-box">
                     {% autoescape off %}{{ data.m_content }}{% endautoescape %}
                 </div>
+
+            </div>
+            <div class="warning-box">
+                <p>交易必读：农产品信息网只是一个信息供求平台，我们不负责该条信息的真实性，请大家谨慎交易，小心骗子。平台不提供在线交易服务，双方在线下买卖过程中有任何纠纷我们概不负责。</p>
+            </div>
+            <div class="line-box">
+                <p class="line-title">该会员最新信息</p>
+                <ul class="p-today-list" style="padding-left: 10px">
+                    <li style="padding: 5px 0">
+                        <span>发布时间</span>
+                        <span title="{{ item.m_title }}">
+                                <a class="p-todat-list-a a-text-hover p-todat-list-title">标题</a>
+                                <a class="p-todat-list-a a-text-hover p-todat-list-price"
+                                   href="/productDetail/{{ item.id }}">报价</a>
+                            </span>
+                    </li>
+                    {% for item in today.page_list %}
+                        <li style="padding: 5px 0">
+                            <span>{{ item.update_time }}</span>
+                            <span title="{{ item.m_title }}">
+                                <a class="p-todat-list-a a-text-hover p-todat-list-title"
+                                   href="/productDetail/{{ item.id }}">{{ item.m_title }}</a>
+                                <a class="p-todat-list-a a-text-hover p-todat-list-price"
+                                   href="/productDetail/{{ item.id }}">{{ item.m_pz }}：<font
+                                        style="color: red">{{ item.m_today_price }}</font>/{{ item.m_today_size }}</a>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="line-box">
+                <p class="line-title">猜你喜欢</p>
+                <div class="clear_both like-a-box">
+                    {% for item in like.page_list %}
+                        <p class="like-a clear_both" title="{{ item.m_title }}"><a
+                                class="pull-left p-todat-list-a a-text-hover"
+                                href="/productDetail/{{ item.id }}">{{ item.m_title }}</a> <span
+                                class="pull-right">时间： {{ item.create_time }}</span></p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="detail-box">
+                <p>农产品交易网是一个免费的农产品信息发布平台，我们希望为广大农户提供一个扩大农产品销售的渠道，辅助解决农产品销售难的问题。</p>
+                <p>{% if request.userInfo != None %}
+                    <a class="a-text"><font color="#444">用户：</font></a>
+                    <a><b>{% autoescape off %}{{ request.userInfo.nickname }}{% endautoescape %}</b></a>
+                    <a class="a-publish" href="/publish/">->免费发布信息</a>
+                {% elif request.userInfo == None %}
+                    <a class="a-text a-text-hover" href="/register/">点此注册用户</a>
+                    <a class=" a-texta-text-hover" href="/login/">用户登陆</a>
+                {% endif %}</p>
             </div>
         </div>
         <div class="col-md-4">

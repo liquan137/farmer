@@ -232,7 +232,7 @@
                         placement: 'center'
                     }).show();
                     setTimeout(() => {
-                        window.location.reload()
+                        window.location.go(-1)
                     }, 1000)
                 } else {
                     new $.zui.Messager(data.msg, {

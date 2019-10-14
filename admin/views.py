@@ -542,13 +542,22 @@ def sysMain(request):
         if request.POST.get('type') == 'f':
             bind = CreateMainForm(request.POST)
             if bind.is_valid():
-                newP = p_product(p_name=request.POST.get('p_name'), create_time=time.time(), update_time=time.time())
-                newP.save()
-                data = {
-                    'status': 200,
-                    'msg': '创建成功',
-                    'data': None
-                }
+                if len(p_product.objects.filter(p_name=request.POST.get('p_name'))) > 0:
+                    data = {
+                        'status': 400,
+                        'msg': '存在重名类目',
+                        'data': None
+                    }
+                else:
+                    newP = p_product(p_name=request.POST.get('p_name'), create_time=time.time(),
+                                     update_time=time.time())
+                    newP.save()
+                    data = {
+                        'status': 200,
+                        'msg': '创建成功',
+                        'data': None
+                    }
+
             else:
                 data = {
                     'status': 400,
@@ -556,12 +565,12 @@ def sysMain(request):
                     'data': None
                 }
         elif request.POST.get('type') == 'c':
-            bind = PasswordMenberForm(request.POST)
+            bind = CreateMainForm(request.POST)
             if bind.is_valid():
-                if request.POST.get('id') == 0:
+                if len(p_product_child.objects.filter(p_name=request.POST.get('p_name'))) > 0:
                     data = {
-                        'status': 200,
-                        'msg': '创建成功',
+                        'status': 400,
+                        'msg': '存在重名类目',
                         'data': None
                     }
                 else:
@@ -579,11 +588,80 @@ def sysMain(request):
                     'msg': bind.errors,
                     'data': None
                 }
+        elif request.POST.get('type') == 'u':
+            bind = CreateMainForm(request.POST)
+            if bind.is_valid():
+                if len(p_product.objects.filter(p_name=request.POST.get('p_name'))) > 0:
+                    data = {
+                        'status': 400,
+                        'msg': '存在重名类目',
+                        'data': None
+                    }
+                else:
+                    father = p_product.objects.get(id=request.POST.get('id'))
+                    father.p_name = request.POST.get('p_name')
+                    father.save()
+                    data = {
+                        'status': 200,
+                        'msg': '修改成功',
+                        'data': None
+                    }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'u_c':
+            bind = CreateMainForm(request.POST)
+            if bind.is_valid():
+                if len(p_product_child.objects.filter(p_name=request.POST.get('p_name'))) > 0:
+                    data = {
+                        'status': 400,
+                        'msg': '存在重名类目',
+                        'data': None
+                    }
+                else:
+                    child = p_product_child.objects.get(id=request.POST.get('id'))
+                    child.p_name = request.POST.get('p_name')
+                    child.save()
+                    data = {
+                        'status': 200,
+                        'msg': '修改成功',
+                        'data': None
+                    }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
         elif request.POST.get('type') == 'd':
             bind = DeleteForm(request.POST)
             if bind.is_valid():
                 D_p = p_product_child.objects.filter(id=request.POST.get('id'))
                 msg = p_message.objects.filter(m_c_id=request.POST.get('id'))
+                for item in msg:
+                    p_message_contact.objects.filter(p_id=item.id).delete()
+                msg.delete()
+                D_p.delete()
+                data = {
+                    'status': 200,
+                    'msg': '删除成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'd_f':
+            bind = DeleteForm(request.POST)
+            if bind.is_valid():
+                D_p = p_product.objects.filter(id=request.POST.get('id'))
+                p_product_child.objects.filter(p_id=request.POST.get('id')).delete()
+                msg = p_message.objects.filter(m_f_id=request.POST.get('id'))
                 for item in msg:
                     p_message_contact.objects.filter(p_id=item.id).delete()
                 msg.delete()
@@ -655,6 +733,102 @@ def category(request):
                 'data': None
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+# 品种管理 API接口
+def sysCategory(request):
+    if request.method == 'POST':
+        if request.admin == None:
+            data = {
+                'status': 401,
+                'msg': '未查询到的操作',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        if request.POST.get('type') == 'u_pz':
+            bind = CreateMainForm(request.POST)
+            if bind.is_valid():
+
+                if request.POST.get('id') == 0:
+                    data = {
+                        'status': 400,
+                        'msg': '修改失败',
+                        'data': None
+                    }
+                else:
+                    pz = p_message.objects.get(id=request.POST.get('id'))
+                    pz.m_pz = request.POST.get('p_name')
+                    pz.save()
+                    data = {
+                        'status': 200,
+                        'msg': '修改成功',
+                        'data': None
+                    }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'u':
+            bind = CreateMainForm(request.POST)
+            if bind.is_valid():
+                if len(p_product_child.objects.filter(p_name=request.POST.get('p_name'))) > 0:
+                    data = {
+                        'status': 400,
+                        'msg': '存在重名类目',
+                        'data': None
+                    }
+                else:
+                    child = p_product_child.objects.get(id=request.POST.get('id'))
+                    child.p_name = request.POST.get('p_name')
+                    child.save()
+                    data = {
+                        'status': 200,
+                        'msg': '修改成功',
+                        'data': None
+                    }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        elif request.POST.get('type') == 'd':
+            bind = DeleteForm(request.POST)
+            if bind.is_valid():
+                D_p = p_product_child.objects.filter(id=request.POST.get('id'))
+                msg = p_message.objects.filter(m_c_id=request.POST.get('id'))
+                for item in msg:
+                    p_message_contact.objects.filter(p_id=item.id).delete()
+                msg.delete()
+                D_p.delete()
+                data = {
+                    'status': 200,
+                    'msg': '删除成功',
+                    'data': None
+                }
+            else:
+                data = {
+                    'status': 400,
+                    'msg': bind.errors,
+                    'data': None
+                }
+        else:
+            data = {
+                'status': 401,
+                'msg': '请求错误',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
 
 # 初始化管理员账号，以及菜单

@@ -28,10 +28,14 @@
                                     <div class="tree-title">
                                         <span class="tree-title-word">{{ item.p_name }}</span>
                                         <button class="btn btn-mini btn-danger" type="button"
-                                                style="float: right;margin-right: 10px;" onclick="handleCreate('删除类别：【{{ item.p_name }}】','0','d')">删除
+                                                style="float: right;margin-right: 10px;"
+                                                onclick="handleCreate('删除类别：【{{ item.p_name }}】','{{ item.id }}','d_f')">
+                                            删除
                                         </button>
                                         <button class="btn btn-mini btn-primary" type="button"
-                                                style="float: right;margin-right: 10px;" onclick="handleCreate('修改类别：【{{ item.p_name }}】的名称','0','u')">修改
+                                                style="float: right;margin-right: 10px;"
+                                                onclick="handleCreate('修改类别：【{{ item.p_name }}】的名称','{{ item.id }}','u')">
+                                            修改
                                         </button>
                                     </div>
                                     <div class="tree-body">
@@ -40,10 +44,14 @@
                                                 <div class="tree-title">
                                                     <span class="tree-title-word">{{ i.p_name }}</span>
                                                     <button class="btn btn-mini btn-danger" type="button"
-                                                            style="float: right;margin-right: 10px;" onclick="handleCreate('删除类别：【{{ i.p_name }}】','0','d')">删除
+                                                            style="float: right;margin-right: 10px;"
+                                                            onclick="handleCreate('删除类别：【{{ i.p_name }}】','{{ i.id }}','d')">
+                                                        删除
                                                     </button>
                                                     <button class="btn btn-mini btn-info" type="button"
-                                                            style="float: right;margin-right: 10px;" onclick="handleCreate('修改类别：【{{ i.p_name }}】的名称','0','u')">修改
+                                                            style="float: right;margin-right: 10px;"
+                                                            onclick="handleCreate('修改类别：【{{ i.p_name }}】的名称','{{ i.id }}','u_c')">
+                                                        修改
                                                     </button>
                                                 </div>
                                             </div>
@@ -167,13 +175,16 @@
     });
 
     let formSubmit = (dom) => {
-        fetch_FORM(api.menber, $('form' + window.formClass).serialize()).then(response => {
+        fetch_FORM(api.sysMain, $('form' + window.formClass).serialize()).then(response => {
             let data = response.data
             if (data.status == 200) {
                 new $.zui.Messager(data.msg, {
                     type: 'success',
                     placement: 'center'
                 }).show();
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
             } else {
                 if (typeof (data.msg) != 'string') {
                     Object.keys(data.msg).map(function (key) {
@@ -206,11 +217,13 @@
         } else if (o == 'c') {
             $("form.form-" + o).css('display', 'block')
             $("#modal-btn").addClass('btn-primary').text('新建')
-        } else if (o == 'd') {
-            $("form.form-" + o).css('display', 'block')
+        } else if (o == 'd' || o == 'd_f') {
+            window.formClass = '.form-d'
+            $("form.form-d").css('display', 'block')
             $("#modal-btn").addClass('btn-danger').text('删除')
-        } else if (o == 'u') {
-            $("form.form-" + o).css('display', 'block')
+        } else if (o == 'u' || o == 'u_c') {
+            window.formClass = '.form-u'
+            $("form.form-u").css('display', 'block')
             $("#modal-btn").addClass('btn-danger').text('修改')
         }
         $("#modal-title").text(t)

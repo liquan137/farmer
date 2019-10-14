@@ -52,6 +52,26 @@ def CitySelect(list):
                     LIST[list.index(item)]['m_address_belong'] = cityList['county_list'][city_y]
     return LIST
 
+# 处理信息中的城市渲染
+def CitySelectOne(list):
+    # 加载城市列表
+    file_name = "static/json/city.json"
+    with open(file_name) as file_obj:
+        cityList = json.load(file_obj)
+    LIST = list
+    if isinstance(LIST['address_province'], int):
+        for city_i in cityList['province_list']:
+            if str(LIST['address_province']) == str(city_i):
+                LIST['address_province'] = cityList['province_list'][city_i]
+    if isinstance(LIST['address_city'], int):
+        for city_x in cityList['city_list']:
+            if str(LIST['address_city']) == str(city_x):
+                LIST['address_city'] = cityList['city_list'][city_x]
+    if isinstance(LIST['address_belong'], int):
+        for city_y in cityList['county_list']:
+            if str(LIST['address_belong']) == str(city_y):
+                LIST['address_belong'] = cityList['county_list'][city_y]
+    return LIST
 
 # 处理数据库中的图片数组
 def handlePhoto(list):
@@ -67,6 +87,19 @@ def handlePhoto(list):
     list = CitySelect(list)
     return list
 
+# 处理数据库中的图片数组
+def handleLike(list):
+    for item in list:
+        list[list.index(item)]['m_photo'] = json.loads(item['m_photo'])
+        if item['create_time'] != 0:
+            list[list.index(item)]['create_time'] = time.strftime("%Y-%m-%d %H:%M",
+                                                                  time.localtime(float(item['create_time'])))
+        if item['update_time'] != 0:
+            list[list.index(item)]['update_time'] = time.strftime("%Y-%m-%d %H:%M",
+
+                                                                  time.localtime(float(item['update_time'])))
+    list = CitySelect(list)
+    return list
 
 # 处理首页的数据
 def handleIndexData(list):
@@ -387,7 +420,7 @@ def getPMsgList(id, recPerPage):
     return List
 
 
-# 产品列表详情页
+# 产品详情页
 def productDetail(request, id):
     if id != None:
         if isinstance(id, int):
@@ -400,17 +433,29 @@ def productDetail(request, id):
                 typeF = p_product.objects.get(id=data['m_f_id'])
                 typeC = p_product_child.objects.get(id=data['m_c_id'])
                 dataContact = object_to_json(dataContact)
+                writerList = Paginator(
+                    p_message.objects.filter(username=data['username']).values().order_by('create_time'), 10)
+                handle = PageObject()
+                writerList = handle.handlePage(writerList, 1, 10)
+                likeList = Paginator(
+                    p_message.objects.filter(m_c_id=data['m_c_id']).values().order_by('create_time'), 10)
+                likeList = handle.handlePage(likeList, 1, 10)
+                likeList['page_list'] = handleLike(likeList['page_list'])
             except:
                 data = {}
             context = {
                 'data': data,
-                'contact': dataContact,
+                'contact': CitySelectOne(dataContact),
                 'typeF': typeF.p_name,
                 'typeC': typeC.p_name,
+                'typeFLink': '/product/' + data['m_f_id'] + '/0/0/0/0/0/1',
+                'typeCLink': '/product/' + data['m_f_id'] + '/' + data['m_f_id'] + '/0/0/0/0/1',
+                'typePZLink': '/product/' + data['m_f_id'] + '/' + data['m_f_id'] + '/' + str(id) + '/0/0/0/1',
                 'today': cdBaoJia(),
-                'hot': hot()
+                'hot': hot(),
+                'writer': writerList,
+                'like': likeList
             }
-            print(context)
             return HttpResponse(template.render(context, request))
         else:
             return HttpResponse('页面参数错误')
@@ -505,14 +550,16 @@ def product_selcet_child(father, child, last, province, city, county):
     threeList = list(deep.dedupe(threeList, key=lambda d: d['m_pz']))
     if last == 0:
         threeAll = [{
-            'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(province) + '/' + str(city) + '/' + str(county) + '/1',
+            'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(province) + '/' + str(city) + '/' + str(
+                county) + '/1',
             'title': '全部',
             'f_id': 0,
             'active': 'on'
         }]
     else:
         threeAll = [{
-            'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(province) + '/' + str(city) + '/' + str(county) + '/1',
+            'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(province) + '/' + str(city) + '/' + str(
+                county) + '/1',
             'title': '全部',
             'f_id': 0,
             'active': ''
@@ -536,6 +583,7 @@ def product_selcet_child(father, child, last, province, city, county):
 def product(request, father, child, last, province, city, county, page):
     city_arr = None
     county_arr = None
+    this = p_product.objects.get(id=father)
     # 加载城市列表
     file_name = "static/json/city.json"
     with open(file_name) as file_obj:
@@ -576,17 +624,69 @@ def product(request, father, child, last, province, city, county, page):
 
     if len(p_message.objects.filter(m_f_id=father)) > 0:
         select['m_f_id'] = father
+        titleNav = [
+            {
+                'title': W_title,
+                'link': '/',
+                'line': ' > '
+            },
+            {
+                'title': this.p_name,
+                'link': '/product/' + str(father) + '/0/0/0/0/0/1',
+                'line': ''
+            }
+        ]
     else:
         msg = urllib.parse.quote('该栏目下没有信息！')
         return HttpResponseRedirect('/message/' + msg)
 
     if len(p_message.objects.filter(m_c_id=child)) > 0:
         select['m_c_id'] = child
-
+        this2 = p_product_child.objects.get(id=child)
+        titleNav = [
+            {
+                'title': W_title,
+                'link': '/',
+                'line': ' > '
+            },
+            {
+                'title': this.p_name,
+                'link': '/product/' + str(father) + '/0/0/0/0/0/1',
+                'line': ' > '
+            },
+            {
+                'title': this2.p_name,
+                'link': '/product/' + str(father) + '/' + str(child) + '/0/0/0/0/1',
+                'line': ''
+            }
+        ]
     try:
         last_name = p_message.objects.get(id=last).m_pz
         if len(p_message.objects.filter(m_pz=last_name)) > 0:
             select['m_pz'] = last_name
+        this2 = p_product_child.objects.get(id=child)
+        titleNav = [
+            {
+                'title': W_title,
+                'link': '/',
+                'line': ' > '
+            },
+            {
+                'title': this.p_name,
+                'link': '/product/' + str(father) + '/0/0/0/0/0/1',
+                'line': ' > '
+            },
+            {
+                'title': this2.p_name,
+                'link': '/product/' + str(father) + '/' + str(child) + '/0/0/0/0/1',
+                'line': ' > '
+            },
+            {
+                'title': last_name,
+                'link': '/product/' + str(father) + '/' + str(child) + '/' + str(last) + '/0/0/0/1',
+                'line': ''
+            }
+        ]
     except:
         None
 
@@ -646,17 +746,7 @@ def product(request, father, child, last, province, city, county, page):
                 msg = urllib.parse.quote('该栏目下没有信息！')
                 return HttpResponseRedirect('/message/' + msg)
             pageData['page_list'] = handlePhoto(pageData['page_list'])
-            this = p_product.objects.get(id=father)
-            titleNav = [
-                {
-                    'title': W_title,
-                    'link': '/'
-                },
-                {
-                    'title': this.p_name,
-                    'link': ''
-                }
-            ]
+
             context = {
                 'child': childData,  # 多级导航
                 'list': pageData,
@@ -747,129 +837,3 @@ def city(request):
         with open(file_name) as file_obj:
             city = json.load(file_obj)
         return HttpResponse(json.dumps(city, ensure_ascii=False))
-
-
-# 产品列表
-def productC(request, father, child, last, province, county, city, page):
-    # 加载城市列表
-    file_name = "static/json/city.json"
-    with open(file_name) as file_obj:
-        cityList = json.load(file_obj)
-    print(cityList)
-    # 每页多少信息
-    recPerPage = 16
-    # if request.userInfo == None:
-    #     return HttpResponseRedirect('/login')
-    if father != None:
-        if isinstance(father, int) and isinstance(child, int) and isinstance(last, int) and isinstance(province,
-                                                                                                       int) and isinstance(
-            county, int) and isinstance(city, int) and isinstance(page, int):
-            threeAll = None
-            template = loader.get_template('home/product.html')
-            table_nav = list(p_product_child.objects.filter(p_id=father).values())
-            if child == 0:
-                childData = [{
-                    'link': '/product/' + str(father) + '/0/0/0/0/0/1',
-                    'title': '全部',
-                    'f_id': 0,
-                    'active': 'on'
-                }]
-            else:
-                childData = [{
-                    'link': '/product/' + str(father) + '/0/0/0/0/0/1',
-                    'title': '全部',
-                    'f_id': 0,
-                    'active': ''
-                }]
-            for item in table_nav:
-                if item['id'] == child:
-                    on = 'on'
-                else:
-                    on = ''
-                childData.append({
-                    'link': '/product/' + str(father) + '/' + str(item['id']) + '/0/0/0/0/1',
-                    'title': item['p_name'],
-                    'f_id': item['p_id'],
-                    'active': on
-                })
-
-            try:
-                if child == 0:
-                    mgsLsit = Paginator(p_message.objects.filter(m_f_id=father).values().order_by('create_time'),
-                                        recPerPage)
-                else:
-                    #  查询所属二级列表下面的所有不重复的子产品！
-                    threeList = list(
-                        p_message.objects.filter(m_c_id=child).values('m_pz', 'id', 'm_c_id').annotate(avg=Avg("m_pz")))
-                    deep = Dedupe()
-                    threeList = list(deep.dedupe(threeList, key=lambda d: d['m_pz']))
-                    # 检查所属二级列表下面的品种
-                    if last == 0:
-                        threeAll = [{
-                            'link': '/product/' + str(father) + '/' + str(child) + '/0/1',
-                            'title': '全部',
-                            'f_id': 0,
-                            'active': 'on'
-                        }]
-                        # 获取分页数据
-                        mgsLsit = Paginator(p_message.objects.filter(m_c_id=child).values().order_by('create_time'),
-                                            recPerPage)
-                    else:
-                        threeAll = [{
-                            'link': '/product/' + str(father) + '/' + str(child) + '/0/1',
-                            'title': '全部',
-                            'f_id': 0,
-                            'active': ''
-                        }]
-                        m_pz = p_message.objects.get(id=last)
-                        # 获取分页数据
-                        mgsLsit = Paginator(p_message.objects.filter(m_pz=m_pz.m_pz).values().order_by('create_time'),
-                                            recPerPage)
-
-                    for item in threeList:
-                        if last == item['id']:
-                            on_last = 'on'
-                        else:
-                            on_last = ''
-                        threeAll.append({
-                            'link': '/product/' + str(father) + '/' + str(child) + '/' + str(item['id']) + '/1',
-                            'title': item['m_pz'],
-                            'f_id': 0,
-                            'active': on_last
-                        })
-                # 使用公共函数中的分页生成器
-                handle = PageObject()
-                pageData = handle.handlePage(mgsLsit, page, recPerPage)
-                if pageData['count'] == 0:
-                    msg = urllib.parse.quote('该栏目下没有信息！')
-                    return HttpResponseRedirect('/message/' + msg)
-                pageData['page_list'] = handlePhoto(pageData['page_list'])
-            except:
-                pageData = None
-            this = p_product.objects.get(id=father)
-            titleNav = [
-                {
-                    'title': W_title,
-                    'link': '/'
-                },
-                {
-                    'title': this.p_name,
-                    'link': ''
-                }
-            ]
-            context = {
-                'child': childData,  # 多级导航
-                'list': pageData,
-                'path': '/product/' + str(father) + '/' + str(child) + '/' + str(last) + '/',
-                'titleNav': titleNav,
-                'this': this.p_name,
-                'threeAll': threeAll,
-                'today': cdBaoJia(),
-                'hot': hot()
-            }
-
-            return HttpResponse(template.render(context, request))
-        else:
-            return HttpResponse('页面参数错误')
-    else:
-        return HttpResponse('不存在参数')

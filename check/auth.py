@@ -50,7 +50,7 @@ def navList(request):
     if 'publish/' in request.path:
         nav.append({
             'link': 'publish/',
-            'title': '产品发布',
+            'title': '农产品信息发布',
             'active': 'active'
         })
     else:

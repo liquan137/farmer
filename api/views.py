@@ -90,8 +90,9 @@ def register(request):
             }
         except:
             try:
-                userEmail = p_menber_email.objects.get(username=responses['username'], type=1)
-                if userEmail.code == responses['code']:
+                userEmail = list(
+                    p_menber_email.objects.filter(username=responses['username'], type=1).order_by('create_time'))
+                if userEmail[0].code == responses['code']:
                     newUser = p_menber(username=responses['username'], password=responses['password'], nickname='')
                     newUser.save()
                     request.session['user_id'] = responses['username']
@@ -142,8 +143,9 @@ def forget(request):
             username = responses['username']
             user = p_menber.objects.get(username=username)
             try:
-                userEmail = p_menber_email.objects.get(username=responses['username'], type=2)
-                if userEmail.code == responses['code']:
+                userEmail = list(
+                    p_menber_email.objects.filter(username=responses['username'], type=2).order_by('create_time'))
+                if userEmail[0].code == responses['code']:
                     user.password = responses['password']
                     user.save()
                     request.session['user_id'] = responses['username']

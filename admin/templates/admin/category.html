@@ -28,10 +28,10 @@
                                     <div class="tree-title">
                                         <span class="tree-title-word">{{ item.p_name }}</span>
                                         <button class="btn btn-mini btn-danger" type="button"
-                                                            style="float: right;margin-right: 10px;">删除
+                                                            style="float: right;margin-right: 10px;" onclick="handleCreate('删除此类目：【{{ item.p_name }}】','{{ item.id }}','d')">删除
                                                     </button>
                                         <button class="btn btn-mini btn-primary" type="button"
-                                                style="float: right;margin-right: 10px;">修改
+                                                style="float: right;margin-right: 10px;"  onclick="handleCreate('修改此类目：【{{ item.p_name }}】','{{ item.id }}','u')">修改
                                         </button>
                                     </div>
                                     <div class="tree-body">
@@ -40,7 +40,7 @@
                                                 <div class="tree-title">
                                                     <span class="tree-title-word">{{ i.m_pz }}</span>
                                                     <button class="btn btn-mini btn-info" type="button"
-                                                            style="float: right;margin-right: 10px;">修改
+                                                            style="float: right;margin-right: 10px;"  onclick="handleCreate('修改此类目：【{{ item.p_name }}】','{{ item.id }}','u_pz')">修改
                                                     </button>
                                                 </div>
                                             </div>
@@ -74,16 +74,16 @@
                     </select>
                 </div>
             </form>
-            <form class="form-u">
+            <form class="form-u form-u_pz">
                 <div class="form-group clear_both">
                     <input type="hidden" name="id">
                     <input type="hidden" name="type">
                     <label for="exampleInputPassword4" class="col-sm-3"
-                           style="line-height: 32px;margin-bottom: 0">修改密码</label>
+                           style="line-height: 32px;margin-bottom: 0">修改类目</label>
                     <div class="col-md-9 col-sm-9" data-toggle="popover">
                         <div class="input-group">
-                            <input type="password" class="form-control" placeholder="输入新密码"
-                                   name="password" autocomplete="off">
+                            <input type="text" class="form-control" placeholder="输入新名称"
+                                   name="p_name" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -135,13 +135,16 @@
     });
 
     let formSubmit = (dom) => {
-        fetch_FORM(api.menber, $('form' + window.formClass).serialize()).then(response => {
+        fetch_FORM(api.sysCategory, $('form' + window.formClass).serialize()).then(response => {
             let data = response.data
             if (data.status == 200) {
                 new $.zui.Messager(data.msg, {
                     type: 'success',
                     placement: 'center'
                 }).show();
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
             } else {
                 if (typeof (data.msg) != 'string') {
                     Object.keys(data.msg).map(function (key) {
@@ -159,7 +162,7 @@
             }
         })
     }
-    let handleOption = (t, id, o) => {
+    let handleCreate = (t, id, o) => {
         $("input[name='id']").val(id)
         $("input[name='type']").val(o)
         $("form.form-f").css('display', 'none')
@@ -171,10 +174,11 @@
             let tem = '1'
             $("form.form-" + o).css('display', 'block')
             $("#modal-btn").addClass('btn-primary').text('封禁')
-        } else if (o == 'u') {
+        } else if (o == 'u' || o == 'u_pz') {
             let tem = '2'
             $("form.form-" + o).css('display', 'block')
             $("#modal-btn").addClass('btn-primary').text('修改')
+            window.formClass = '.form-u'
         } else if (o == 'd') {
             let tem = '3'
             $("form.form-" + o).css('display', 'block')
