@@ -1,6 +1,6 @@
 {% load static %}
-{%  include "admin/base_admin_header.html" %}
-    <link rel="stylesheet" href="{% static '/css/admin/login.css' %}">
+{% include "admin/base_admin_header.html" %}
+<link rel="stylesheet" href="{% static '/css/admin/login.css' %}">
 </head>
 <style>
 
@@ -31,10 +31,10 @@
 
 <script type="text/javascript"
         src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
-{%  include "admin/base_admin_footer.html" %}
+{% include "admin/base_admin_footer.html" %}
 <script>
     $(document).ready(function () {
-        $('#id_captcha_1').attr('placeholder','请输入右侧的答案').attr('name','code').siblings().attr('title','点击图片切换验证码')
+        $('#id_captcha_1').attr('placeholder', '请输入右侧的答案').attr('name', 'code').siblings().attr('title', '点击图片切换验证码')
         $('.captcha').click(function () {
             $.getJSON("/refresh_captcha/", function (result) {
                 $('img.captcha').attr('src', result['image_url']);
@@ -66,10 +66,10 @@
                             message: '账号不能为空'
                         },
                         stringLength: {
-                         min: 4,
-                         max: 16,
-                         message: '账号长度必须在4到16之间'
-                     },
+                            min: 4,
+                            max: 16,
+                            message: '账号长度必须在4到16之间'
+                        },
                     }
                 },
                 code: {
@@ -78,10 +78,10 @@
                             message: '验证码不能为空'
                         },
                         stringLength: {
-                         min: 1,
-                         max: 4,
-                         message: '验证码长度必须在1到4之间'
-                     },
+                            min: 1,
+                            max: 4,
+                            message: '验证码长度必须在1到4之间'
+                        },
                     }
                 },
                 password: {
@@ -90,10 +90,10 @@
                             message: '密码不能为空'
                         },
                         stringLength: {
-                         min: 4,
-                         max: 16,
-                         message: '密码长度必须在4到16之间'
-                     },
+                            min: 4,
+                            max: 16,
+                            message: '密码长度必须在4到16之间'
+                        },
                     }
                 },
             }
@@ -110,6 +110,9 @@
                         type: 'success',
                         placement: 'center'
                     }).show();
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1000)
                 } else {
                     new $.zui.Messager(data.msg, {
                         type: 'danger',

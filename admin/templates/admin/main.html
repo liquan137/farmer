@@ -28,10 +28,10 @@
                                     <div class="tree-title">
                                         <span class="tree-title-word">{{ item.p_name }}</span>
                                         <button class="btn btn-mini btn-danger" type="button"
-                                                            style="float: right;margin-right: 10px;">删除
-                                                    </button>
+                                                style="float: right;margin-right: 10px;" onclick="handleCreate('删除类别：【{{ item.p_name }}】','0','d')">删除
+                                        </button>
                                         <button class="btn btn-mini btn-primary" type="button"
-                                                style="float: right;margin-right: 10px;">修改
+                                                style="float: right;margin-right: 10px;" onclick="handleCreate('修改类别：【{{ item.p_name }}】的名称','0','u')">修改
                                         </button>
                                     </div>
                                     <div class="tree-body">
@@ -40,30 +40,34 @@
                                                 <div class="tree-title">
                                                     <span class="tree-title-word">{{ i.p_name }}</span>
                                                     <button class="btn btn-mini btn-danger" type="button"
-                                                            style="float: right;margin-right: 10px;">删除
+                                                            style="float: right;margin-right: 10px;" onclick="handleCreate('删除类别：【{{ i.p_name }}】','0','d')">删除
                                                     </button>
                                                     <button class="btn btn-mini btn-info" type="button"
-                                                            style="float: right;margin-right: 10px;">修改
+                                                            style="float: right;margin-right: 10px;" onclick="handleCreate('修改类别：【{{ i.p_name }}】的名称','0','u')">修改
                                                     </button>
                                                 </div>
                                             </div>
                                         {% endfor %}
-                                        <div class="tree-item">
+                                        <div class="tree-item"
+                                             onclick="handleCreate('为栏目：【{{ item.p_name }}】 新建子类别','{{ item.id }}','c')">
                                             <div class="tree-title tree-title-last">
                                                 <span class="tree-title-word">新增类目</span>
                                                 <button class="btn btn-mini btn-success" type="button"
-                                                        style="float: right;margin-right: 10px;">新增
+                                                        style="float: right;margin-right: 10px;"
+                                                        onclick="handleCreate('为栏目：【{{ item.p_name }}】 新建子类别','{{ item.id }}','c')">
+                                                    新增
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             {% endfor %}
-                            <div class="tree-item">
+                            <div class="tree-item" onclick="handleCreate('新建一级类别','0','f')">
                                 <div class="tree-title tree-title-last">
                                     <span class="tree-title-word">新增类目</span>
                                     <button class="btn btn-mini btn-success" type="button"
-                                            style="float: right;margin-right: 10px;">新增
+                                            style="float: right;margin-right: 10px;"
+                                            onclick="handleCreate('新建一级类别','0','f')">新增
                                     </button>
                                 </div>
                             </div>
@@ -84,13 +88,25 @@
         <div class="modal-content">
             <p style="padding: 0 20px;line-height: 28px">
             <form class="form-f">
-                <input type="hidden" name="id">
-                <input type="hidden" name="type">
-                <div style="padding: 0 15px">
-                    <select class="form-control" id="exampleInputAddress1" name="auth">
-                        <option value="1">正常</option>
-                        <option value="2">封禁</option>
-                    </select>
+                <div class="form-group clear_both">
+                    <input type="hidden" name="id">
+                    <input type="hidden" name="type">
+                    <label for="exampleInputPassword4" class="col-sm-3"
+                           style="line-height: 32px;margin-bottom: 0">创建类别</label>
+                    <div class="col-md-9 col-sm-9 select_create_input_box" data-toggle="popover">
+                        <input type="text" class="form-control select_create_input" placeholder="输入名称" name="p_name">
+                    </div>
+                </div>
+            </form>
+            <form class="form-c">
+                <div class="form-group clear_both">
+                    <input type="hidden" name="id">
+                    <input type="hidden" name="type">
+                    <label for="exampleInputPassword4" class="col-sm-3"
+                           style="line-height: 32px;margin-bottom: 0">创建类别</label>
+                    <div class="col-md-9 col-sm-9 select_create_input_box" data-toggle="popover">
+                        <input type="text" class="form-control select_create_input" placeholder="输入名称" name="p_name">
+                    </div>
                 </div>
             </form>
             <form class="form-u">
@@ -98,12 +114,9 @@
                     <input type="hidden" name="id">
                     <input type="hidden" name="type">
                     <label for="exampleInputPassword4" class="col-sm-3"
-                           style="line-height: 32px;margin-bottom: 0">修改密码</label>
-                    <div class="col-md-9 col-sm-9" data-toggle="popover">
-                        <div class="input-group">
-                            <input type="password" class="form-control" placeholder="输入新密码"
-                                   name="password" autocomplete="off">
-                        </div>
+                           style="line-height: 32px;margin-bottom: 0">修改类别</label>
+                    <div class="col-md-9 col-sm-9 select_create_input_box" data-toggle="popover">
+                        <input type="text" class="form-control select_create_input" placeholder="输入新名称" name="p_name">
                     </div>
                 </div>
             </form>
@@ -111,7 +124,7 @@
                 <input type="hidden" name="id">
                 <input type="hidden" name="type">
                 <div>
-                    <h4 style="padding: 20px 15px">确认要删除此账号？（删除后,其发布的文章也会被删除！）</h4>
+                    <h4 style="padding: 20px 15px">确认要删除它？（删除后,其所属的文章也会被删除！）</h4>
                 </div>
             </form>
             </p>
@@ -129,12 +142,14 @@
 <script>
     $(document).ready(function () {
         $(".tree-title").click(function () {
-            if ($(this).next().attr('class').indexOf('active') != -1) {
-                this.classList.remove('open')
-                $(this).next().removeClass('active')
-            } else {
-                $(this).next().addClass('active')
-                this.classList.add('open')
+            if ($(this).next().attr('class') != undefined) {
+                if ($(this).next().attr('class').indexOf('active') != -1) {
+                    this.classList.remove('open')
+                    $(this).next().removeClass('active')
+                } else {
+                    $(this).next().addClass('active')
+                    this.classList.add('open')
+                }
             }
         })
         $("input[name='username']").val('')
@@ -176,26 +191,27 @@
             }
         })
     }
-    let handleOption = (t, id, o) => {
+    let handleCreate = (t, id, o) => {
         $("input[name='id']").val(id)
         $("input[name='type']").val(o)
         $("form.form-f").css('display', 'none')
-        $("form.form-u").css('display', 'none')
+        $("form.form-c").css('display', 'none')
         $("form.form-d").css('display', 'none')
+        $("form.form-u").css('display', 'none')
         window.formClass = '.form-' + o
         $("#modal-btn").removeClass('btn-primary').removeClass('btn-danger')
         if (o == 'f') {
-            let tem = '1'
             $("form.form-" + o).css('display', 'block')
-            $("#modal-btn").addClass('btn-primary').text('封禁')
-        } else if (o == 'u') {
-            let tem = '2'
+            $("#modal-btn").addClass('btn-primary').text('新建')
+        } else if (o == 'c') {
             $("form.form-" + o).css('display', 'block')
-            $("#modal-btn").addClass('btn-primary').text('修改')
+            $("#modal-btn").addClass('btn-primary').text('新建')
         } else if (o == 'd') {
-            let tem = '3'
             $("form.form-" + o).css('display', 'block')
             $("#modal-btn").addClass('btn-danger').text('删除')
+        } else if (o == 'u') {
+            $("form.form-" + o).css('display', 'block')
+            $("#modal-btn").addClass('btn-danger').text('修改')
         }
         $("#modal-title").text(t)
         $('#dumpModal').modal({
@@ -203,6 +219,10 @@
             position: 'center'
         })
     }
+    $(".select_create_input_box .select_create_input").focus(function () {
+        $(".select_create_input_box select.form-control").focus()
+        $(".select_create_input_box select.form-control").click().attr("size", 2)
+    })
 </script>
 </body>
 </html>

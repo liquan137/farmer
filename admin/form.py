@@ -86,6 +86,7 @@ class CreateForm(forms.Form):
         "required": "请选择权限级别",
     })
 
+
 # 封禁普通账号表单
 class AuthMenberForm(forms.Form):
     id = forms.EmailField(required=True, error_messages={
@@ -94,6 +95,7 @@ class AuthMenberForm(forms.Form):
     auth = forms.IntegerField(error_messages={
         "required": "请选择封禁操作",
     })
+
 
 # 修改密码普通账号表单
 class PasswordMenberForm(forms.Form):
@@ -104,4 +106,14 @@ class PasswordMenberForm(forms.Form):
         "required": "密码不能为空",
         'max_length': '密码不能超过16位',
         'min_length': '密码不能低于5位'
+    })
+
+
+# 绑定普通账号表单
+class CreateMainForm(forms.Form):
+    p_name = forms.CharField(required=True, error_messages={
+        "required": "名称不能为空",
+    })
+    id = forms.IntegerField(required=True, error_messages={
+        "required": "索引不能为空",
     })

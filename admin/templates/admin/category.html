@@ -110,12 +110,14 @@
 <script>
     $(document).ready(function () {
         $(".tree-title").click(function () {
-            if ($(this).next().attr('class').indexOf('active') != -1) {
-                this.classList.remove('open')
-                $(this).next().removeClass('active')
-            } else {
-                $(this).next().addClass('active')
-                this.classList.add('open')
+            if ($(this).next().attr('class') != undefined) {
+                if ($(this).next().attr('class').indexOf('active') != -1) {
+                    this.classList.remove('open')
+                    $(this).next().removeClass('active')
+                } else {
+                    $(this).next().addClass('active')
+                    this.classList.add('open')
+                }
             }
         })
         $("input[name='username']").val('')

@@ -419,18 +419,18 @@ def productDetail(request, id):
 
 
 # 生成一级列表、和二级列表
-def FClist(father, child):
+def FClist(father, child, province, city, county):
     table_nav = list(p_product_child.objects.filter(p_id=father).values())
     if child == 0:
         childData = [{
-            'link': '/product/' + str(father) + '/0/0/0/0/0/1',
+            'link': '/product/' + str(father) + '/0/0/' + str(province) + '/' + str(city) + '/' + str(county) + '/1',
             'title': '全部',
             'f_id': 0,
             'active': 'on'
         }]
     else:
         childData = [{
-            'link': '/product/' + str(father) + '/0/0/0/0/0/1',
+            'link': '/product/' + str(father) + '/0/0/' + str(province) + '/' + str(city) + '/' + str(county) + '/1',
             'title': '全部',
             'f_id': 0,
             'active': ''
@@ -442,7 +442,8 @@ def FClist(father, child):
             on = ''
         if len(p_message.objects.filter(m_c_id=item['id'])) > 0:
             childData.append({
-                'link': '/product/' + str(father) + '/' + str(item['id']) + '/0/0/0/0/1',
+                'link': '/product/' + str(father) + '/' + str(item['id']) + '/0/' + str(province) + '/' + str(
+                    city) + '/' + str(county) + '/1',
                 'title': item['p_name'],
                 'f_id': item['p_id'],
                 'active': on
@@ -496,7 +497,7 @@ def countySelect(cityList, county_arr, father, child, last, province, city, coun
     return county_arr
 
 
-# 生成一级列表
+# 生成二级列表
 def product_selcet_child(father, child, last, province, city, county):
     threeList = list(
         p_message.objects.filter(m_f_id=child).values('m_pz', 'id', 'm_c_id').annotate(avg=Avg("m_pz")))
@@ -504,14 +505,14 @@ def product_selcet_child(father, child, last, province, city, county):
     threeList = list(deep.dedupe(threeList, key=lambda d: d['m_pz']))
     if last == 0:
         threeAll = [{
-            'link': '/product/' + str(father) + '/' + str(child) + '/0/0/0/0/1',
+            'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(province) + '/' + str(city) + '/' + str(county) + '/1',
             'title': '全部',
             'f_id': 0,
             'active': 'on'
         }]
     else:
         threeAll = [{
-            'link': '/product/' + str(father) + '/' + str(child) + '/0/0/0/0/1',
+            'link': '/product/' + str(father) + '/' + str(child) + '/0/' + str(province) + '/' + str(city) + '/' + str(county) + '/1',
             'title': '全部',
             'f_id': 0,
             'active': ''
@@ -522,7 +523,8 @@ def product_selcet_child(father, child, last, province, city, county):
         else:
             on_last = ''
         threeAll.append({
-            'link': '/product/' + str(father) + '/' + str(child) + '/' + str(item['id']) + '/0/0/0/1',
+            'link': '/product/' + str(father) + '/' + str(child) + '/' + str(item['id']) + '/' + str(
+                province) + '/' + str(city) + '/' + str(county) + '/1',
             'title': item['m_pz'],
             'f_id': 0,
             'active': on_last
@@ -572,8 +574,11 @@ def product(request, father, child, last, province, city, county, page):
     select = {
     }
 
-    # if len(p_message.objects.filter(m_f_id=father)) > 0:
-    #     select['m_f_id'] = father
+    if len(p_message.objects.filter(m_f_id=father)) > 0:
+        select['m_f_id'] = father
+    else:
+        msg = urllib.parse.quote('该栏目下没有信息！')
+        return HttpResponseRedirect('/message/' + msg)
 
     if len(p_message.objects.filter(m_c_id=child)) > 0:
         select['m_c_id'] = child
@@ -602,7 +607,7 @@ def product(request, father, child, last, province, city, county, page):
             threeAll = None
             template = loader.get_template('home/product.html')
             # 生成一级二级列表 判断父级、子级是否被选中,来渲染模板列表的选中状态
-            childData = FClist(father, child)
+            childData = FClist(father, child, province, city, county)
             threeAll = product_selcet_child(father, child, last, province, city, county)
             # 如果一级列表没有被选中，就查看地址是否被选中
             if city == 0:
