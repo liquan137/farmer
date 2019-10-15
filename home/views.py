@@ -76,6 +76,7 @@ def CitySelectOne(list):
 # 处理数据库中的图片数组
 def handlePhoto(list):
     for item in list:
+        print('photo', item['m_photo'])
         list[list.index(item)]['m_photo'] = json.loads(item['m_photo'])
         if item['create_time'] != 0:
             list[list.index(item)]['create_time'] = time.strftime("%m-%d %H:%M",
@@ -146,7 +147,7 @@ def object_to_json(obj):
 def cdBaoJia():
     handle = PageObject()
     page = 1
-    todayPY = Paginator(p_message.objects.all().values().order_by('-create_time'),
+    todayPY = Paginator(p_message.objects.all().values().order_by('create_time'),
                         6)
     todayData = handle.handlePage(todayPY, page, 6)
     todayData['page_list'] = handleIndexData(todayData['page_list'])
@@ -157,7 +158,7 @@ def cdBaoJia():
 def hot():
     handle = PageObject()
     page = 1
-    todayPY = Paginator(p_product_child.objects.all().values().order_by('-create_time'),
+    todayPY = Paginator(p_product_child.objects.all().values().order_by('create_time'),
                         40)
     todayData = handle.handlePage(todayPY, page, 40)
     return todayData
@@ -322,6 +323,17 @@ def registerReg(request):
     }
     return HttpResponse(template.render(context, request))
 
+# 认证
+def authReg(request):
+    if request.userInfo == None:
+        return HttpResponseRedirect('/login')
+    template = loader.get_template('home/authReg.html')
+    userInfo = p_menber.objects.get(username=request.userInfo['username'])
+    userInfo = object_to_json(userInfo)
+    context = {
+        'userInfo': userInfo
+    }
+    return HttpResponse(template.render(context, request))
 
 # 登出操作
 def logout(request):

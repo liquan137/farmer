@@ -95,19 +95,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card-box ready-login-box">
-                {% if request.userInfo != None %}
-                    <p>
-                        <strong>{% autoescape off %}{{ request.userInfo.nickname }}{% endautoescape %}</strong>
-                        <font color="#444">您好，欢迎登录！</font>
-                        <a href="/logout/">退出</a>
-                    </p>
-                {% elif request.userInfo == None %}
-                    <p class="ready-login-btn"><a href="/register">注册会员</a>|<a href="/login">会员登录</a></p>
-                {% endif %}
-
-                <a class="btn btn-green btn-create" type="button" href="/publish">免费发布信息</a>
-            </div>
+            {% include "home/userInfo.html" %}
             <div class="card-box">
                 {% include "home/chandi.html" %}
             </div>

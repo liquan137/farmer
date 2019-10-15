@@ -30,6 +30,7 @@
                                 <th>账号</th>
                                 <th>类型</th>
                                 <th>公司</th>
+                                <th>实名认证</th>
                                 <th>状态</th>
                                 <th width="180">操作</th>
                             </tr>
@@ -52,6 +53,21 @@
                                         <td><span class="label label-primary">农业合作社</span></td>
                                     {% endif %}
                                     <td>{{ item.company_name }}</td>
+                                    {% if item.company_auth == 0 %}
+                                        <td>
+                                            <button class="btn btn-mini btn-primary" type="button"
+                                                    onclick="auth('{{ item.auth_id }}')">前往审核
+                                            </button>
+                                        </td>
+                                    {% elif item.company_auth == 1 %}
+                                        <td><span class="label label-primary" onclick="auth('{{ item.auth_id }}')">审核通过</span></td>
+                                    {% elif item.company_auth == 2 %}
+                                        <td><span class="label label-warning" onclick="auth('{{ item.auth_id }}')">审核不通过</span></td>
+                                    {% elif item.company_auth == 3 %}
+                                        <td><span class="label label-primary">未提交审核</span></td>
+                                    {% else %}
+                                        <td><span class="label">未知</span></td>
+                                    {% endif %}
                                     {% if item.auth == 1 %}
                                         <td><span class="label label-primary">正常</span></td>
                                     {% else %}
@@ -101,7 +117,7 @@
             <form class="form-u">
                 <div class="form-group clear_both">
                     <input type="hidden" name="id">
-                <input type="hidden" name="type">
+                    <input type="hidden" name="type">
                     <label for="exampleInputPassword4" class="col-sm-3"
                            style="line-height: 32px;margin-bottom: 0">修改密码</label>
                     <div class="col-md-9 col-sm-9" data-toggle="popover">
@@ -128,6 +144,101 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="authModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                        class="sr-only">关闭</span></button>
+                <h4 class="modal-title">审核</h4>
+            </div>
+            <div class="modal-body">
+                <div class="clear_both form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2">法人姓名</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="person_compony"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">法人姓名</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="person"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">法人手机</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="person_phone"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">法人身份证</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="person_card"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">公司地址</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static">
+                                <span id="address_province"></span> -
+                                <span id="address_city"></span> -
+                                <span id="address_belong"></span> -
+                                <span id="address_detail"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">公司联系人</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="contact_person"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">联系人手机</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="contact_phone"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">公司固话</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="contact_tel"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">联系QQ</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="contact_qq"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">联系邮箱</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="contact_email"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">公司简介</label>
+                        <div class="col-sm-10">
+                            <div class="form-control-static" id="company_des"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2">证明材料</label>
+                    </div>
+                    <div id="photo"></div>
+                    <input type="hidden" name="auth_id">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="authPass(2)">不通过</button>
+                <button type="button" class="btn btn-primary" onclick="authPass(1)">通过</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript"
         src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
 {% include "admin/base_admin_footer.html" %}
@@ -147,6 +258,67 @@
         });
     });
 
+    let auth = (id) => {
+        $("input[name='auth_id']").val(id)
+        fetch_FORM(api.authGetMenber, qs.stringify({id: id})).then(reponse => {
+            let data = reponse.data
+            if (data.status == 200) {
+                new $.zui.Messager(data.msg, {
+                    type: 'success',
+                    placement: 'center'
+                }).show();
+                let htmlData = data.data
+                Object.keys(htmlData).map(key => {
+                    if (key == 'photo') {
+                        if (htmlData.photo != '' && htmlData.photo != '[]') {
+                            console.log('photo', JSON.parse(htmlData.photo))
+                            let imgList = JSON.parse(htmlData.photo)
+                            html = ''
+                            for (let i in imgList) {
+                                html += '<img src=' + imgList[i] + ' />'
+                            }
+                            $('#photo').html(html)
+                        } else {
+                            $('#photo').text('没有上传证明材料')
+                        }
+
+                    } else {
+                        $('#' + key).text(htmlData[key])
+                    }
+
+                })
+            } else {
+                new $.zui.Messager(data.msg, {
+                    type: 'danger',
+                    placement: 'center'
+                }).show();
+            }
+        })
+        $('#authModal').modal({
+            moveable: true,
+            position: 'center'
+        })
+    }
+
+    let authPass = (type) => {
+        fetch_FORM(api.authMenber, qs.stringify({id: $("input[name='auth_id']").val(), auth: type})).then(response => {
+            let data = response.data
+            if (data.status == 200) {
+                new $.zui.Messager(data.msg, {
+                    type: 'success',
+                    placement: 'center'
+                }).show();
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
+            } else {
+                new $.zui.Messager(data.msg, {
+                    type: 'danger',
+                    placement: 'center'
+                }).show();
+            }
+        })
+    }
     let formSubmit = (dom) => {
         fetch_FORM(api.menber, $('form' + window.formClass).serialize()).then(response => {
             let data = response.data
@@ -155,6 +327,9 @@
                     type: 'success',
                     placement: 'center'
                 }).show();
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
             } else {
                 if (typeof (data.msg) != 'string') {
                     Object.keys(data.msg).map(function (key) {

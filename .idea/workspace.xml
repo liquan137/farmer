@@ -3,106 +3,28 @@
   <component name="ChangeListManager">
     <list default="true" id="fc417b68-8707-43fc-8043-875c39218e6c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/migrations/0002_p_sys.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/templates/admin/base_admin_header.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/admin/base_admin_header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/templates/admin/category.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/admin/category.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/templates/admin/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/admin/main.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/form.py" beforeDir="false" afterPath="$PROJECT_DIR$/admin/form.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/templates/admin/menber.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/admin/menber.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/migrations/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/check/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/check/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/city.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/farmer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/farmer/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0002_p_file.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0003_auto_20191010_1732.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0004_p_message_contact.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0005_p_message_type.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0006_p_message_contact_auth.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0007_auto_20191012_2141.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0008_auto_20191012_2150.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0009_p_menber_auth.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/0010_auto_20191013_2003.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/migrations/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/hot.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/hot.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/manage.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/manage.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/managePassword.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/managePassword.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/managePrice.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/managePrice.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/home/product.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/product.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/productC.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/home/productDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/productDetail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/publish.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/publish.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/publishDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/publishDetail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/quote.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/quote.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/templates/home/registerReg.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/registerReg.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/detail.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/detail.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/publishDetail.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/publishDetail.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/admin/common.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/admin/common.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/adminApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/adminApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/15706333031.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/15706333341.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063356811.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063366711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063371811.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063375211.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063380311.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063383411.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063389411.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063400411.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063405711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063438611.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063440811.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063441511.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063567611.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063583711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063636811.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063640811.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063646911.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063651911.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063657011.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063667411.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063668411.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157063675711.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069369011.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069370411.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069372311.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069405011.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069733611.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069738311.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069739511.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069744811.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157069748911.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157070363011.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157070364511.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157070413511.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157070414711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157070416711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157070417211.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071657911.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071658411.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071767411.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071781011.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071781611.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071784211.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071785311.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071898711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157071899311.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157072058711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157077424711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157077425811.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157077435611.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157077436611.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157077453711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157077454711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157078025911.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157078108311.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157078165311.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157079789111.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157079795711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157079906611.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157080356111.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157095135811.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157095843511.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157096103011.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/images/157096778911.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/api.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -121,7 +43,12 @@
     <option name="HIDDEN_KINDS">
       <set />
     </option>
-    <expand />
+    <expand>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="db" type="feb32156:DbDataSourceImpl" />
+      </path>
+    </expand>
     <select />
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
@@ -148,7 +75,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/admin/templates/admin" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/home/templates/home" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -161,16 +88,16 @@
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="H:\website\farmer" />
-      <recent name="H:\website\farmer\home" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="H:\website\farmer\admin\templates\admin" />
       <recent name="C:\Users\Administrator\Documents\GitHub\farmer\home\templates\home" />
+      <recent name="H:\website\farmer\admin\templates\admin" />
       <recent name="H:\website\farmer\home\templates\home" />
       <recent name="C:\Users\Administrator\Documents\GitHub\farmer\admin\templates\admin" />
       <recent name="C:\Users\Administrator\Documents\GitHub\farmer\static\css" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="H:\website\farmer" />
+      <recent name="H:\website\farmer\home" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -219,6 +146,26 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="ServiceViewManager">
+    <option name="allServicesViewState">
+      <serviceView>
+        <treeState>
+          <expand>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@9bf22210" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+            </path>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@9bf22210" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@74604b04" type="9fbbdea:ServiceModel$ServiceNode" />
+            </path>
+          </expand>
+          <select />
+        </treeState>
+      </serviceView>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -241,6 +188,7 @@
       <workItem from="1570862523707" duration="9788000" />
       <workItem from="1571011976579" duration="5391000" />
       <workItem from="1571047741111" duration="13842000" />
+      <workItem from="1571135667551" duration="13781000" />
     </task>
     <task id="LOCAL-00001" summary="new">
       <created>1570353648422</created>

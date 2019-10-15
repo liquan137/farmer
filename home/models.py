@@ -59,6 +59,24 @@ class p_menber(models.Model):
     company_des = models.CharField(max_length=600, help_text="公司介绍,不超过300字", default="")
     auth = models.IntegerField(help_text="封禁 1：正常 2：封禁", default=1)
 
+class p_menber_auth(models.Model):
+    username = models.CharField(max_length=30, help_text="关联用户")
+    photo = models.CharField(max_length=800, help_text="营业许可证或者组织证明材料")
+    person = models.CharField(max_length=20, help_text="法人")
+    person_card = models.CharField(max_length=30, help_text="法人身份证号码")
+    person_phone = models.CharField(max_length=20, help_text="法人手机")
+    person_compony = models.CharField(max_length=20, help_text="公司/组织名称")
+    address_province = models.IntegerField(help_text="所属地区代码(省级)", default=0)
+    address_city = models.IntegerField(help_text="所属地区代码(市级)", default=0)
+    address_belong = models.IntegerField(help_text="所属地区代码（地区）", default=0)
+    address_detail = models.CharField(max_length=200, help_text="详细地址", default="")
+    contact_person = models.CharField(max_length=200, help_text="联系人", default="")
+    contact_phone = models.CharField(max_length=200, help_text="联系人手机号码", default="")
+    contact_tel = models.CharField(max_length=200, help_text="联系人固定号码", default="")
+    contact_email = models.CharField(max_length=200, help_text="联系人邮箱", default="")
+    contact_qq = models.CharField(max_length=200, help_text="联系人QQ", default="")
+    company_des = models.CharField(max_length=600, help_text="公司简介", default="")
+    auth = models.IntegerField(help_text="认证情况 1：通过 2：不通过 0：待审核", default=0)
 
 class p_menber_email(models.Model):
     username = models.CharField(max_length=30, help_text="关联用户")

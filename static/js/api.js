@@ -7,7 +7,9 @@ let apiData = {
     publish: '/publish',
     uploadImg: '/uploadImg',
     updatePrice: '/updatePrice',
-    updatePassword: '/updatePassword'
+    updatePassword: '/updatePassword',
+    updatePublish: '/updatePublish',
+    authReg: '/authReg'
 }
 
 let setApi = (data) => {

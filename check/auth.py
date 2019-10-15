@@ -1,4 +1,4 @@
-from home.models import p_menber, p_product
+from home.models import p_menber, p_product,p_menber_auth
 from admin.models import p_sys, p_admin
 
 global W_title
@@ -206,18 +206,26 @@ class menber_check(object):
         else:
             request.admin = None
         if user_id:
+            authType = ''
             try:
                 user = p_menber.objects.get(username=user_id)
                 if user.nickname == '':
                     user.nickname = '<font><a href="/registerReg/" style="color:#F00">请完善资料</a></font>'
                 else:
                     user.nickname = '<font color="#444">' + user.nickname + '</font>'
+
+                try:
+                    auth = p_menber_auth.objects.get(username=user_id)
+                    authType = auth.auth
+                except:
+                    authType = 0
                 request.userInfo = {
                     'id': user.id,
                     'nickname': user.nickname,
                     'username': user.username,
                     'type': user.type,
-                    'company_name': user.company_name
+                    'company_name': user.company_name,
+                    'auth': authType
                 }
             except:
                 request.userInfo = None

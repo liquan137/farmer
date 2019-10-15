@@ -240,6 +240,63 @@ def registerReg(request):
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
 
+# 认证提交
+def authReg(request):
+    if request.userInfo == None:
+        data = {
+            'status': 401,
+            'msg': '请登录之后，再进行操作哦',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    if request.method == 'POST':
+        responses = json.loads(request.body)
+        username = request.userInfo['username']
+        for response in responses:
+            print(responses[response])
+        try:
+
+            user = p_menber_auth.objects.get(username=username)
+            data = {
+                'status': 400,
+                'msg': '已经提交过认证了',
+                'data': None
+            }
+        except:
+            newAuth = p_menber_auth(
+                person=responses['person'],
+                photo=responses['photo'],
+                person_card=responses['person_card'],
+                person_phone=responses['person_phone'],
+                username=request.userInfo['username'],
+                person_compony=responses['company_name'],
+                address_province=responses['company_address1'],
+                address_city=responses['company_address2'],
+                address_belong=responses['company_address'],
+                address_detail=responses['address_detail'],
+                contact_person=responses['contact_person'],
+                contact_phone=responses['contact_phone'],
+                contact_tel=responses['contact_tel'],
+                contact_email=responses['contact_email'],
+                contact_qq=responses['contact_qq'],
+                company_des=responses['company_des'])
+            newAuth.save()
+            data = {
+                'status': 200,
+                'msg': '提交认证成功',
+                'data': None
+            }
+
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
 # 邮箱验证码 注册、忘记密码的时候发送验证码
 def verifyEmail(request):
     # status为True 就发送邮件
@@ -387,6 +444,60 @@ def publish(request):
                 'data': newMessage.id
             }
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+
+# 信息修改
+def updatePublish(request):
+    if request.userInfo == None:
+        data = {
+            'status': 401,
+            'msg': '请登录之后，再进行操作哦',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    if request.method == 'POST':
+        responses = json.loads(request.body)
+        try:
+            Message = p_message.objects.get(id=responses['id'])
+            Message.m_title = responses['m_title']
+            # Message.m_address_belong = responses['company_address'],
+            # Message.m_address_province = responses['company_address1'],
+            # Message.m_address_city = responses['company_address2'],
+            # Message.m_address_detail = responses['address_detail'],
+            Message.m_begin = str(int(responses['m_begin'])) + '月' + responses['m_begin_size']
+            Message.m_end = str(int(responses['m_end'])) + '月' + responses['m_end_size']
+            Message.m_photo = responses['m_photo']
+            Message.m_pz = responses['m_pz']
+            Message.m_size = responses['m_size']
+            # Message.m_today_price = responses['m_today_price'],
+            Message.m_today_date = time.time()
+            # Message.m_today_size = responses['m_today_size'],
+            Message.m_content = responses['m_content']
+            # Message.m_f_id = responses['m_f_id'],
+            # Message.m_c_id = responses['m_c_id'],
+            Message.update_time = time.time()
+            Message.username = request.userInfo['username']
+            Message.save()
+            data = {
+                'status': 200,
+                'msg': '修改完成',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        except:
+            data = {
+                'status': 400,
+                'msg': '没有该篇文章',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
     else:
         data = {
             'status': 401,

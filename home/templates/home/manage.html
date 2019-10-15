@@ -4,6 +4,10 @@
 <link rel="stylesheet" href="{% static '/css/body.css' %}">
 <link rel="stylesheet" href="{% static '/css/publish.css' %}">
 <link rel="stylesheet" href="{% static '/css/page.css' %}">
+<link href="{% static '/dist/lib/uploader/zui.uploader.min.css' %}" rel="stylesheet">
+<script src="{% static '/dist/lib/uploader/zui.uploader.min.js' %}"></script>
+<link href="{% static '/dist/lib/datetimepicker/datetimepicker.min.css' %}" rel="stylesheet">
+<script src="{% static '/dist/lib/datetimepicker/datetimepicker.min.js' %}"></script>
 <script src="//unpkg.com/wangeditor/release/wangEditor.min.js"></script>
 </head>
 <body>
@@ -21,6 +25,7 @@
                             <a href="/publish/" class="list-group-item">发布供应信息</a>
                             <a href="/manage/1" class="list-group-item active">管理我发布的信息</a>
                             <a href="/managePrice/1" class="list-group-item">查看我的报价</a>
+                            <a href="/authReg/" class="list-group-item">实名认证</a>
                             <a href="/registerReg" class="list-group-item">修改会员资料</a>
                             <a href="/password" class="list-group-item">修改密码</a>
                             <a href="/logout" class="list-group-item">退出</a>
@@ -75,6 +80,7 @@
         </div>
         <div class="modal-content clear_both">
             <form class="price" style="padding: 0 20px;padding-top:15px;width: 100%;margin: 0 auto">
+                <input type="hidden" name="id">
                 <div class="form-group">
                     <label for="exampleInputAccount4" class="col-sm-2">信息标题</label>
                     <div class="col-md-10 col-sm-10">
@@ -99,6 +105,60 @@
                     <div class="col-md-10 col-sm-10" data-toggle="popover">
                         <input type="text" name="m_size" class="form-control"
                                id="exampleInputPassword4" placeholder="规格">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword4" class="col-sm-2">上市期</label>
+                    <div class="col-md-10 col-sm-10">
+                        <div class="input-group" style="margin: 0px -10px">
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control form-date"
+                                       placeholder="选择开始月份" name="m_begin" autocomplete='off'>
+                            </div>
+                            <div class="col-xs-2">
+                                <select class="form-control" id="exampleInputAddress1"
+                                        name="m_begin_size">
+                                    <option>上旬</option>
+                                    <option>中旬</option>
+                                    <option>下旬</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2">
+                                <span class="input-group-addon" style="line-height: 20.5px">至</span>
+                            </div>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control form-date"
+                                       placeholder="选择结束月份" name="m_end" autocomplete='off'>
+                            </div>
+                            <div class="col-xs-2">
+                                <select class="form-control" id="exampleInputAddress1"
+                                        name="m_end_size">
+                                    <option>上旬</option>
+                                    <option>中旬</option>
+                                    <option>下旬</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword4" class="col-sm-2">实拍相片</label>
+                    <div class="col-md-10 col-sm-10" data-toggle="popover">
+                        <input type="hidden" class="form-control" name="m_photo" value="[]">
+                        <div id="uploaderExample" class="uploader">
+                            <div class="file-list" data-drag-placeholder="上传最多使用五张图片"></div>
+                            <button type="button" class="btn btn-green uploader-btn-browse"><i
+                                    class="icon icon-cloud-upload"></i> 选择图片
+                            </button>
+                            <span style="text-indent: 10px;line-height: 32px">  图片尺寸最好是为1比1的比例，800X800以下</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword4" class="col-sm-2"></label>
+                    <div class="col-md-10 col-sm-10" data-toggle="popover">
+                        <div class="input-group-text"><b>提示：有图的信息将优先展示在前台！图片要求在3MB以内，干净无牛皮藓，无电话，否则信息将被下架处理。</b>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -130,37 +190,172 @@
 <script type="text/javascript"
         src="//cdn.jsdelivr.net/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min.js"></script>
 <script type="text/javascript">
-    /* 富文本编辑器初始化 */
-    var E = window.wangEditor
-    window.editor = new E('#editor')
-    // 或者 var editor = new E( document.getElementById('editor') )
-    window.editor.customConfig.menus = [
-        'head',  // 标题
-        'bold',  // 粗体
-        'fontSize',  // 字号
-        'fontName',  // 字体
-        'italic',  // 斜体
-        'underline',  // 下划线
-        'strikeThrough',  // 删除线
-        'foreColor',  // 文字颜色
-        'backColor',  // 背景颜色
-        'list',  // 列表
-        'justify',  // 对齐方式
-        'quote',  // 引用
-        'emoticon',  // 表情
-        'image',  // 插入图片
-        'table',  // 表格
-        'undo',  // 撤销
-        'redo'  // 重复
-    ]
-    window.editor.customConfig.uploadImgServer = api.uploadImg
-    window.editor.customConfig.uploadFileName = 'file'
-    window.editor.customConfig.withCredentials = true
-    window.editor.customConfig.zIndex = 100
-    window.editor.create()
+    $(document).ready(function () {
+        /* 表单效验 */
+        $('form.price').bootstrapValidator({
+            // 默认的提示消息
+            message: '请填写该字段',
+            // 表单框里右侧的icon
+            feedbackIcons: {
+                valid: 'icon-radiobutton iconfont iconfont-val',
+                invalid: 'icon-roundclosefill iconfont iconfont-val',
+                validating: 'icon-icon_task_checkbox_d iconfont iconfont-val'
+            },
+            submitHandler: function (validator, form, submitButton) {
+                // 表单提交成功时会调用此方法
+                // validator: 表单验证实例对象
+                // form  jq对象  指定表单对象
+                // submitButton  jq对象  指定提交按钮的对象
+                console.log(form)
+            },
+            fields: {
+                m_title: {
+                    validators: {
+                        notEmpty: {
+                            message: '标题不能为空'
+                        },
+                        stringLength: {    //长度限制
+                            min: 2,
+                            max: 20,
+                            message: '字数在2~20之间'
+                        },
+                    }
+                },
+                m_pz: {
+                    validators: {
+                        notEmpty: {
+                            message: '品种不能为空'
+                        },
+                        stringLength: {    //长度限制
+                            min: 2,
+                            max: 20,
+                            message: '字数在2~20之间'
+                        },
+                    }
+                },
+                /*m_begin: {
+                    validators: {
+                        notEmpty: {
+                            message: '上市开始期不能为空'
+                        }
+                    }
+                },
+                m_end: {
+                    validators: {
+                        notEmpty: {
+                            message: '上市结束期不能为空'
+                        }
+                    }
+                },*/
+                m_size: {
+                    validators: {
+                        notEmpty: {
+                            message: '报价不能为空'
+                        },
+                        stringLength: {    //长度限制
+                            min: 1,
+                            max: 20,
+                            message: '字数在1~20之间'
+                        },
+                    }
+                },
+                m_today_price: {
+                    validators: {
+                        notEmpty: {
+                            message: '今日报价不能为空'
+                        },
+                        stringLength: {    //长度限制
+                            min: 1,
+                            max: 20,
+                            message: '字数在1~20之间'
+                        },
+                    }
+                },
+                m_today_size: {
+                    validators: {
+                        notEmpty: {
+                            message: '今日报价单位不能为空'
+                        },
+                        stringLength: {    //长度限制
+                            min: 1,
+                            max: 6,
+                            message: '字数在1~6之间'
+                        },
+                    }
+                },
+                company_img_file: {
+                    validators: {
+                        notEmpty: {
+                            message: '请上传图片'
+                        },
+                        file: {
+                            extension: 'png,jpg,jpeg',
+                            type: 'image/png,image/jpg,image/jpeg',
+                            message: '请重新选择图片'
+                        }
+                    }
+                },
+                m_content: {
+                    validators: {
+                        notEmpty: {
+                            message: '正文内容不能为空'
+                        },
+                        stringLength: {    //长度限制
+                            min: 10,
+                            max: 240,
+                            message: '字数在10~240之间'
+                        },
+                    }
+                },
+            }
+        });
+        /* 月份选择按钮初始化 */
+        $(".form-date").datetimepicker(
+            {
+                language: "zh-CN",
+                weekStart: 1,
+                todayBtn: 0,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 3,
+                minView: 3,
+                forceParse: 0,
+                format: "mm"
+            });
+        /* 富文本编辑器初始化 */
+        var E = window.wangEditor
+        window.editor = new E('#editor')
+        // 或者 var editor = new E( document.getElementById('editor') )
+        window.editor.customConfig.menus = [
+            'head',  // 标题
+            'bold',  // 粗体
+            'fontSize',  // 字号
+            'fontName',  // 字体
+            'italic',  // 斜体
+            'underline',  // 下划线
+            'strikeThrough',  // 删除线
+            'foreColor',  // 文字颜色
+            'backColor',  // 背景颜色
+            'list',  // 列表
+            'justify',  // 对齐方式
+            'quote',  // 引用
+            'emoticon',  // 表情
+            'image',  // 插入图片
+            'table',  // 表格
+            'undo',  // 撤销
+            'redo'  // 重复
+        ]
+        window.editor.customConfig.uploadImgServer = api.uploadImg
+        window.editor.customConfig.uploadFileName = 'file'
+        window.editor.customConfig.withCredentials = true
+        window.editor.customConfig.zIndex = 100
+        window.editor.create()
+    })
+
     let upoadate = (id) => {
         $('.updateTitle').eq(0).text(id)
         $('.updateTitle').eq(1).val(id)
+        $("input[name='id']").val(id)
         $('#dumpModal').modal({
             moveable: true,
             position: 'center'
@@ -176,27 +371,64 @@
             return false;
         }
         $("input[name='m_content']").val(content)
-        fetch_POST(api.updatePrice, qs.parse($('form.price').serialize())).then(response => {
-            let data = response.data
-            if (data.status == 200) {
-                new $.zui.Messager(data.msg, {
-                    type: 'success',
-                    placement: 'center'
-                }).show();
-                $('#dumpModal').modal({
-                    moveable: true,
-                    position: 'center'
-                })
-                setTimeout(() => {
-                    window.location.reload()
-                }, 1000)
-            } else {
+        var bootstrapValidator = $("form.price").data('bootstrapValidator');
+        bootstrapValidator.validate();
+        if (bootstrapValidator.isValid()) {
+            fetch_POST(api.updatePublish, qs.parse($('form.price').serialize())).then(response => {
+                let data = response.data
+                if (data.status == 200) {
+                    new $.zui.Messager(data.msg, {
+                        type: 'success',
+                        placement: 'center'
+                    }).show();
+                    $('#dumpModal').modal({
+                        moveable: true,
+                        position: 'center'
+                    })
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1000)
+                } else {
+                    new $.zui.Messager(data.msg, {
+                        type: 'danger',
+                        placement: 'center'
+                    }).show();
+                }
+            })
+        }
+
+    }
+    /* 图片上传按钮初始化 */
+    $('#uploaderExample').uploader({
+        autoUpload: true,            // 当选择文件后立即自动进行上传操作
+        url: api.uploadImg,  // 文件上传提交地址
+        filters: {
+            // 只允许上传图片或图标（.ico）
+            mime_types: [
+                {title: '图片', extensions: 'jpg,gif,png,jpeg,JPG,JPEG,PNG'},
+            ],
+            // 最大上传文件为 1MB
+            max_file_size: '3mb',
+            // 不允许上传重复文件
+            prevent_duplicates: true,
+        },
+        responseHandler: function (responseObject, file) {
+            console.log(JSON.parse(responseObject.response))
+            let data = JSON.parse(responseObject.response)
+            // 当服务器返回的文本内容包含 `'error'` 文本时视为上传失败
+            if (data.status != 200) {
                 new $.zui.Messager(data.msg, {
                     type: 'danger',
                     placement: 'center'
                 }).show();
+                return '上传失败。服务器返回了一个错误：' + responseObject.response;
+            } else if (data.status == 200) {
+                let imgList = JSON.parse($("input[name='m_photo']").val())
+                imgList.push(data.data[0])
+                $("input[name='m_photo']").val(JSON.stringify(imgList))
+                console.log('列表', imgList)
             }
-        })
-    }
+        }
+    });
 </script>
 {% include "home/base_footer.html" %}

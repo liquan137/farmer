@@ -96,6 +96,12 @@ class AuthMenberForm(forms.Form):
         "required": "请选择封禁操作",
     })
 
+# 删除用户账号表单
+class DeleteMenberForm(forms.Form):
+    id = forms.EmailField(required=True, error_messages={
+        "required": "普通账号不能为空",
+    })
+
 
 # 修改密码普通账号表单
 class PasswordMenberForm(forms.Form):

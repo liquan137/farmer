@@ -4,7 +4,9 @@ let apiData = {
     sysBind: '/sysBind',
     menber: '/menber',
     sysMain: '/sysMain',
-    sysCategory: '/sysCategory'
+    sysCategory: '/sysCategory',
+    authGetMenber: '/authGetMenber',
+    authMenber: '/authMenber'
 }
 
 let setApi = (data) => {

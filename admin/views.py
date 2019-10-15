@@ -16,11 +16,34 @@ from common.page import PageObject
 from common.dedupe import Dedupe
 
 
+# 处理信息中的城市渲染
+def CitySelectOne(list):
+    # 加载城市列表
+    file_name = "static/json/city.json"
+    with open(file_name) as file_obj:
+        cityList = json.load(file_obj)
+    LIST = list
+    if isinstance(LIST['address_province'], int):
+        for city_i in cityList['province_list']:
+            if str(LIST['address_province']) == str(city_i):
+                LIST['address_province'] = cityList['province_list'][city_i]
+    if isinstance(LIST['address_city'], int):
+        for city_x in cityList['city_list']:
+            if str(LIST['address_city']) == str(city_x):
+                LIST['address_city'] = cityList['city_list'][city_x]
+    if isinstance(LIST['address_belong'], int):
+        for city_y in cityList['county_list']:
+            if str(LIST['address_belong']) == str(city_y):
+                LIST['address_belong'] = cityList['county_list'][city_y]
+    return LIST
+
+
 # objects.get()结果转换
 def object_to_json(obj):
     return dict([(kk, obj.__dict__[kk]) for kk in obj.__dict__.keys() if kk != "_state" and kk != "password"])
 
 
+# 检查系统
 def sysInfo():
     if os.name == 'nt':
         name = 'windows'
@@ -382,6 +405,14 @@ def menber(request, page):
         pageData = Paginator(p_menber.objects.all().values().order_by('id'),
                              recPerPage)
         pageData = handle.handlePage(pageData, page, recPerPage)
+        for item in pageData['page_list']:
+            try:
+                Auth = p_menber_auth.objects.get(username=item['username'])
+                pageData['page_list'][pageData['page_list'].index(item)].update(company_auth=Auth.auth)
+                pageData['page_list'][pageData['page_list'].index(item)].update(auth_id=Auth.id)
+            except:
+                pageData['page_list'][pageData['page_list'].index(item)].update(company_auth=3)
+
         template = loader.get_template('admin/menber.html')
         context = {
             'list': pageData
@@ -403,6 +434,85 @@ def menber(request, page):
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
+
+# 用户审核获取信息 API接口
+def authGetMenber(request):
+    if request.method == 'POST':
+        if request.admin == None:
+            data = {
+                'status': 401,
+                'msg': '未查询到的操作',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        else:
+            try:
+                auth = object_to_json(p_menber_auth.objects.get(id=request.POST.get('id')))
+                data = {
+                    'status': 200,
+                    'msg': '获取成功',
+                    'data': CitySelectOne(auth)
+                }
+                # p_menber_auth.objects.get(id=request.POST.get('id')).delete()
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+            except:
+                data = {
+                    'status': 400,
+                    'msg': '未查询到该认证申请',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+# 用户审核 API接口
+def authMenber(request):
+    if request.method == 'POST':
+        if request.admin == None:
+            data = {
+                'status': 401,
+                'msg': '未查询到的操作',
+                'data': None
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        else:
+            msg = ''
+            try:
+                print(int(request.POST.get('auth')) ,1)
+                if int(request.POST.get('auth')) == 1:
+                    msg = '审核状态为通过'
+                elif int(request.POST.get('auth')) == 2:
+                    msg = '审核状态不通过'
+                auth = p_menber_auth.objects.get(id=request.POST.get('id'))
+                auth.auth = request.POST.get('auth')
+                auth.save()
+                data = {
+                    'status': 200,
+                    'msg': msg,
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+            except:
+                data = {
+                    'status': 400,
+                    'msg': '未查询到该认证申请',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    else:
+        data = {
+            'status': 401,
+            'msg': '请求错误',
+            'data': None
+        }
+        return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
 
 # 用户管理 API接口
 def sysMenber(request):
@@ -453,7 +563,7 @@ def sysMenber(request):
                     'data': None
                 }
         elif request.POST.get('type') == 'd':
-            bind = DeleteForm(request.POST)
+            bind = DeleteMenberForm(request.POST)
             if bind.is_valid():
                 user = p_menber.objects.get(username=request.POST.get('id'))
                 msg = p_message.objects.filter(username=request.POST.get('id'))
