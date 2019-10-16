@@ -8,9 +8,9 @@
             <li>
                 <span>{{ item.update_time }}</span>
                 <span title="{{ item.m_title }}">
-            <a class="p-todat-list-a a-text-hover" href="/productDetail/{{ item.id }}">{{ item.m_title }}：<font style="color: red">{{ item.m_today_price }}</font>/{{ item.m_today_size }}</a>
+            <a class="p-todat-list-a a-text-hover" href="/productDetail/{{ item.id }}">{{ item.m_pz }}：<font style="color: red">{{ item.m_today_price }}</font>/{{ item.m_today_size }}</a>
             <div class="p-todat-list-special">
-                <a href="/productDetail/{{ item.id }}">{{ item.m_address_city }}{{ item.m_address_belong }}新民白菜，矮棵黄心菜，玲珑黄，秋宝</a>
+                <a href="/productDetail/{{ item.id }}">{{ item.m_address_city }}{{ item.m_address_belong }}{{ item.m_title }}</a>
             </div>
         </span>
             </li>

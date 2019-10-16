@@ -52,6 +52,7 @@ def CitySelect(list):
                     LIST[list.index(item)]['m_address_belong'] = cityList['county_list'][city_y]
     return LIST
 
+
 # 处理信息中的城市渲染
 def CitySelectOne(list):
     # 加载城市列表
@@ -73,6 +74,7 @@ def CitySelectOne(list):
                 LIST['address_belong'] = cityList['county_list'][city_y]
     return LIST
 
+
 # 处理数据库中的图片数组
 def handlePhoto(list):
     for item in list:
@@ -88,6 +90,7 @@ def handlePhoto(list):
     list = CitySelect(list)
     return list
 
+
 # 处理数据库中的图片数组
 def handleLike(list):
     for item in list:
@@ -101,6 +104,7 @@ def handleLike(list):
                                                                   time.localtime(float(item['update_time'])))
     list = CitySelect(list)
     return list
+
 
 # 处理首页的数据
 def handleIndexData(list):
@@ -154,13 +158,21 @@ def cdBaoJia():
     return todayData
 
 
-# 产品报价
+# 热门产品
 def hot():
     handle = PageObject()
     page = 1
-    todayPY = Paginator(p_product_child.objects.all().values().order_by('create_time'),
-                        40)
-    todayData = handle.handlePage(todayPY, page, 40)
+    hignList = list(
+        p_message.objects.all().values('m_pz', 'id', 'm_c_id').annotate(avg=Avg("m_c_id")).order_by('-num'))
+    deep = Dedupe()
+    hignList = list(deep.dedupe(hignList, key=lambda d: d['m_c_id']))
+    print(hignList)
+    for item in hignList:
+        sqlChild = p_product_child.objects.get(id=item['m_c_id'])
+        hignList[hignList.index(item)].update(p_id=item['m_c_id'], p_name=sqlChild.p_name)
+    todayData = {
+        'page_list': hignList
+    }
     return todayData
 
 
@@ -227,6 +239,45 @@ def List(request, page):
         'path': '/list/',
         'today': todayData,
         'hot': hot()
+    }
+    return HttpResponse(template.render(context, request))
+
+
+# 搜索
+def search(request):
+    if request.GET.get('keyword') == '' or request.GET.get('keyword') == None:
+        template = loader.get_template('home/message.html')
+        context = {
+            'msg': urllib.parse.unquote(urllib.parse.unquote('请填写关键词'))
+        }
+        return HttpResponse(template.render(context, request))
+    template = loader.get_template('home/search.html')
+    keyword = request.GET.get('keyword')
+    print()
+    nav = navList()
+    recPerPage = 25
+    page = 1
+    try:
+        pagePY = Paginator(p_message.objects.filter(m_title__contains=keyword).values().order_by('-create_time'),
+                           recPerPage)
+    except:
+        pagePY = False
+    if pagePY != False:
+        handle = PageObject()
+        pageData = handle.handlePage(pagePY, page, recPerPage)
+        pageData['page_list'] = handlePhoto(pageData['page_list'])
+        todayData = cdBaoJia()
+    else:
+        pageData = False
+
+    context = {
+        'supply': pageData,
+        'list': pageData,
+        'nav': nav,
+        'path': '/list/',
+        'today': todayData,
+        'hot': hot(),
+        'search': keyword
     }
     return HttpResponse(template.render(context, request))
 
@@ -323,6 +374,7 @@ def registerReg(request):
     }
     return HttpResponse(template.render(context, request))
 
+
 # 认证
 def authReg(request):
     if request.userInfo == None:
@@ -334,6 +386,7 @@ def authReg(request):
         'userInfo': userInfo
     }
     return HttpResponse(template.render(context, request))
+
 
 # 登出操作
 def logout(request):
@@ -437,9 +490,29 @@ def productDetail(request, id):
     if id != None:
         if isinstance(id, int):
             template = loader.get_template('home/productDetail.html')
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]  # 所以这里是真实的ip
+            else:
+                ip = request.META.get('REMOTE_ADDR')  # 这里获得代理ip
+            dataContact = []
+            sqldata = p_message.objects.get(id=id)
             try:
-                data = p_message.objects.get(id=id)
-                data = object_to_json(data)
+                ipList = json.loads(sqldata.m_ip)
+                for item in ipList:
+                    if ip in ipList:
+                        print('---', item, ip, sqldata.m_ip)
+                    else:
+                        sqldata.num = sqldata.num + 1
+                        ipList.append(ip)
+                        sqldata.m_ip = json.dumps(ipList)
+                        sqldata.save()
+            except:
+                sqldata.m_ip = json.dumps([ip])
+                sqldata.num = 1
+                sqldata.save()
+            try:
+                data = object_to_json(sqldata)
                 data['m_photo'] = json.loads(data['m_photo'])
                 dataContact = p_message_contact.objects.get(p_id=id)
                 typeF = p_product.objects.get(id=data['m_f_id'])
@@ -453,6 +526,7 @@ def productDetail(request, id):
                     p_message.objects.filter(m_c_id=data['m_c_id']).values().order_by('create_time'), 10)
                 likeList = handle.handlePage(likeList, 1, 10)
                 likeList['page_list'] = handleLike(likeList['page_list'])
+
             except:
                 data = {}
             context = {
@@ -475,7 +549,7 @@ def productDetail(request, id):
         return HttpResponse('不存在参数')
 
 
-# 生成一级列表、和二级列表
+# 生成一级列表
 def FClist(father, child, province, city, county):
     table_nav = list(p_product_child.objects.filter(p_id=father).values())
     if child == 0:
@@ -557,7 +631,7 @@ def countySelect(cityList, county_arr, father, child, last, province, city, coun
 # 生成二级列表
 def product_selcet_child(father, child, last, province, city, county):
     threeList = list(
-        p_message.objects.filter(m_f_id=child).values('m_pz', 'id', 'm_c_id').annotate(avg=Avg("m_pz")))
+        p_message.objects.filter(m_f_id=father,m_c_id=child).values('m_pz', 'id', 'm_c_id').annotate(avg=Avg("m_pz")))
     deep = Dedupe()
     threeList = list(deep.dedupe(threeList, key=lambda d: d['m_pz']))
     if last == 0:
@@ -649,7 +723,7 @@ def product(request, father, child, last, province, city, county, page):
             }
         ]
     else:
-        msg = urllib.parse.quote('该栏目下没有信息！')
+        msg = urllib.parse.quote('该栏目下没有信息2！')
         return HttpResponseRedirect('/message/' + msg)
 
     if len(p_message.objects.filter(m_c_id=child)) > 0:
@@ -751,6 +825,7 @@ def product(request, father, child, last, province, city, county, page):
             city_arr = citySelect(cityList, province, city_arr, father, child, last, city, county)
             county_arr = countySelect(cityList, county_arr, father, child, last, province, city, county)
             # 使用公共函数中的分页生成器
+            print('select',select)
             mgsLsit = Paginator(p_message.objects.filter(**select).values().order_by('create_time'), recPerPage)
             handle = PageObject()
             pageData = handle.handlePage(mgsLsit, page, recPerPage)
@@ -804,6 +879,34 @@ def Manage(request, page):
     context = {
         'list': pageData,
         'path': '/manage/',
+    }
+    return HttpResponse(template.render(context, request))
+
+
+# 举报
+def report(request):
+    if request.GET.get('contact') == '' or request.GET.get('contact') == None:
+        template = loader.get_template('home/message.html')
+        context = {
+            'msg': urllib.parse.unquote(urllib.parse.unquote('请填写联系方式'))
+        }
+        return HttpResponse(template.render(context, request))
+    if request.GET.get('content') == '' or request.GET.get('content') == None:
+        template = loader.get_template('home/message.html')
+        context = {
+            'msg': urllib.parse.unquote(urllib.parse.unquote('请填写问题描述'))
+        }
+        return HttpResponse(template.render(context, request))
+    if request.userInfo == None:
+        newReport = p_report(contact=request.GET.get('contact'), content=request.GET.get('content'), username=0)
+        newReport.save()
+    else:
+        newReport = p_report(contact=request.GET.get('contact'), content=request.GET.get('content'),
+                             username=request.userInfo['username'])
+        newReport.save()
+    template = loader.get_template('home/pass.html')
+    context = {
+        'msg': urllib.parse.unquote(urllib.parse.unquote('请填写问题描述'))
     }
     return HttpResponse(template.render(context, request))
 

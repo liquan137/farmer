@@ -4,7 +4,7 @@
             <div class="col-lg-12 clear_both">
         <span class="pull-left">
 
-            {%  if request.userInfo != None %}
+            {% if request.userInfo != None %}
                 <a><font color="#444">用户：</font></a>
                 <a><b>{% autoescape off %}{{ request.userInfo.nickname }}{% endautoescape %}</b></a>
 
@@ -30,16 +30,19 @@
                 <a href="/"><img src="http://www.nongnet.com/images/logo.gif" alt=""></a>
             </div>
             <div class="col-md-5 col-sm-5 search-bar-input">
-                <div class="input-group">
-                    <div class="input-control search-box  has-icon-right search-example"
-                         id="searchboxExample">
-                        <input id="inputSearchExample3" type="search" class="form-control search-input"
-                               placeholder="搜索">
-                    </div>
-                    <span class="input-group-btn">
-                    <button class="btn btn-green" type="button">搜索</button>
+                <form action="/search">
+                    <div class="input-group">
+                        <div class="input-control search-box  has-icon-right search-example"
+                             id="searchboxExample">
+                            <input id="inputSearchExample3" type="search" class="form-control search-input"
+                                   placeholder="搜索" name="keyword" value="{{ search }}">
+                        </div>
+                        <span class="input-group-btn">
+                    <button  class="btn btn-green" type="submit">搜索</button>
                   </span>
-                </div>
+                    </div>
+                </form>
+
             </div>
             <div class="col-md-4 col-sm-3 search-bar-text">
                 <a href="">买卖，信得过的平台！</a>

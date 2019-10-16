@@ -38,12 +38,14 @@ urlpatterns = [
     path('admin/sysCategory', admin_views.sysCategory),  # 品种接口
     path('', home_views.index),  # 主页面
     path('list/<int:page>', home_views.List),  # 主页分页
+    path('search/', home_views.search),  # 搜索
     path('quote/<int:child>/<int:page>', home_views.Quote),  # 报价
     path('logout/', home_views.logout),  # 退出登录
     path('login/', home_views.login),  # 登录
     path('register/', home_views.register),  # 注册
     path('registerReg/', home_views.registerReg),  # 完善资料
     path('authReg/', home_views.authReg),  # 认证
+    path('report/', home_views.report),  # 认证
     path('forget/', home_views.forget),  # 找回密码
     path('publish/', home_views.publish),  # 发布信息
     path('city/', home_views.city),  # 城市写入接口

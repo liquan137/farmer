@@ -11,8 +11,7 @@
         <div class="col-md-8">
             <div class="card-box">
                 <div class="clear_both card-title">
-                    <h3 class="pull-left">农产品交易信息</h3>
-                    <a class="a-text pull-right" href="">查看求购信息</a>
+                    <h3 class="pull-left">搜索结果：【{{ search }}】交易信息</h3>
                 </div>
                 <div>
                     <ul class="msg-list">
@@ -27,8 +26,8 @@
                                 </span>
                                 <a href="/productDetail/{{ item.id }}" class="msg-word has-photo">{{ item.m_title }}</a>
                                 <span class="pull-right">{{ item.create_time }}</span>
-                                <span class="pull-right">{{ item.m_address_city }}</span>
                                 <span class="pull-right">{{ item.m_address_province }}</span>
+                                <span class="pull-right">{{ item.m_address_city }}</span>
                             </li>
                         {% endfor %}
                     </ul>

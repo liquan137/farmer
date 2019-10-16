@@ -2,7 +2,7 @@
                 {% if request.userInfo != None %}
                     <p>
                         {% if request.userInfo.auth == 0 %}
-                            <span class="label label-primary">待审核</span>
+                            <span class="label label-primary">待认证</span>
                         {% elif request.userInfo.auth == 1 %}
                             <span class="label label-warning">认证 V</span>
                         {% elif request.userInfo.auth == 2 %}

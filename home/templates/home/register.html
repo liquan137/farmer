@@ -232,8 +232,14 @@
                         placement: 'center'
                     }).show();
                     setTimeout(() => {
-                        window.location.go(-1)
-                    }, 1000)
+                        console.log('{{ request.session.from }}')
+                        if ('{{ request.session.from }}'.indexOf('logout') > -1 || '{{ request.session.from }}'.indexOf('register') > -1){
+                            window.location.href = '/'
+                        }  else {
+                            window.location.href = '{{ request.session.from }}'
+                        }
+
+                    }, 500)
                 } else {
                     new $.zui.Messager(data.msg, {
                         type: 'danger',

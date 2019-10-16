@@ -4591,9 +4591,9 @@
                 },
                 contact_tel: {
                     validators: {
-                        /*notEmpty: {
+                        notEmpty: {
                             message: '固定电话不能为空'
-                        },*/
+                        },
                         regexp: {
                             regexp: /\d{3}-\d{8}|\d{4}-\d{7}/,
                             message: '固定电话格式错误，正确格式0000-00000000'
@@ -4611,9 +4611,9 @@
                 },
                 contact_email: {
                     validators: {
-                        /*notEmpty: {
-                            message: '固定电话不能为空'
-                        },*/
+                        notEmpty: {
+                            message: '邮箱格式错误'
+                        },
                         regexp: {
                             regexp: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                             message: '邮箱格式错误'

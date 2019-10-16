@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>提示</title>
+    <!-- zui css -->
+    <link rel="stylesheet" href="{% static '/dist/css/zui.min.css' %}">
+    <link rel="stylesheet" href="{% static '/dist/theme/blue.css' %}">
+    <!-- app css -->
+    <link rel="stylesheet" href="{% static '/css/app.css' %}">
+    <!-- jquery js -->
+    <script src="{% static '/dist/lib/jquery/jquery.js' %}"></script>
+
+</head>
+<body>
+<div class="page page-error text-center">
+    <header>
+        <h1><img style="max-width: 210px" src="{% static '/img/200.jpg' %}" alt=""></h1>
+        <p>提交成功</p>
+    </header>
+    <a class="btn btn-primary btn-round" href="/" style="margin-right:10px;">回到首页</a>
+    <a class="btn btn-round" href="javascript:history.back();">返回上页</a>
+    <footer class="page-copyright">
+        <p>农业信息网</p>
+        <p>© 2018. All RIGHT RESERVED.</p>
+    </footer>
+</div>
+
+{% load static %}
+<!-- zui js -->
+<script src="{% static '/dist/js/zui.min.js' %}"></script>
+<!-- app js -->
+<script src="{% static '/js/app.js' %}"></script>
+
+</body>
+</html>

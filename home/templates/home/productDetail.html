@@ -19,6 +19,25 @@
         </div>
         <div class="col-md-8">
             <div class="detail-box">
+                <div>
+                    <h2 class="with-padding">
+                    <span>
+                        {% if data.type == '1' %}
+                            [供]
+                        {% elif data.type == '2' %}
+                            [需]
+                        {% endif %}
+                    </span>
+                        {{ data.m_title }}
+                    </h2>
+                    <p class="clear_both" style="border-bottom: 1px solid #ddd">
+                        <span class="pull-left with-padding">时间：{{ data.create_time }} </span>
+                        <span class="pull-left with-padding">浏览人数：{{ data.num }}</span>
+                        <a class="pull-right with-padding" data-toggle="modal" data-target="#myModal"><i
+                                class="icon icon-warning-sign"></i>举报/投诉</a>
+                    </p>
+
+                </div>
                 <div class="clear_both">
                     <div class="img-view">
                         <img src="{{ data.m_photo.0 }}" alt="">
@@ -40,6 +59,7 @@
                 </div>
                 <div class="body-box">
                     {% autoescape off %}{{ data.m_content }}{% endautoescape %}
+                    <p>联系我时请说明是在 农产品信息网 上看到的，谢谢！</p>
                 </div>
 
             </div>
@@ -105,6 +125,45 @@
             <!--<div class="card-box">
                 {% include "home/info.html" %}
             </div>-->
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                        class="sr-only">关闭</span></button>
+                <h4 class="modal-title">举报投诉</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" action="/report">
+                    <div class="form-group">
+                        <label for="exampleInputAccount4" class="col-sm-2">类型</label>
+                        <div class="col-md-6 col-sm-10">
+                            <p class="form-control-static">举报</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputAccount4" class="col-sm-2">联系方法</label>
+                        <div class="col-md-6 col-sm-10">
+                            <input type="text" class="form-control" id="exampleInputAccount4"
+                                   placeholder="电子邮件/手机号/用户名" name="contact">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword4" class="col-sm-2">问题描述</label>
+                        <div class="col-md-6 col-sm-10">
+                            <textarea class="form-control" rows="3" placeholder="请输入内容" name="content"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

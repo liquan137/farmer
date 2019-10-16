@@ -24,6 +24,8 @@ class p_message(models.Model):
     create_time = models.CharField(max_length=30, help_text="创建时间", default="0")
     update_time = models.CharField(max_length=30, help_text="修改时间", default="0")
     auth = models.IntegerField(help_text="封禁 1：正常 2：封禁", default=1)
+    num = models.IntegerField(help_text="浏览人数", default=1)
+    m_ip = models.TextField(help_text="ip记录", default='0')
 
 
 class p_message_contact(models.Model):
@@ -104,3 +106,8 @@ class p_file(models.Model):
     path = models.CharField(max_length=200, help_text="文件路径")
     create_time = models.CharField(max_length=30, help_text="创建时间", default="0")
     update_time = models.CharField(max_length=30, help_text="修改时间", default="0")
+
+class p_report(models.Model):
+    username = models.CharField(max_length=30, help_text="关联用户")
+    content = models.CharField(max_length=500, help_text="举报描述", default="")
+    contact = models.CharField(max_length=500, help_text="联系方式", default="")
