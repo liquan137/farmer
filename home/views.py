@@ -723,7 +723,7 @@ def product(request, father, child, last, province, city, county, page):
             }
         ]
     else:
-        msg = urllib.parse.quote('该栏目下没有信息2！')
+        msg = urllib.parse.quote('该栏目下没有信息！')
         return HttpResponseRedirect('/message/' + msg)
 
     if len(p_message.objects.filter(m_c_id=child)) > 0:

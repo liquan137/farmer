@@ -1,5 +1,3 @@
-from django.core.paginator import Paginator
-
 
 # 示例
 # def getPMsgList(id, recPerPage):

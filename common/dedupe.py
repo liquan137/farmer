@@ -10,5 +10,3 @@ class Dedupe:
                 yield item
                 seen.add(val)
 
-# 示例
-# list(dedupe([random.randint(0, 100) for k in range(1000)]))

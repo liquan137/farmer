@@ -31,8 +31,6 @@ def random_password(num):
 
 # 登陆
 def login(request):
-    print(request.userInfo)
-    print(request.method)
     if request.method == 'POST':
         responses = json.loads(request.body)
         for response in responses:
@@ -73,8 +71,6 @@ def login(request):
 
 # 注册
 def register(request):
-    print(request.userInfo)
-    print(request.method)
     if request.method == 'POST':
         responses = json.loads(request.body)
         for response in responses:
@@ -132,8 +128,6 @@ def register(request):
 
 # 忘记密码
 def forget(request):
-    print(request.userInfo)
-    print(request.method)
     if request.method == 'POST':
         responses = json.loads(request.body)
         for response in responses:

@@ -3,17 +3,17 @@
   <component name="ChangeListManager">
     <list default="true" id="fc417b68-8707-43fc-8043-875c39218e6c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/farmer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/farmer/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/base_nav.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/base_nav.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/chandi.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/chandi.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/dedupe.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/dedupe.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/page.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/admin.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/home/templates/home/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/productDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/productDetail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/publishDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/publishDetail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/home/templates/home/userInfo.html" beforeDir="false" afterPath="$PROJECT_DIR$/home/templates/home/userInfo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home/tests.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/home/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -180,6 +180,7 @@
       <workItem from="1571047741111" duration="13842000" />
       <workItem from="1571135667551" duration="13781000" />
       <workItem from="1571225466036" duration="11005000" />
+      <workItem from="1571306918350" duration="7540000" />
     </task>
     <task id="LOCAL-00001" summary="new">
       <created>1570353648422</created>
