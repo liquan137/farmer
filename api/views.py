@@ -557,7 +557,6 @@ def uploadImg(request):
         user.msg_limit = 0
         user.file_limit = 0
     else:
-
         if int(user.file_limit) >= int(limit.img_limit):
             data = {
                 'status': 400,
