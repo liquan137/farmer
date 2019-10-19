@@ -95,14 +95,14 @@ def handlePhoto(list):
 def handleLike(list):
     for item in list:
         list[list.index(item)]['m_photo'] = json.loads(item['m_photo'])
-        if item['create_time'] != 0:
-            list[list.index(item)]['create_time'] = time.strftime("%Y-%m-%d %H:%M",
-                                                                  time.localtime(float(item['create_time'])))
-        if item['update_time'] != 0:
-            list[list.index(item)]['update_time'] = time.strftime("%Y-%m-%d %H:%M",
+        list[list.index(item)]['create_time'] = time.strftime("%Y-%m-%d %H:%M",
+                                                              time.localtime(float(item['create_time'])))
+        list[list.index(item)]['update_time'] = time.strftime("%Y-%m-%d %H:%M",
 
-                                                                  time.localtime(float(item['update_time'])))
+                                                              time.localtime(float(item['update_time'])))
+
     list = CitySelect(list)
+    print('create_time', list)
     return list
 
 
@@ -114,7 +114,11 @@ def handleIndexData(list):
         if item['create_time'] != 0:
             time_delta = round(now_time) - round(float(item['create_time']))
             time_result = round(time_delta / 60)
-            if time_result < 60:
+            print(time_result)
+            if time_result < 1:
+                temp = time_result
+                list[list.index(item)]['create_time'] = '刚刚'
+            elif time_result < 60 and time_result > 1:
                 temp = time_result
                 list[list.index(item)]['create_time'] = '%s分钟前' % temp
             elif time_result > 60 and time_result < 1440:
@@ -151,7 +155,7 @@ def object_to_json(obj):
 def cdBaoJia():
     handle = PageObject()
     page = 1
-    todayPY = Paginator(p_message.objects.all().values().order_by('create_time'),
+    todayPY = Paginator(p_message.objects.all().values().order_by('-create_time'),
                         6)
     todayData = handle.handlePage(todayPY, page, 6)
     todayData['page_list'] = handleIndexData(todayData['page_list'])
@@ -513,30 +517,36 @@ def productDetail(request, id):
                 sqldata.save()
             try:
                 data = object_to_json(sqldata)
+                print(data)
                 data['m_photo'] = json.loads(data['m_photo'])
                 dataContact = p_message_contact.objects.get(p_id=id)
                 typeF = p_product.objects.get(id=data['m_f_id'])
                 typeC = p_product_child.objects.get(id=data['m_c_id'])
                 dataContact = object_to_json(dataContact)
                 writerList = Paginator(
-                    p_message.objects.filter(username=data['username']).values().order_by('create_time'), 10)
+                    p_message.objects.filter(username=data['username']).order_by('-create_time').values(), 10)
                 handle = PageObject()
                 writerList = handle.handlePage(writerList, 1, 10)
+                writerList['page_list'] = handleIndexData(writerList['page_list'])
                 likeList = Paginator(
-                    p_message.objects.filter(m_c_id=data['m_c_id']).values().order_by('create_time'), 10)
+                    p_message.objects.filter(m_c_id=data['m_c_id']).order_by('-create_time').values(), 10)
                 likeList = handle.handlePage(likeList, 1, 10)
                 likeList['page_list'] = handleLike(likeList['page_list'])
-
+                data['create_time'] = time.strftime("%Y-%m-%d %H:%M",
+                                                    time.localtime(float(data['create_time'])))
+                data['update_time'] = time.strftime("%Y-%m-%d %H:%M",
+                                                    time.localtime(float(data['update_time'])))
             except:
                 data = {}
+
             context = {
                 'data': data,
                 'contact': CitySelectOne(dataContact),
                 'typeF': typeF.p_name,
                 'typeC': typeC.p_name,
                 'typeFLink': '/product/' + data['m_f_id'] + '/0/0/0/0/0/1',
-                'typeCLink': '/product/' + data['m_f_id'] + '/' + data['m_f_id'] + '/0/0/0/0/1',
-                'typePZLink': '/product/' + data['m_f_id'] + '/' + data['m_f_id'] + '/' + str(id) + '/0/0/0/1',
+                'typeCLink': '/product/' + data['m_f_id'] + '/' + data['m_c_id'] + '/0/0/0/0/1',
+                'typePZLink': '/product/' + data['m_f_id'] + '/' + data['m_c_id'] + '/' + str(id) + '/0/0/0/1',
                 'today': cdBaoJia(),
                 'hot': hot(),
                 'writer': writerList,
@@ -631,7 +641,7 @@ def countySelect(cityList, county_arr, father, child, last, province, city, coun
 # 生成二级列表
 def product_selcet_child(father, child, last, province, city, county):
     threeList = list(
-        p_message.objects.filter(m_f_id=father,m_c_id=child).values('m_pz', 'id', 'm_c_id').annotate(avg=Avg("m_pz")))
+        p_message.objects.filter(m_f_id=father, m_c_id=child).values('m_pz', 'id', 'm_c_id').annotate(avg=Avg("m_pz")))
     deep = Dedupe()
     threeList = list(deep.dedupe(threeList, key=lambda d: d['m_pz']))
     if last == 0:
@@ -825,7 +835,7 @@ def product(request, father, child, last, province, city, county, page):
             city_arr = citySelect(cityList, province, city_arr, father, child, last, city, county)
             county_arr = countySelect(cityList, county_arr, father, child, last, province, city, county)
             # 使用公共函数中的分页生成器
-            print('select',select)
+            print('select', select)
             mgsLsit = Paginator(p_message.objects.filter(**select).values().order_by('create_time'), recPerPage)
             handle = PageObject()
             pageData = handle.handlePage(mgsLsit, page, recPerPage)

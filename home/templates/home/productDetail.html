@@ -13,8 +13,7 @@
                 <a href="/" class="a-text a-text-hover">农产品信息网</a> >
                 <a href="{{ typeFLink }}" class="a-text a-text-hover">{{ typeF }}</a> >
                 <a href="{{ typeCLink }}" class="a-text a-text-hover">{{ typeC }}</a> >
-                <a href="{{ typePZLink }}" class="a-text a-text-hover">{{ data.m_pz }}</a> >
-                <span class="a-text a-text-hover">【{{ data.m_pz }}】的详细资料</span>
+                <a href="{{ typePZLink }}" class="a-text a-text-hover">{{ data.m_pz }}</a>
             </div>
         </div>
         <div class="col-md-8">
@@ -71,13 +70,12 @@
                 <ul class="p-today-list" style="padding-left: 10px">
                     <li style="padding: 5px 0">
                         <span>发布时间</span>
-                        <span title="{{ item.m_title }}">
+                        <span>
                                 <a class="p-todat-list-a a-text-hover p-todat-list-title">标题</a>
-                                <a class="p-todat-list-a a-text-hover p-todat-list-price"
-                                   href="/productDetail/{{ item.id }}">报价</a>
+                                <a class="p-todat-list-a a-text-hover p-todat-list-price">报价</a>
                             </span>
                     </li>
-                    {% for item in today.page_list %}
+                    {% for item in writer.page_list %}
                         <li style="padding: 5px 0">
                             <span>{{ item.update_time }}</span>
                             <span title="{{ item.m_title }}">

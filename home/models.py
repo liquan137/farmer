@@ -60,6 +60,9 @@ class p_menber(models.Model):
     contact_qq = models.CharField(max_length=200, help_text="联系人QQ", default="")
     company_des = models.CharField(max_length=600, help_text="公司介绍,不超过300字", default="")
     auth = models.IntegerField(help_text="封禁 1：正常 2：封禁", default=1)
+    msg_limit = models.IntegerField(help_text="当天发表的文章次数", default=0)
+    file_limit = models.IntegerField(help_text="当天上传的次数", default=0)
+    limit_time = models.CharField(max_length=30, help_text="记录时间", default="1571453334.0664003")
 
 class p_menber_auth(models.Model):
     username = models.CharField(max_length=30, help_text="关联用户")

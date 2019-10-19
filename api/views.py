@@ -9,6 +9,7 @@ import time
 import os
 from django.conf import settings
 import datetime
+from admin.models import p_sys
 
 # Create your views here.
 # 邮箱配置
@@ -33,13 +34,15 @@ def random_password(num):
 def login(request):
     if request.method == 'POST':
         responses = json.loads(request.body)
-        for response in responses:
-            print(responses[response])
-            if response == 'username':
-                request.session['user_id'] = responses[response]
-
         try:
             user = p_menber.objects.get(username=responses['username'])
+            if user.auth == 2:
+                data = {
+                    'status': 401,
+                    'msg': '账号处于封禁状态',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
             if user.password == responses['password']:
                 request.session['user_id'] = responses['username']
                 data = {
@@ -374,6 +377,24 @@ def publish(request):
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
     if request.method == 'POST':
         responses = json.loads(request.body)
+        user = p_menber.objects.get(username=request.userInfo['username'])
+        limit = p_sys.objects.get(id=1)
+        time_local = time.localtime(time.time())
+        sql_local = time.localtime(float(user.limit_time))
+        now_time =time.strftime("%Y%m%d", time_local)
+        sql_time =time.strftime("%Y%m%d", sql_local)
+        if now_time != sql_time:
+            user.limit_time = time.time()
+            user.msg_limit = 0
+            user.file_limit = 0
+        else:
+            if int(user.msg_limit) >= int(limit.article_limit):
+                data = {
+                    'status': 400,
+                    'msg': '您今天已经发布超过'+str(limit.article_limit)+'次，无法继续发布！',
+                    'data': None
+                }
+                return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
         try:
             p_message.objects.get(m_title=responses['m_title'])
             data = {
@@ -395,6 +416,7 @@ def publish(request):
                     }
                     return HttpResponse(json.dumps(data, ensure_ascii=False),
                                         content_type="application/json,charset=utf-8")
+
             newMessage = p_message(
                 m_title=responses['m_title'],
                 m_address_belong=responses['company_address'],
@@ -416,6 +438,9 @@ def publish(request):
                 update_time=time.time(),
                 username=request.userInfo['username'],
             )
+            user.limit_time = time.time()
+            user.msg_limit = user.msg_limit + 1
+            user.save()
             newMessage.save()
             newMessageContact = p_message_contact(
                 p_id=newMessage.id,
@@ -520,7 +545,28 @@ def uploadImg(request):
             "errno": 1,
         }
         return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
+    user = p_menber.objects.get(username=request.userInfo['username'])
+    limit = p_sys.objects.get(id=1)
+    time_local = time.localtime(time.time())
+    sql_local = time.localtime(float(user.limit_time))
+    now_time = time.strftime("%Y%m%d", time_local)
+    sql_time = time.strftime("%Y%m%d", sql_local)
+    print(int(user.file_limit), int(limit.img_limit))
+    if now_time != sql_time:
+        user.limit_time = time.time()
+        user.msg_limit = 0
+        user.file_limit = 0
+    else:
 
+        if int(user.file_limit) >= int(limit.img_limit):
+            data = {
+                'status': 400,
+                'msg': '您今天长传的图片超过' + str(limit.img_limit) + '次，无法继续上传！',
+                'data': None,
+                'type': 'error',
+                "errno": 1,
+            }
+            return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
     fix = str(round(time.time())) + '1'
     name = img.name.split('.')
     if len(name) == 1:
@@ -537,6 +583,9 @@ def uploadImg(request):
     url = '/static/upload/images/' + fix + str(request.userInfo['id']) + '.' + name[len(name) - 1]
     newFile = p_file(name=img.name, path=url, create_time=time.time())
     newFile.save()
+    user.file_limit = user.file_limit+1
+    user.limit_time = time.time()
+    user.save()
     data = {
         'status': 200,
         'msg': '上传成功',
