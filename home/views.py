@@ -714,7 +714,7 @@ def product(request, father, child, last, province, city, county, page):
                     'active': ''
                 })
     # 每页多少信息
-    recPerPage = 16
+    recPerPage = 1
     select = {
     }
 
@@ -847,7 +847,8 @@ def product(request, father, child, last, province, city, county, page):
             context = {
                 'child': childData,  # 多级导航
                 'list': pageData,
-                'path': '/product/' + str(father) + '/' + str(child) + '/' + str(last) + '/',
+                'path': '/product/' + str(father) + '/' + str(child) + '/' + str(last) + '/' + str(
+                    province) + '/' + str(city) + '/' + str(county) + '/',
                 'titleNav': titleNav,
                 'this': this.p_name,
                 'threeAll': threeAll,
