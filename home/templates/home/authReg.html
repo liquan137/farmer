@@ -19,7 +19,7 @@
                 <div class="container">
                     <h3>具有公司或者其它组织性质的，可以进行实名认证，提交者必须保证提交材料的真实性以确保认证无误通过！通过认证的用户，将会在信息栏显示实名认证的图标，提高信息的曝光性和可靠性！</h3>
                     <div class="login-center">
-                        <form class="form-horizontal registerReg" method="post">
+                        <form class="form-horizontal authReg" method="post">
                             <div class="form-group">
                                 <label for="exampleInputAccount1" class="col-sm-2">法人姓名</label>
                                 <div class="col-md-8 col-sm-10">
@@ -4293,7 +4293,7 @@
     }
     /* 表单效验 */
     $(document).ready(function () {
-        $('form').bootstrapValidator({
+        $('form.authReg').bootstrapValidator({
             // 默认的提示消息
             message: '请填写该字段',
             // 表单框里右侧的icon
@@ -4602,10 +4602,10 @@
             }).show();
             return false;
         }
-        var bootstrapValidator = $("form.registerReg").data('bootstrapValidator');
+        var bootstrapValidator = $("form.authReg").data('bootstrapValidator');
         bootstrapValidator.validate();
         if (bootstrapValidator.isValid()) {
-            fetch_POST(api.authReg, qs.parse($('form.registerReg').serialize())).then(response => {
+            fetch_POST(api.authReg, qs.parse($('form.authReg').serialize())).then(response => {
                 let data = response.data
                 if (data.status == 200) {
                     new $.zui.Messager(data.msg, {

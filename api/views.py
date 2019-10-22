@@ -505,7 +505,7 @@ def updatePublish(request):
             Message.username = request.userInfo['username']
             Message.save()
             data = {
-                'status': 200,
+                'status': 400,
                 'msg': '修改完成',
                 'data': None
             }
@@ -513,7 +513,7 @@ def updatePublish(request):
         except:
             data = {
                 'status': 400,
-                'msg': '没有该篇文章',
+                'msg': '参数错误',
                 'data': None
             }
             return HttpResponse(json.dumps(data, ensure_ascii=False), content_type="application/json,charset=utf-8")
@@ -552,10 +552,12 @@ def uploadImg(request):
     now_time = time.strftime("%Y%m%d", time_local)
     sql_time = time.strftime("%Y%m%d", sql_local)
     print(int(user.file_limit), int(limit.img_limit))
+    print(now_time, sql_time)
     if now_time != sql_time:
         user.limit_time = time.time()
         user.msg_limit = 0
         user.file_limit = 0
+        user.save()
     else:
         if int(user.file_limit) >= int(limit.img_limit):
             data = {
