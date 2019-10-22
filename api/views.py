@@ -387,6 +387,7 @@ def publish(request):
             user.limit_time = time.time()
             user.msg_limit = 0
             user.file_limit = 0
+            user.save()
         else:
             if int(user.msg_limit) >= int(limit.article_limit):
                 data = {
