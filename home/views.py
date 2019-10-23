@@ -155,7 +155,7 @@ def object_to_json(obj):
 def cdBaoJia():
     handle = PageObject()
     page = 1
-    todayPY = Paginator(p_message.objects.all().values().order_by('-create_time'),
+    todayPY = Paginator(p_message.objects.all().values().order_by('-update_time'),
                         6)
     todayData = handle.handlePage(todayPY, page, 6)
     todayData['page_list'] = handleIndexData(todayData['page_list'])
@@ -524,13 +524,13 @@ def productDetail(request, id):
                 typeC = p_product_child.objects.get(id=data['m_c_id'])
                 dataContact = object_to_json(dataContact)
                 writerList = Paginator(
-                    p_message.objects.filter(username=data['username']).order_by('-create_time').values(), 10)
+                    p_message.objects.filter(username=data['username']).order_by('-update_time').values(), 6)
                 handle = PageObject()
-                writerList = handle.handlePage(writerList, 1, 10)
+                writerList = handle.handlePage(writerList, 1, 6)
                 writerList['page_list'] = handleIndexData(writerList['page_list'])
                 likeList = Paginator(
-                    p_message.objects.filter(m_c_id=data['m_c_id']).order_by('-create_time').values(), 10)
-                likeList = handle.handlePage(likeList, 1, 10)
+                    p_message.objects.filter(m_c_id=data['m_c_id']).order_by('-create_time').values(), 6)
+                likeList = handle.handlePage(likeList, 1, 6)
                 likeList['page_list'] = handleLike(likeList['page_list'])
                 data['create_time'] = time.strftime("%Y-%m-%d %H:%M",
                                                     time.localtime(float(data['create_time'])))
@@ -714,7 +714,7 @@ def product(request, father, child, last, province, city, county, page):
                     'active': ''
                 })
     # 每页多少信息
-    recPerPage = 1
+    recPerPage = 8
     select = {
     }
 
