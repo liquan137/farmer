@@ -42,7 +42,7 @@ dask==2.1.0
 decorator==4.4.0
 defusedxml==0.6.0
 distributed==2.1.0
-Django==2.2.6
+Django==2.2.21
 django-ranged-response==0.2.0
 django-simple-captcha==0.5.12
 docutils==0.14
